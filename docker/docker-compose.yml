@@ -1,0 +1,209 @@
+version: '3'
+
+services:
+  zookeeper:
+    image: apachepulsar/pulsar:latest
+    container_name: zookeeper
+    restart: on-failure
+    networks:
+      - pulsar
+    volumes:
+      - ./data/zookeeper:/pulsar/data/zookeeper
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - PULSAR_MEM=-Xms256m -Xmx256m -XX:MaxDirectMemorySize=256m
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
+             bin/generate-zookeeper-config.sh conf/zookeeper.conf && \
+             exec bin/pulsar zookeeper"
+    healthcheck:
+      test: ["CMD", "bin/pulsar-zookeeper-ruok.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+    # Init cluster metadata
+  pulsar-init:
+      container_name: pulsar-init
+      hostname: pulsar-init
+      image: apachepulsar/pulsar:latest
+      networks:
+        - pulsar
+      command: >
+        bin/pulsar initialize-cluster-metadata \
+                 --cluster cluster-a \
+                 --zookeeper zookeeper:2181 \
+                 --configuration-store zookeeper:2181 \
+                 --web-service-url http://broker:8080 \
+                 --broker-service-url pulsar://broker:6650
+      depends_on:
+        zookeeper:
+          condition: service_healthy
+
+    # Start bookie
+  bookie:
+      image: apachepulsar/pulsar:latest
+      container_name: bookie
+      restart: on-failure
+      networks:
+        - pulsar
+      environment:
+        - clusterName=cluster-autoscaler
+        - zkServers=zookeeper:2181
+        - metadataServiceUri=metadata-store:zk:zookeeper:2181
+        # otherwise every time we run docker compose up or down we fail to start due to Cookie
+        # See: https://github.com/apache/bookkeeper/blob/405e72acf42bb1104296447ea8840d805094c787/bookkeeper-server/src/main/java/org/apache/bookkeeper/bookie/Cookie.java#L57-68
+        - advertisedAddress=bookie
+        - BOOKIE_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
+      depends_on:
+        zookeeper:
+          condition: service_healthy
+        pulsar-init:
+          condition: service_completed_successfully
+      # Map the local directory to the container to avoid bookie startup failure due to insufficient container disks.
+      volumes:
+        - ./data/bookkeeper:/pulsar/data/bookkeeper
+      command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && exec bin/pulsar bookie"
+
+    # Start broker
+  broker:
+      image: apachepulsar/pulsar:latest
+      container_name: broker
+      hostname: broker
+      restart: on-failure
+      networks:
+        - pulsar
+      environment:
+        - metadataStoreUrl=zk:zookeeper:2181
+        - zookeeperServers=zookeeper:2181
+        - clusterName=cluster-a
+        - managedLedgerDefaultEnsembleSize=1
+        - managedLedgerDefaultWriteQuorum=1
+        - managedLedgerDefaultAckQuorum=1
+        - advertisedAddress=broker
+        - advertisedListeners=external:pulsar://127.0.0.1:6650
+        - PULSAR_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
+      depends_on:
+        zookeeper:
+          condition: service_healthy
+        bookie:
+          condition: service_started
+      ports:
+        - "6650:6650"
+        - "8080:8080"
+      expose:
+        - "8080"
+      command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
+
+
+  # Pulsar Manager
+  dashboard:
+    container_name: "pulsar_manager"
+    image: apachepulsar/pulsar-manager:v0.3.0
+    platform: linux/amd64
+    ports:
+      - "9527:9527"
+      - "7750:7750"
+    networks:
+      - pulsar
+    depends_on:
+      bookie:
+        condition: service_started
+    links:
+      - broker
+    volumes:
+      - "pulsardata:/data"
+    environment:
+      SPRING_CONFIGURATION_FILE: "/pulsar-manager/pulsar-manager/application.properties"
+
+
+  redis:
+    image: redis:7-alpine
+    container_name: bull_redis
+    ports:
+      - "6379:6379"
+
+  cerbos:
+    image: ghcr.io/cerbos/cerbos:0.29.0
+    ports:
+      - '3593:3593'
+      - '3592:3592'
+    volumes:
+      - ../src/sal/policy:/policies
+
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: "localstack/localstack:0.14.5"
+    network_mode: bridge
+    environment:
+      - SERVICES=s3
+    ports:
+      - "4566:4566"
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test: "bash -c 'AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws --endpoint-url=http://localhost:4566 s3 ls'"
+      retries: 15
+      interval: 10s
+
+  clickhouse:
+    container_name: "autoscaler_clickhouse"
+    image: "clickhouse/clickhouse-server:latest"
+    environment:
+      - CLICKHOUSE_DB=autoscaler_clickhouse
+      - CLICKHOUSE_USER=user
+      - CLICKHOUSE_PASSWORD=password
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+    ports:
+      - "18123:8123"
+      - "19000:9000"
+    volumes:
+      - /var/lib/clickhouse/
+      - /var/log/clickhouse-server/
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  vitess:
+    image: vitess/vttestserver:mysql80
+    ports:
+      - "33574:33574"
+      - "33575:33575"
+      - "33576:33576"
+      - "33577:33577"
+    environment:
+      PORT: 33574
+      NUM_SHARDS: "1"
+      KEYSPACES: "autoscaler"
+      MYSQL_BIND_HOST: "0.0.0.0"
+      FOREIGN_KEY_MODE: "disallow"
+
+  supertokens:
+    image: registry.supertokens.io/supertokens/supertokens-mysql:6.0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 3567:3567
+    environment:
+      MYSQL_CONNECTION_URI: mysql://root:root@vitess:33574/autoscaler
+    restart: unless-stopped
+    healthcheck:
+      test: >
+        bash -c 'exec 3<>/dev/tcp/127.0.0.1/3567 && echo -e "GET /hello HTTP/1.1\r\nhost: 127.0.0.1:3567\r\nConnection: close\r\n\r\n" >&3 && cat <&3 | grep "Hello"'
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+networks:
+  pulsar:
+    driver: bridge
+  app_network:
+    driver: bridge
+
+volumes:
+  pulsardata:
+  pulsarconf:

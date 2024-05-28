@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software in your academic work, please use the citation below."
+- family-names: "Clifton"
+  given-names: "Zac"
+  orcid: "https://github.com/Cliftonz"
+- family-names: "Utria"
+  given-names: "Edward"
+  orcid: "https://github.com/EdWrld"
+- family-names: "Gallivin"
+  given-names: "Jason"
+  orcid: "https://github.com/jasekiw"
+title: "AutoScaler"
+version: <your version>
+date-released: 2021-08-25
+url: "https://github.com/novuhq/novu"
+
