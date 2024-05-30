@@ -117,12 +117,6 @@ services:
       SPRING_CONFIGURATION_FILE: "/pulsar-manager/pulsar-manager/application.properties"
 
 
-  redis:
-    image: redis:7-alpine
-    container_name: bull_redis
-    ports:
-      - "6379:6379"
-
   cerbos:
     image: ghcr.io/cerbos/cerbos:0.29.0
     ports:
@@ -130,22 +124,6 @@ services:
       - '3592:3592'
     volumes:
       - ../src/sal/policy:/policies
-
-  localstack:
-    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
-    image: "localstack/localstack:0.14.5"
-    network_mode: bridge
-    environment:
-      - SERVICES=s3
-    ports:
-      - "4566:4566"
-    volumes:
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    healthcheck:
-      test: "bash -c 'AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws --endpoint-url=http://localhost:4566 s3 ls'"
-      retries: 15
-      interval: 10s
 
   clickhouse:
     container_name: "autoscaler_clickhouse"
@@ -166,29 +144,14 @@ services:
         soft: 262144
         hard: 262144
 
-  vitess:
-    image: vitess/vttestserver:mysql80
-    ports:
-      - "33574:33574"
-      - "33575:33575"
-      - "33576:33576"
-      - "33577:33577"
-    environment:
-      PORT: 33574
-      NUM_SHARDS: "1"
-      KEYSPACES: "autoscaler"
-      MYSQL_BIND_HOST: "0.0.0.0"
-      FOREIGN_KEY_MODE: "disallow"
-
   supertokens:
-    image: registry.supertokens.io/supertokens/supertokens-mysql:6.0
-    depends_on:
-      db:
-        condition: service_healthy
+    image: registry.supertokens.io/supertokens/supertokens-postgresql:latest
     ports:
-      - 3567:3567
+      - "3567:3567"
     environment:
-      MYSQL_CONNECTION_URI: mysql://root:root@vitess:33574/autoscaler
+      POSTGRESQL_CONNECTION_URI: postgres://user:password@timescaledb:5432/supertokens
+    depends_on:
+      - timescaledb
     restart: unless-stopped
     healthcheck:
       test: >
@@ -196,6 +159,91 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: timescaledb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: timescale
+    volumes:
+      - timescaledb-data:/var/lib/postgresql/data
+
+  posthog:
+    image: posthog/posthog:latest
+    container_name: posthog
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://user:password@timescaledb:5432/posthog
+      POSTHOG_DB_NAME: posthog
+      POSTHOG_DB_USER: user
+      POSTHOG_DB_PASSWORD: password
+      POSTHOG_REDIS_HOST: redis
+      SECRET_KEY: supersecretkey
+    depends_on:
+      - timescaledb
+      - redis
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - tempo
+      - loki
+      - pyroscope
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+    ports:
+      - "3200:3200"
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+
+  pyroscope:
+    image: pyroscope/pyroscope:latest
+    container_name: pyroscope
+    ports:
+      - "4040:4040"
+
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
+    container_name: dragonfly
+    ports:
+      - "6379:6379"
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+
 
 
 networks:
@@ -205,5 +253,7 @@ networks:
     driver: bridge
 
 volumes:
+  timescaledb-data:
+  minio-data:
   pulsardata:
   pulsarconf:
