@@ -8,15 +8,16 @@
 <h1 align="center"> 🚀 Open-Source Autoscaling for Every System 🚀</h1>
 
 ## Why Autoscaler? ✨
-Autoscaler is a powerful open-source autoscaling solution that empowers your systems with dynamic scaling capabilities.
-With Autoscaler, you can make your application specific actions trigger scaling events,
-ensuring your system's performance is always optimized.
+Autoscaler is a powerful open-source autoscaling solution that reliably scales and right-sizes your applications with dynamic scaling capabilities.
+With Autoscaler, you can specify as complex scaling events as you need, ensuring your system's performance is always optimize.
+Keep your engineers and product teams aligned by providing clear insights into how your application is scaling by enabling informed decision-making and better collaboration.
 Whether you're running a small application or a large-scale platform, AutoScaler has got you covered! 📈
 
 ## Features 🎉
-🔌 **Ingestion Integrations**: AutoScaler seamlessly integrates with various data sources and monitoring systems, making it easy to manage your system's performance.
 
 ## Planned Features 🔧
+🔌 **Ingestion Integrations**: Autoscaler seamlessly integrates with various data sources and monitoring systems, making it easy to manage your system's performance.
+
 ⚙️ **Configurable Scaling Algorithms**: Tailor the scaling algorithms to suit your specific application's needs and optimize resource utilization.
 
 🔍 **Monitoring**: Monitor your system's metrics in real-time, ensuring you're always aware of its performance.
@@ -45,6 +46,10 @@ Whether you're running a small application or a large-scale platform, AutoScaler
 
 ## Getting Started 🏁
 To get started with AutoScaler, follow the instructions below:
+
+Install protobuf
+- mac: ```brew install protobuf```
+- windows: https://stackoverflow.com/questions/13616033/install-protocol-buffers-on-windows
 
 Clone the repository: `git clone https://github.com/autoscaler-co/autoscaler.git`
 
