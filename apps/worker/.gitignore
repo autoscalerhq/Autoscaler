@@ -1,0 +1,4 @@
+target/
+Secrets*.toml
+test_sub.sh
+public/
