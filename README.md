@@ -11,7 +11,7 @@
 Autoscaler is a powerful open-source autoscaling solution that reliably scales and right-sizes your applications with dynamic scaling capabilities.
 With Autoscaler, you can specify as complex scaling events as you need, ensuring your system's performance is always optimize.
 Keep your engineers and product teams aligned by providing clear insights into how your application is scaling by enabling informed decision-making and better collaboration.
-Whether you're running a small application or a large-scale platform, AutoScaler has got you covered! 📈
+Whether you're running a small application or a large-scale PLATFORM, AutoScaler has got you covered! 📈
 
 ## Features 🎉
 

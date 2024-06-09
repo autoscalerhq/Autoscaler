@@ -3,6 +3,7 @@ use axum::Router;
 use axum_extra::extract::cookie::Key;
 use sqlx::PgPool;
 use tower_http::services::{ServeDir, ServeFile};
+use env_config::{EnvironmentGroup, get_env_var_value};
 
 mod auth;
 mod customers;
@@ -36,6 +37,11 @@ async fn main(
     #[shuttle_shared_db::Postgres] postgres: PgPool,
     #[shuttle_runtime::Secrets] secrets: shuttle_runtime::SecretStore,
 ) -> shuttle_axum::ShuttleAxum {
+
+    println!("test");
+
+    println!("test {:?}", get_env_var_value( EnvironmentGroup::Shared,"PYROSCOPE_URL", false));
+
     sqlx::migrate!()
         .run(&postgres)
         .await
