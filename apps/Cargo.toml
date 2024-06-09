@@ -1,0 +1,3 @@
+[workspace]
+resolver = "2"
+members = ["api", "env_config", "generate_docs", "shared_setup"]

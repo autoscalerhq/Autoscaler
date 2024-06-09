@@ -1,0 +1,9 @@
+[package]
+name = "generate_docs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+env_config = { path = "../env_config" }
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"

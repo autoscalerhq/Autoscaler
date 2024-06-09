@@ -1,0 +1,4 @@
+assets = [
+    "dist/*",
+]
+name = "autoscaler"
