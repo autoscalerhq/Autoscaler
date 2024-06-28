@@ -31,6 +31,34 @@ pub fn check_and_install_git(platform: &str) {
     }
 }
 
+pub fn install_cargo_watch() {
+    match Command::new("cargo").arg("watch").arg("--version").output() {
+        Ok(output) => {
+            if output.status.success() {
+                println!("Cargo Watch is already installed!");
+            }
+        }
+        Err(_) => {
+            // Attempt to install using brew
+            let output = Command::new("brew")
+                .arg("install")
+                .arg("cargo-watch")
+                .output()
+                .unwrap_or_else(|_| panic!("Failed to execute command"));
+
+            // Check if the installation command was successful
+            if output.status.success() {
+                println!("Successfully installed Cargo Watch!");
+            } else {
+                println!("Failed to install Cargo Watch...");
+                if let Ok(output_str) = str::from_utf8(&output.stderr) {
+                    println!("Error: {}", output_str);
+                }
+            }
+        }
+    }
+}
+
 pub fn install_homebrew() {
     let test_brew_cmd = Command::new("brew")
         .arg("--version")

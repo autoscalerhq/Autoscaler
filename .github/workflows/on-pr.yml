@@ -1,0 +1,280 @@
+name: "CI"
+
+on:
+  merge_group:
+  workflow_dispatch:
+  workflow_call:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+
+  dependency-review:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    environment: Linting
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v4
+
+  spellcheck:
+    name: Spell check
+    runs-on: ubuntu-latest
+    environment: Linting
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Spell Check
+        uses: streetsidesoftware/cspell-action@v6
+        with:
+          root: 'apps/web'
+          files: '**/*'
+          incremental_files_only: true
+
+  lint-generic:
+    runs-on: ubuntu-18.04
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install other dependencies
+        run: sudo apt-get install moreutils dos2unix
+
+      - name: Check encoding
+        run: isutf8 **/*
+
+      - name: Check line endings
+        run: bash .github/workflows/scripts/check_line_endings.sh
+
+      - name: Check TODOs
+        run: bash .github/workflows/scripts/check_todos.sh
+
+      - name: Check FIXMEs
+        run: bash .github/workflows/scripts/check_fixmes.sh
+
+  check-coverage:
+    runs-on: ubuntu-18.04
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+
+      - name: Install Rust Nightly toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          components: llvm-tools-preview
+
+      - name: Install grcov
+        run: cargo install grcov --debug
+
+      - name: Run coverage
+        run: bash .github/workflows/scripts/run_coverage.sh
+
+      - name: Upload coverage report on GitHub
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: coverage
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Upload coverage report on Codecov
+        run: bash .github/workflows/scripts/upload_coverage_on_codecov.sh
+
+      - name: Check coverage threshold
+        run: bash .github/workflows/scripts/check_coverage.sh
+
+  cargo-build:
+    name: Cargo Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: cargo build
+        run: cargo b --workspace --all-targets --all-features
+
+  cargo-fmt:
+    name: Cargo fmt
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt
+
+      - name: Rustfmt Check
+        run: cargo fmt --all --check
+
+  cargo-clippy:
+    name: Cargo clippy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy
+
+      - name: Clippy Check
+        run: cargo clippy --workspace --all-targets --all-features -- -Dwarnings
+
+  cargo-doc:
+    name: Cargo doc
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Cargo doc test
+        run: cargo doc --workspace --all-features
+
+  check-if-lib:
+    uses: ./.github/workflows/crate_type.yaml
+
+  cargo-test-doc:
+    needs: check-if-lib
+    if: ${{ needs.check-if-lib.outputs.is_lib == 'true' }}
+    name: Cargo test doc
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Cargo test doc
+        run: cargo test --doc --workspace --all-features
+
+  cargo-next-test:
+    name: Cargo test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Install cargo-nextest
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+
+      - name: Cargo test
+        run: cargo nextest run --workspace --all-targets --all-features
+
+  cargo-miri-test:
+    name: Cargo miri
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Setup miri
+        run: |
+          rustup toolchain install nightly --component miri;
+          rustup override set nightly;
+          cargo miri setup;
+
+      - name: Test with Miri
+        run: cargo miri test --workspace --all-targets --all-features
+
+  typos-cli:
+    name: typos
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - name: Install Typos
+        uses: taiki-e/install-action@v2
+        with:
+          tool: typos-cli
+
+      - name: run typos
+        run: typos
+
+  taplo-toml-fmt:
+    name: taplo fmt
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - name: Install Taplo
+        uses: taiki-e/install-action@v2
+        with:
+          tool: taplo-cli
+
+      - name: Run Taplo
+        id: taplo
+        run: taplo fmt --check --diff
+
+  markdownlint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - name: markdownlint-cli2-action
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: '**/*.md'
+
+  yamlfmt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+
+      - name: Install yamlfmt
+        run: go install github.com/google/yamlfmt/cmd/yamlfmt@latest
+
+      - name: Run yamlfmt
+        run: yamlfmt --lint .
+
+  cargo-deny:
+    uses: ./.github/workflows/cargo_deny.yaml
+
+  check-msrv:
+    uses: ./.github/workflows/check_msrv.yaml

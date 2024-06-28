@@ -9,8 +9,10 @@
       <sourceFolder url="file://$MODULE_DIR$/apps/worker/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/apps/apiold/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/cli/jarvis/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cli/jarvy/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/apps/target" />
       <excludeFolder url="file://$MODULE_DIR$/cli/jarvis/target" />
+      <excludeFolder url="file://$MODULE_DIR$/cli/jarvy/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
