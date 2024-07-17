@@ -1,4 +1,0 @@
-assets = [
-    "dist/*",
-]
-name = "autoscaler"
