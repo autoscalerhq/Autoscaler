@@ -61,98 +61,98 @@ Navigate to docker/ and run the setup script: `./setup.sh`
 Autoscaler supports a wide range of providers crossed many different categories.
 
 Frameworks
-[ ] Nestjs
-[ ] BullMQ
-[ ] Celery
-[ ] Micronaut
-[ ] Quarkus
+- [ ] Nestjs
+- [ ] BullMQ
+- [ ] Celery
+- [ ] Micronaut
+- [ ] Quarkus
 
 Push Based Providers:
-[ ] AWS Cloudwatch
-[ ] Prometheus
-[ ] Datadog
-[ ] New Relic
-[ ] AWS CloudWatch
-[ ] Azure Monitor
-[ ] Google Cloud Monitoring
-[ ] InfluxDB
-[ ] Graphite
-[ ] StatsD
-[ ] SignalFx
-[ ] Splunk
-[ ] Sysdig
-[ ] ElasticSearch
-[ ] AppDynamics
-[ ] Dynatrace
+- [ ] AWS Cloudwatch
+- [ ] Prometheus
+- [ ] Datadog
+- [ ] New Relic
+- [ ] AWS CloudWatch
+- [ ] Azure Monitor
+- [ ] Google Cloud Monitoring
+- [ ] InfluxDB
+- [ ] Graphite
+- [ ] StatsD
+- [ ] SignalFx
+- [ ] Splunk
+- [ ] Sysdig
+- [ ] ElasticSearch
+- [ ] AppDynamics
+- [ ] Dynatrace
 
 Pull Based Providers:
-[ ] InfluxDB
-[ ] Graphite
-[ ] StatsD
-[ ] SignalFx
-[ ] Splunk
-[ ] ElasticSearch
-[ ] AppDynamics
-[ ] Dynatrace
-[ ] Mixpanel
-[ ] New Relic
-[ ] DataDog
-[ ] MariaDB
-[ ] MySQL
-[ ] MongoDB
-[ ] Cassandra
-[ ] Pulsar
-[ ] Kafka
-[ ] RabbitMQ
-[ ] ActiveMQ
-[ ] Redis
-[ ] Memcached
-[ ] Couchbase
-[ ] CouchDB
-[ ] Neo4j
-[ ] OrientDB
-[ ] ArangoDB
-[ ] Aerospike
-[ ] Hazelcast
-[ ] VoltDB
+- [ ] InfluxDB
+- [ ] Graphite
+- [ ] StatsD
+- [ ] SignalFx
+- [ ] Splunk
+- [ ] ElasticSearch
+- [ ] AppDynamics
+- [ ] Dynatrace
+- [ ] Mixpanel
+- [ ] New Relic
+- [ ] DataDog
+- [ ] MariaDB
+- [ ] MySQL
+- [ ] MongoDB
+- [ ] Cassandra
+- [ ] Pulsar
+- [ ] Kafka
+- [ ] RabbitMQ
+- [ ] ActiveMQ
+- [ ] Redis
+- [ ] Memcached
+- [ ] Couchbase
+- [ ] CouchDB
+- [ ] Neo4j
+- [ ] OrientDB
+- [ ] ArangoDB
+- [ ] Aerospike
+- [ ] Hazelcast
+- [ ] VoltDB
 
 Analytics
-[ ] Clickhouse
-[ ] Segment
-[ ] Snowflake
-[ ] BigQuery
-[ ] Redshift
-[ ] GCP BigQuery
-[ ] AWS S3
+- [ ] Clickhouse
+- [ ] Segment
+- [ ] Snowflake
+- [ ] BigQuery
+- [ ] Redshift
+- [ ] GCP BigQuery
+- [ ] AWS S3
 
 Scalers
-[ ] AWS ECS
-[ ] AWS EC2
-[ ] AWS Beanstalk
-[ ] Azure Containers
-[ ] Azure App Service
-[ ] GCP Containers
-[ ] GCP App Engine
-[ ] Digital Ocean
-[ ] Oracle VM
-[ ] Heroku
-[ ] Fly.io
-[ ] render
-[ ] Capcover
-[ ] microtica
-[ ] Docker
+- [ ] AWS ECS
+- [ ] AWS EC2
+- [ ] AWS Beanstalk
+- [ ] Azure Containers
+- [ ] Azure App Service
+- [ ] GCP Containers
+- [ ] GCP App Engine
+- [ ] Digital Ocean
+- [ ] Oracle VM
+- [ ] Heroku
+- [ ] Fly.io
+- [ ] render
+- [ ] Capcover
+- [ ] microtica
+- [ ] Docker
 
 Integrations
-[ ] Kubernetes
-[ ] Nomad
-[ ] Openshift
-[ ] VMWare
-[ ] Proxmox
+- [ ] Kubernetes
+- [ ] Nomad
+- [ ] Openshift
+- [ ] VMWare
+- [ ] Proxmox
 
 ## Contributing 🤝
 We welcome contributions from the community! If you want to contribute to AutoScaler, please follow our Contribution Guidelines to get started.
 
 ## License 📜
-AutoScaler is licensed under the MIT License.
+AutoScaler is licensed under the [MIT License](./LICENSE).
 
 Get ready to supercharge your system's performance with AutoScaler! 🚀 Don't hesitate, start scaling smarter today! 😎💪
