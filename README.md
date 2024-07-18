@@ -47,15 +47,30 @@ Whether you're running a small application or a large-scale PLATFORM, AutoScaler
 ## Getting Started 🏁
 To get started with AutoScaler, follow the instructions below:
 
-Install protobuf
+1. Install protobuf
 - mac: ```brew install protobuf```
 - windows: https://stackoverflow.com/questions/13616033/install-protocol-buffers-on-windows
 
-Clone the repository: `git clone https://github.com/autoscaler-co/autoscaler.git`
+2. Clone the repository
+```
+git clone https://github.com/autoscalerhq/autoscaler.git
+```
 
-Install the required dependencies: `pnpm install`
+3. Install the required dependencies
+```
+pnpm install
+```
 
-Navigate to docker/ and run the setup script: `./setup.sh`
+4. Navigate to docker directory
+```
+cd docker
+```
+
+5. Run the setup script 
+```
+chmod +x setup.sh  
+./setup.sh
+```
 
 ## Providers 📡
 Autoscaler supports a wide range of providers crossed many different categories.
