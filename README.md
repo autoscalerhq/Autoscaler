@@ -47,112 +47,127 @@ Whether you're running a small application or a large-scale PLATFORM, AutoScaler
 ## Getting Started 🏁
 To get started with AutoScaler, follow the instructions below:
 
-Install protobuf
+1. Install protobuf
 - mac: ```brew install protobuf```
 - windows: https://stackoverflow.com/questions/13616033/install-protocol-buffers-on-windows
 
-Clone the repository: `git clone https://github.com/autoscaler-co/autoscaler.git`
+2. Clone the repository
+```
+git clone https://github.com/autoscalerhq/autoscaler.git
+```
 
-Install the required dependencies: `pnpm install`
+3. Install the required dependencies
+```
+pnpm install
+```
 
-Navigate to docker/ and run the setup script: `./setup.sh`
+4. Navigate to docker directory
+```
+cd docker
+```
+
+5. Run the setup script 
+```
+chmod +x setup.sh  
+./setup.sh
+```
 
 ## Providers 📡
 Autoscaler supports a wide range of providers crossed many different categories.
 
 Frameworks
-[ ] Nestjs
-[ ] BullMQ
-[ ] Celery
-[ ] Micronaut
-[ ] Quarkus
+- [ ] Nestjs
+- [ ] BullMQ
+- [ ] Celery
+- [ ] Micronaut
+- [ ] Quarkus
 
 Push Based Providers:
-[ ] AWS Cloudwatch
-[ ] Prometheus
-[ ] Datadog
-[ ] New Relic
-[ ] AWS CloudWatch
-[ ] Azure Monitor
-[ ] Google Cloud Monitoring
-[ ] InfluxDB
-[ ] Graphite
-[ ] StatsD
-[ ] SignalFx
-[ ] Splunk
-[ ] Sysdig
-[ ] ElasticSearch
-[ ] AppDynamics
-[ ] Dynatrace
+- [ ] AWS Cloudwatch
+- [ ] Prometheus
+- [ ] Datadog
+- [ ] New Relic
+- [ ] AWS CloudWatch
+- [ ] Azure Monitor
+- [ ] Google Cloud Monitoring
+- [ ] InfluxDB
+- [ ] Graphite
+- [ ] StatsD
+- [ ] SignalFx
+- [ ] Splunk
+- [ ] Sysdig
+- [ ] ElasticSearch
+- [ ] AppDynamics
+- [ ] Dynatrace
 
 Pull Based Providers:
-[ ] InfluxDB
-[ ] Graphite
-[ ] StatsD
-[ ] SignalFx
-[ ] Splunk
-[ ] ElasticSearch
-[ ] AppDynamics
-[ ] Dynatrace
-[ ] Mixpanel
-[ ] New Relic
-[ ] DataDog
-[ ] MariaDB
-[ ] MySQL
-[ ] MongoDB
-[ ] Cassandra
-[ ] Pulsar
-[ ] Kafka
-[ ] RabbitMQ
-[ ] ActiveMQ
-[ ] Redis
-[ ] Memcached
-[ ] Couchbase
-[ ] CouchDB
-[ ] Neo4j
-[ ] OrientDB
-[ ] ArangoDB
-[ ] Aerospike
-[ ] Hazelcast
-[ ] VoltDB
+- [ ] InfluxDB
+- [ ] Graphite
+- [ ] StatsD
+- [ ] SignalFx
+- [ ] Splunk
+- [ ] ElasticSearch
+- [ ] AppDynamics
+- [ ] Dynatrace
+- [ ] Mixpanel
+- [ ] New Relic
+- [ ] DataDog
+- [ ] MariaDB
+- [ ] MySQL
+- [ ] MongoDB
+- [ ] Cassandra
+- [ ] Pulsar
+- [ ] Kafka
+- [ ] RabbitMQ
+- [ ] ActiveMQ
+- [ ] Redis
+- [ ] Memcached
+- [ ] Couchbase
+- [ ] CouchDB
+- [ ] Neo4j
+- [ ] OrientDB
+- [ ] ArangoDB
+- [ ] Aerospike
+- [ ] Hazelcast
+- [ ] VoltDB
 
 Analytics
-[ ] Clickhouse
-[ ] Segment
-[ ] Snowflake
-[ ] BigQuery
-[ ] Redshift
-[ ] GCP BigQuery
-[ ] AWS S3
+- [ ] Clickhouse
+- [ ] Segment
+- [ ] Snowflake
+- [ ] BigQuery
+- [ ] Redshift
+- [ ] GCP BigQuery
+- [ ] AWS S3
 
 Scalers
-[ ] AWS ECS
-[ ] AWS EC2
-[ ] AWS Beanstalk
-[ ] Azure Containers
-[ ] Azure App Service
-[ ] GCP Containers
-[ ] GCP App Engine
-[ ] Digital Ocean
-[ ] Oracle VM
-[ ] Heroku
-[ ] Fly.io
-[ ] render
-[ ] Capcover
-[ ] microtica
-[ ] Docker
+- [ ] AWS ECS
+- [ ] AWS EC2
+- [ ] AWS Beanstalk
+- [ ] Azure Containers
+- [ ] Azure App Service
+- [ ] GCP Containers
+- [ ] GCP App Engine
+- [ ] Digital Ocean
+- [ ] Oracle VM
+- [ ] Heroku
+- [ ] Fly.io
+- [ ] render
+- [ ] Capcover
+- [ ] microtica
+- [ ] Docker
 
 Integrations
-[ ] Kubernetes
-[ ] Nomad
-[ ] Openshift
-[ ] VMWare
-[ ] Proxmox
+- [ ] Kubernetes
+- [ ] Nomad
+- [ ] Openshift
+- [ ] VMWare
+- [ ] Proxmox
 
 ## Contributing 🤝
 We welcome contributions from the community! If you want to contribute to AutoScaler, please follow our Contribution Guidelines to get started.
 
 ## License 📜
-AutoScaler is licensed under the MIT License.
+AutoScaler is licensed under the [MIT License](./LICENSE).
 
 Get ready to supercharge your system's performance with AutoScaler! 🚀 Don't hesitate, start scaling smarter today! 😎💪
