@@ -46,7 +46,31 @@ Whether you're running a small application or a large-scale PLATFORM, Autoscaler
 
 ## Getting Started 🏁
 To get started with AutoScaler, follow the instructions below:
-// TODO
+
+1. Install protobuf
+- mac: ```brew install protobuf```
+- windows: https://stackoverflow.com/questions/13616033/install-protocol-buffers-on-windows
+
+2. Clone the repository
+```
+git clone https://github.com/autoscalerhq/autoscaler.git
+```
+
+3. Install the required dependencies
+```
+pnpm install
+```
+
+4. Navigate to docker directory
+```
+cd docker
+```
+
+5. Run the setup script 
+```
+chmod +x setup.sh  
+./setup.sh
+```
 
 ## Providers 📡
 Autoscaler wants to support a wide range of providers over many different categories.
@@ -54,30 +78,10 @@ If you want any of the unsupported items or more, put in an issue for the team t
 
 Frameworks
 - [ ] Nestjs
-- [ ] Express
-- [ ] Micronaut
-- [ ] Quarkus
-- [ ] Ruby on Rails
-- [ ] Sinatra
-- [ ] Rack
-- [ ] Django
-- [ ] Flask
-- [ ] FastAPI
-- [ ] Express
-- [ ] Fastify
-
-Queue Frameworks:
 - [ ] BullMQ
 - [ ] Celery
-- [ ] SideKiq
-- [ ] Solid Queue
-- [ ] Delayed Job
-- [ ] Good Job
-- [ ] Resque
-- [ ] Que
-- [ ] Shoryuken
-- [ ] RQ
-- [ ] Bull
+- [ ] Micronaut
+- [ ] Quarkus
 
 Push Based Providers:
 - [ ] AWS Cloudwatch
@@ -96,7 +100,6 @@ Push Based Providers:
 - [ ] ElasticSearch
 - [ ] AppDynamics
 - [ ] Dynatrace
-- [ ] OpenTelemetry
 
 Pull Based Providers:
 - [ ] InfluxDB
@@ -166,6 +169,6 @@ Integrations
 We welcome contributions from the community! If you want to contribute to AutoScaler, please follow our Contribution Guidelines to get started.
 
 ## License 📜
-Autoscaler is licensed under the FSL License to make sure we can support it and you can use it.
+AutoScaler is licensed under the [FSL License](./LICENSE).
 
 Get ready to supercharge your system's performance with Autoscaler! 🚀 Don't hesitate, start scaling smarter today! 😎💪
