@@ -10,7 +10,7 @@ if (typeof window !== 'undefined') {
     SuperTokensReact.init(frontendConfig());
 }
 
-export const SuperTokensProvider: React.FC<React.PropsWithChildren<{}>> = ({
+export const SuperTokensProvider: React.FC<React.PropsWithChildren<NonNullable<unknown>>> = ({
                                                                                children,
                                                                            }) => {
     setRouter(useRouter(), usePathname() || window.location.pathname);
