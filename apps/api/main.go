@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/supertokens"
@@ -33,7 +34,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-
+	fmt.Print("Server running on port 4000")
 	err = http.ListenAndServe("localhost:4000", corsMiddleware(
 		supertokens.Middleware(http.HandlerFunc(func(rw http.ResponseWriter,
 			r *http.Request) {
