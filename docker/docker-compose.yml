@@ -22,7 +22,7 @@ services:
       - '3593:3593'
       - '3592:3592'
     volumes:
-      - ../src/sal/policy:/policies
+      - ../policy:/policies
 
   supertokens:
     image: registry.supertokens.io/supertokens/supertokens-postgresql:latest
