@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/TestSuite.schema.json
+# docs: https://docs.cerbos.dev/cerbos/latest/policies/compile#testing
+
+name: orgTestSuite
+description: Tests for verifying the org resource policy
+tests:
+  - name: org actions
+    input:
+      principals:
+        - admin#1
+        - engineer#2
+        - reader#3
+      resources:
+        - org#1
+      actions:
+        - create
+        - read
+        - update
+        - delete
+    expected:
+      - resource: org#1
+        principal: admin#1
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_ALLOW
+      - resource: org#1
+        principal: engineer#2
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delete: EFFECT_DENY
+      - resource: org#1
+        principal: reader#3
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delete: EFFECT_DENY

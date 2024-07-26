@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/Policy.schema.json
+# docs: https://docs.cerbos.dev/cerbos/latest/policies/resource_policies
+
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  resource: org
+  version: default
+  rules:
+    - actions:
+        - create
+      effect: EFFECT_ALLOW
+      roles:
+        - admin
+    - actions:
+        - read
+      effect: EFFECT_ALLOW
+      roles:
+        - user
+        - admin
+        - reader
+        - writer
+        - engineer
+    - actions:
+        - update
+      effect: EFFECT_ALLOW
+      roles:
+        - admin
+        - writer
+    - actions:
+        - delete
+      effect: EFFECT_ALLOW
+      roles:
+        - admin
+        - writer
+
+    # This is an example of using conditions for attribute-based access control
+    # The action is only allowed if the principal ID matches the ownerId attribute
+    # - actions: 
+    #    - someAction
+    #   effect: EFFECT_ALLOW
+    #   roles:
+    #     - user 
+    #   condition:
+    #     match:
+    #       expr: request.resource.attr.ownerId == request.principal.id
