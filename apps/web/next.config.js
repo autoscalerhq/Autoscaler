@@ -4,7 +4,7 @@ const nextConfig = {
     trailingSlash: true,
 
     // Export settings
-    output: "export",
+    // output: "export",
     distDir: "./dist",
 
     // Optimization settings
