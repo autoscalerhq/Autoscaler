@@ -10,7 +10,7 @@ const getAuthor = (payload) => {
 async function start() {
   const payload = require(process.env.GITHUB_EVENT_PATH);
   if (payload?.pull_request) {
-    console.log('Skipping pull request execution');
+    console.log('Skipping pulls request execution');
     return;
   }
 
