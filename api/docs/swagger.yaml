@@ -1,0 +1,18 @@
+info:
+  contact: {}
+paths:
+  /:
+    get:
+      description: Check if the api is up and running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Health check endpoint
+      tags:
+      - health
+swagger: "2.0"
