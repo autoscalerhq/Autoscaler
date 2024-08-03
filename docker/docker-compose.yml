@@ -1,155 +1,51 @@
-version: '3'
 
 services:
-  zookeeper:
-    image: apachepulsar/pulsar:latest
-    container_name: zookeeper
-    restart: on-failure
-    networks:
-      - pulsar
-    volumes:
-      - ./data/zookeeper:/pulsar/data/zookeeper
-    environment:
-      - metadataStoreUrl=zk:zookeeper:2181
-      - PULSAR_MEM=-Xms256m -Xmx256m -XX:MaxDirectMemorySize=256m
-    command: >
-      bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
-             bin/generate-zookeeper-config.sh conf/zookeeper.conf && \
-             exec bin/pulsar zookeeper"
-    healthcheck:
-      test: ["CMD", "bin/pulsar-zookeeper-ruok.sh"]
-      interval: 10s
-      timeout: 5s
-      retries: 30
-
-    # Init cluster metadata
-  pulsar-init:
-      container_name: pulsar-init
-      hostname: pulsar-init
-      image: apachepulsar/pulsar:latest
-      networks:
-        - pulsar
-      command: >
-        bin/pulsar initialize-cluster-metadata \
-                 --cluster cluster-a \
-                 --zookeeper zookeeper:2181 \
-                 --configuration-store zookeeper:2181 \
-                 --web-service-url http://broker:8080 \
-                 --broker-service-url pulsar://broker:6650
-      depends_on:
-        zookeeper:
-          condition: service_healthy
-
-    # Start bookie
-  bookie:
-      image: apachepulsar/pulsar:latest
-      container_name: bookie
-      restart: on-failure
-      networks:
-        - pulsar
-      environment:
-        - clusterName=cluster-autoscaler
-        - zkServers=zookeeper:2181
-        - metadataServiceUri=metadata-store:zk:zookeeper:2181
-        # otherwise every time we run docker compose up or down we fail to start due to Cookie
-        # See: https://github.com/apache/bookkeeper/blob/405e72acf42bb1104296447ea8840d805094c787/bookkeeper-server/src/main/java/org/apache/bookkeeper/bookie/Cookie.java#L57-68
-        - advertisedAddress=bookie
-        - BOOKIE_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
-      depends_on:
-        zookeeper:
-          condition: service_healthy
-        pulsar-init:
-          condition: service_completed_successfully
-      # Map the local directory to the container to avoid bookie startup failure due to insufficient container disks.
-      volumes:
-        - ./data/bookkeeper:/pulsar/data/bookkeeper
-      command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && exec bin/pulsar bookie"
-
-    # Start broker
-  broker:
-      image: apachepulsar/pulsar:latest
-      container_name: broker
-      hostname: broker
-      restart: on-failure
-      networks:
-        - pulsar
-      environment:
-        - metadataStoreUrl=zk:zookeeper:2181
-        - zookeeperServers=zookeeper:2181
-        - clusterName=cluster-a
-        - managedLedgerDefaultEnsembleSize=1
-        - managedLedgerDefaultWriteQuorum=1
-        - managedLedgerDefaultAckQuorum=1
-        - advertisedAddress=broker
-        - advertisedListeners=external:pulsar://127.0.0.1:6650
-        - PULSAR_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
-      depends_on:
-        zookeeper:
-          condition: service_healthy
-        bookie:
-          condition: service_started
-      ports:
-        - "6650:6650"
-        - "8080:8080"
-      expose:
-        - "8080"
-      command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
-
-
-  # Pulsar Manager
-  dashboard:
-    container_name: "pulsar_manager"
-    image: apachepulsar/pulsar-manager:v0.3.0
-    platform: linux/amd64
+  nats1:
+    image: docker.io/nats:2.10-alpine
     ports:
-      - "9527:9527"
-      - "7750:7750"
-    networks:
-      - pulsar
-    depends_on:
-      bookie:
-        condition: service_started
-    links:
-      - broker
+      - "4222:4222"
+      - "8222:8222"
     volumes:
-      - "pulsardata:/data"
-    environment:
-      SPRING_CONFIGURATION_FILE: "/pulsar-manager/pulsar-manager/application.properties"
+      - './data/nats/1:/data'
+    command:
+      - "--name=nats1"
+      - "--cluster_name=c1"
+      - "--cluster=nats://nats1:6222"
+      - "--routes=nats-route://nats1:6222,nats-route://nats2:6222"
+      - "--http_port=8222"
+      - "--js"
+      - "--sd=/data"
 
+  nats2:
+    image: docker.io/nats:2.10-alpine
+    ports:
+      - "4223:4222"
+      - "8223:8222"
+    volumes:
+      - './data/nats/2:/data'
+    command:
+      - "--name=nats2"
+      - "--cluster_name=c1"
+      - "--cluster=nats://nats2:6222"
+      - "--routes=nats-route://nats1:6222,nats-route://nats2:6222"
+      - "--http_port=8222"
+      - "--js"
+      - "--sd=/data"
 
   cerbos:
-    image: ghcr.io/cerbos/cerbos:0.29.0
+    image: ghcr.io/cerbos/cerbos:0.37.0
     ports:
       - '3593:3593'
       - '3592:3592'
     volumes:
-      - ../src/sal/policy:/policies
-
-  clickhouse:
-    container_name: "autoscaler_clickhouse"
-    image: "clickhouse/clickhouse-server:latest"
-    environment:
-      - CLICKHOUSE_DB=autoscaler_clickhouse
-      - CLICKHOUSE_USER=user
-      - CLICKHOUSE_PASSWORD=password
-      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
-    ports:
-      - "18123:8123"
-      - "19000:9000"
-    volumes:
-      - /var/lib/clickhouse/
-      - /var/log/clickhouse-server/
-    ulimits:
-      nofile:
-        soft: 262144
-        hard: 262144
+      - ../policy:/policies
 
   supertokens:
     image: registry.supertokens.io/supertokens/supertokens-postgresql:latest
     ports:
       - "3567:3567"
     environment:
-      POSTGRESQL_CONNECTION_URI: postgres://user:password@timescaledb:5432/supertokens
+      POSTGRESQL_CONNECTION_URI: postgresql://postgres:password@timescaledb:5432/postgres
     depends_on:
       - timescaledb
     restart: unless-stopped
@@ -161,99 +57,13 @@ services:
       retries: 5
 
   timescaledb:
-    image: timescale/timescaledb:latest-pg14
+    image: timescale/timescaledb:latest-pg16
     container_name: timescaledb
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: timescale
+#      POSTGRES_DB: supertokens
     volumes:
-      - timescaledb-data:/var/lib/postgresql/data
+      - './data/postgres:/var/lib/postgresql/data'
 
-  posthog:
-    image: posthog/posthog:latest
-    container_name: posthog
-    ports:
-      - "8000:8000"
-    environment:
-      DATABASE_URL: postgres://user:password@timescaledb:5432/posthog
-      POSTHOG_DB_NAME: posthog
-      POSTHOG_DB_USER: user
-      POSTHOG_DB_PASSWORD: password
-      POSTHOG_REDIS_HOST: redis
-      SECRET_KEY: supersecretkey
-    depends_on:
-      - timescaledb
-      - redis
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    depends_on:
-      - prometheus
-      - tempo
-      - loki
-      - pyroscope
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus:/etc/prometheus
-
-  tempo:
-    image: grafana/tempo:latest
-    container_name: tempo
-    ports:
-      - "3200:3200"
-
-  loki:
-    image: grafana/loki:latest
-    container_name: loki
-    ports:
-      - "3100:3100"
-
-  pyroscope:
-    image: pyroscope/pyroscope:latest
-    container_name: pyroscope
-    ports:
-      - "4040:4040"
-
-  dragonfly:
-    image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
-    container_name: dragonfly
-    ports:
-      - "6379:6379"
-
-  minio:
-    image: minio/minio:latest
-    container_name: minio
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      MINIO_ROOT_USER: minio
-      MINIO_ROOT_PASSWORD: minio123
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio-data:/data
-
-
-
-networks:
-  pulsar:
-    driver: bridge
-  app_network:
-    driver: bridge
-
-volumes:
-  timescaledb-data:
-  minio-data:
-  pulsardata:
-  pulsarconf:

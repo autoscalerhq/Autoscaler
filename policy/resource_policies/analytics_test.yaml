@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/TestSuite.schema.json
+# docs: https://docs.cerbos.dev/cerbos/latest/policies/compile#testing
+
+name: analyticsTestSuite
+description: Tests for verifying the analytics resource policy
+tests:
+  - name: analytics actions
+    input:
+      principals:
+        - admin#1
+        - engineer#2
+        - reader#3
+      resources:
+        - analytics#8
+      actions:
+        - create
+        - read
+        - update
+        - delete
+        - duplicate
+        - template
+    expected:
+      - resource: analytics#8
+        principal: admin#1
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_ALLOW
+          duplicate: EFFECT_ALLOW
+          template: EFFECT_ALLOW
+      - resource: analytics#8
+        principal: engineer#2
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_ALLOW
+          duplicate: EFFECT_ALLOW
+          template: EFFECT_ALLOW
+      - resource: analytics#8
+        principal: reader#3
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delete: EFFECT_DENY
+          duplicate: EFFECT_DENY
+          template: EFFECT_DENY

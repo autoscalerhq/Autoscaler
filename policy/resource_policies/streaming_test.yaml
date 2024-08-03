@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/TestSuite.schema.json
+# docs: https://docs.cerbos.dev/cerbos/latest/policies/compile#testing
+
+name: streamingTestSuite
+description: Tests for verifying the streaming resource policy
+tests:
+  - name: streaming actions
+    input:
+      principals:
+        - admin#1
+        - engineer#2
+        - reader#3
+      resources:
+        - streaming#6
+      actions:
+        - create
+        - read
+        - update
+        - delete
+        - duplicate
+    expected:
+      - resource: streaming#6
+        principal: admin#1
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_ALLOW
+          duplicate: EFFECT_ALLOW
+      - resource: streaming#6
+        principal: engineer#2
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_ALLOW
+          duplicate: EFFECT_ALLOW
+      - resource: streaming#6
+        principal: reader#3
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delete: EFFECT_DENY
+          duplicate: EFFECT_DENY

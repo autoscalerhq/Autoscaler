@@ -9,9 +9,9 @@
 
 ## Why Autoscaler? ✨
 Autoscaler is a powerful open-source autoscaling solution that reliably scales and right-sizes your applications with dynamic scaling capabilities.
-With Autoscaler, you can specify as complex scaling events as you need, ensuring your system's performance is always optimize.
+With Autoscaler, you can specify as complex scaling events as you need, ensuring your system's performance is always optimized.
 Keep your engineers and product teams aligned by providing clear insights into how your application is scaling by enabling informed decision-making and better collaboration.
-Whether you're running a small application or a large-scale PLATFORM, AutoScaler has got you covered! 📈
+Whether you're running a small application or a large-scale PLATFORM, Autoscaler has got you covered! 📈
 
 ## Features 🎉
 
@@ -22,15 +22,15 @@ Whether you're running a small application or a large-scale PLATFORM, AutoScaler
 
 🔍 **Monitoring**: Monitor your system's metrics in real-time, ensuring you're always aware of its performance.
 
-📥 **Ingestion**: Easily ingest data from multiple sources to make informed scaling decisions.
+📥 **Ingestion**: Ingest data from multiple sources to make informed scaling decisions.
 
 🧩 **Modular Scalers**: Choose from a variety of pre-built scalers or create custom ones that fit your unique requirements.
 
-🗃️ **Multiple Database Support**: AutoScaler supports a wide range of databases, ensuring compatibility with your preferred data storage solution.
+🗃️ **Multiple Database Support**: Autoscaler supports a wide range of databases, ensuring compatibility with your preferred data storage solution.
 
 💾 **Data Management**: Efficiently handle and manage data, avoiding data-related bottlenecks.
 
-🔗 **Cross-System Correlation**: AutoScaler can intelligently correlate data from different systems, providing a comprehensive view of your entire infrastructure.
+🔗 **Cross-System Correlation**: Autoscaler can intelligently correlate data from different systems, providing a comprehensive view of your entire infrastructure.
 
 🔒 **VPC PrivateLinks**: Keep your data and communication secure with VPC PrivateLinks support.
 
@@ -38,9 +38,9 @@ Whether you're running a small application or a large-scale PLATFORM, AutoScaler
 
 📊 **Analytics & BI**: Gain valuable insights into your system's performance with integrated analytics and Business Intelligence tools.
 
-🏃 **Reliability & HA**: AutoScaler ensures high availability and reliability, guaranteeing a smooth scaling experience.
+🏃 **Reliability & HA**: Autoscaler ensures high availability and reliability, guaranteeing a smooth scaling experience.
 
-🔑 **Roles & Permissions**: Manage access to AutoScaler with ease through comprehensive roles and permissions.
+🔑 **Roles & Permissions**: Manage access to Autoscaler with ease through comprehensive roles and permissions.
 
 🔐 **SSO (Single Sign-On)**: Enhance security and user experience by enabling Single Sign-On authentication.
 
@@ -73,7 +73,8 @@ chmod +x setup.sh
 ```
 
 ## Providers 📡
-Autoscaler supports a wide range of providers crossed many different categories.
+Autoscaler wants to support a wide range of providers over many different categories.
+If you want any of the unsupported items or more, put in an issue for the team to review.
 
 Frameworks
 - [ ] Nestjs
@@ -168,6 +169,6 @@ Integrations
 We welcome contributions from the community! If you want to contribute to AutoScaler, please follow our Contribution Guidelines to get started.
 
 ## License 📜
-AutoScaler is licensed under the [MIT License](./LICENSE).
+AutoScaler is licensed under the [FSL License](./LICENSE).
 
-Get ready to supercharge your system's performance with AutoScaler! 🚀 Don't hesitate, start scaling smarter today! 😎💪
+Get ready to supercharge your system's performance with Autoscaler! 🚀 Don't hesitate, start scaling smarter today! 😎💪

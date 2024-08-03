@@ -1,0 +1,14 @@
+# Options for analysis running.
+run:
+
+# output configuration options
+output:
+
+# All available settings of specific linters.
+linters-settings:
+
+linters:
+
+issues:
+
+severity:
