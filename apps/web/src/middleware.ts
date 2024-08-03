@@ -9,6 +9,8 @@ ensureSuperTokensInit();
 export async function middleware(
   request: NextRequest & { session?: SessionContainer },
 ) {
+
+  console.log('middleware ran')
   if (request.headers.has("x-user-id")) {
     console.warn(
       "The FE tried to pass x-user-id, which is only supposed to be a backend internal header. Ignoring.",

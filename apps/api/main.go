@@ -35,16 +35,33 @@ func main() {
 		panic(err.Error())
 	}
 	fmt.Print("Server running on port 4000")
-	err = http.ListenAndServe("localhost:4000", corsMiddleware(
-		supertokens.Middleware(http.HandlerFunc(func(rw http.ResponseWriter,
-			r *http.Request) {
-			// TODO: Handle your APIs..
+	//session.VerifySession(nil, likeCommentAPI)
+	//http.HandleFunc("/comment", likeCommentAPI)
 
-		}))))
+	err = http.ListenAndServe("localhost:4000", corsMiddleware(
+		supertokens.Middleware(RouterMux())))
 	if err != nil {
 		panic(err.Error())
 	}
 
+}
+func RouterMux() http.Handler {
+	userMux := http.NewServeMux()
+	userMux.Handle("/comment", session.VerifySession(nil, likeCommentAPI))
+	return userMux
+}
+
+func likeCommentAPI(w http.ResponseWriter, r *http.Request) {
+	// retrieve the session object as shown below
+	sessionContainer := session.GetSessionFromRequestContext(r.Context())
+
+	userID := sessionContainer.GetUserID()
+
+	_, err := w.Write([]byte("Hello " + userID))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	//fmt.Println(userID)
 }
 
 func corsMiddleware(next http.Handler) http.Handler {

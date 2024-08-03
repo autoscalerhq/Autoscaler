@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env ROARR_LOG=true npm exec turbowatch turbowatch.ts",
-    "next-dev": "next dev --turbo",
+    "next-dev": "next dev --turbo -p 3000",
     "analyze": "cross-env ANALYZE=true next build",
     "build": "next build && cargo build",
     "shuttle-login": "cargo shuttle login",

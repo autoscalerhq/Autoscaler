@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { SuperTokensConfig } from "supertokens-auth-react/lib/build/types";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
+import SuperTokensReact from 'supertokens-auth-react';
+import SuperTokens from 'supertokens-node';
+import {backendConfig} from '@/app/config/backend';
 
 const routerInfo: { router?: ReturnType<typeof useRouter>; pathName?: string } =
   {};
@@ -16,6 +19,15 @@ export function setRouter(
 ) {
   routerInfo.router = router;
   routerInfo.pathName = pathName;
+}
+
+
+let initialized = false;
+export function ensureFrontendSuperTokensInit() {
+  if (!initialized) {
+    SuperTokensReact.init(frontendConfig());
+    initialized = true;
+  }
 }
 
 export const frontendConfig = (): SuperTokensConfig => {

@@ -7,6 +7,7 @@ const nextConfig = {
     // output: "export",
     distDir: "./dist",
 
+
     // Optimization settings
     images: {
         unoptimized: true,
