@@ -210,4 +210,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# env file
+.env
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,windows,rust,rust-analyzer,jetbrains+iml,go

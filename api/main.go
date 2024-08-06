@@ -5,11 +5,13 @@ import (
 	"errors"
 	_ "github.com/autoscalerhq/autoscaler/api/docs"
 	"github.com/autoscalerhq/autoscaler/api/routes"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
+	"log"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -28,6 +30,10 @@ var (
 
 func main() {
 
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	// Handle SIGINT (CTRL+C) gracefully.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
