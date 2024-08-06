@@ -67,3 +67,22 @@ services:
     volumes:
       - './data/postgres:/var/lib/postgresql/data'
 
+  dkron1:
+    image: dkron/dkron
+    container_name: dkron1
+    command: agent --server --bootstrap-expect=1 --enable-prometheus --node-name=node1
+    ports:
+      - "8080:8080"
+      - "8946:8946"
+      - "6868:6868"
+    volumes:
+      - './data/dkron:/dkron/data'
+    environment:
+      - DKRON_LOG_LEVEL=debug
+
+  nats-nui:
+    image: ghcr.io/nats-nui/nui:latest
+    restart: always
+    ports:
+      - "31311:31311"
+
