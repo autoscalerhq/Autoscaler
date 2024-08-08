@@ -81,14 +81,6 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
-	//kv, _ := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{
-	//	Bucket: "profiles",
-	//})
-	//
-	//kv.Put(ctx, "sue.color", []byte("blue"))
-	//entry, _ := kv.Get(ctx, "sue.color")
-	//fmt.Printf("%s @ %d -> %q\n", entry.Key(), entry.Revision(), string(entry.Value()))
-
 	// Getting work jobs
 	cfg := jetstream.StreamConfig{
 		Name:      "EVENTS",
@@ -127,6 +119,7 @@ func main() {
 	}
 
 	consumeCtx, err := cons.Consume(messageHandler, jetstream.PullMaxMessages(10))
+	defer consumeCtx.Drain()
 
 	if err != nil {
 		println("Consuming messages err", err.Error())
@@ -134,39 +127,6 @@ func main() {
 	}
 
 	println("Pausing main thread")
-	time.Sleep(time.Second * 30)
-	consumeCtx.Drain()
-
-	//msgChan, err := cons.Consume.Consume(ctx)
-	//if err != nil {
-	//	println("Fetching messages err", err.Error())
-	//	return
-	//}
-	//
-	//for msg := range msgChan {
-	//	println("Msg: ", string(msg.Data()))
-	//	println("Msg sub: ", msg.Subject())
-	//	err := msg.DoubleAck(ctx)
-	//	if err != nil {
-	//		println(err.Error(), "double ack err")
-	//	}
-	//}
-
-	//msgs, err := cons.Fetch(10)
-	//if err != nil {
-	//	println("Fetching messages err", err.Error())
-	//	return
-	//} else {
-	//	println("message error: ", msgs.Error().Error())
-	//	for msg := range msgs.Messages() {
-	//		println("Msg: ", string(msg.Data()))
-	//		println("Msg sub: ", msg.Subject())
-	//		err := msg.DoubleAck(ctx)
-	//		if err != nil {
-	//			println(err.Error(), "double ack err")
-	//		}
-	//	}
-	//}
 
 	fmt.Println("\n# Stream info with one consumer")
 	printStreamState(ctx, stream)
