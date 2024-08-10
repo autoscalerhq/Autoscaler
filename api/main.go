@@ -11,7 +11,6 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
-	"log"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -32,7 +31,8 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		// Todo this should be handled better before going to production
+		//log.Fatal("Error loading .env file")
 	}
 	// Handle SIGINT (CTRL+C) gracefully.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
