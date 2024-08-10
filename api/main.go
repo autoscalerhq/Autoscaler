@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	_ "github.com/autoscalerhq/autoscaler/api/docs"
+	"github.com/autoscalerhq/autoscaler/api/middleware"
 	"github.com/autoscalerhq/autoscaler/api/routes"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -60,7 +61,7 @@ func main() {
 	e := echo.New()
 
 	// Middleware
-	e.Use(tracingMiddleware)
+	e.Use(appmiddleware.TracingMiddleware)
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
