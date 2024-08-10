@@ -5,6 +5,7 @@ import (
 	"errors"
 	_ "github.com/autoscalerhq/autoscaler/api/docs"
 	"github.com/autoscalerhq/autoscaler/api/routes"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -28,6 +29,11 @@ var (
 
 func main() {
 
+	err := godotenv.Load()
+	if err != nil {
+		// Todo this should be handled better before going to production
+		//log.Fatal("Error loading .env file")
+	}
 	// Handle SIGINT (CTRL+C) gracefully.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
