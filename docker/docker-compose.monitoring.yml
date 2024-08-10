@@ -83,11 +83,48 @@ services:
     volumes:
       - './data/postgres:/var/lib/postgresql/data'
 
+  dkron1:
+    image: dkron/dkron
+    container_name: dkron1
+    command: agent -server -bootstrap-expect=3 -join=dkron2,dkron3
+    ports:
+      - "8946:8946"
+      - "6868:6868"
+    volumes:
+      - './data/dkron:/dkron/data'
+    environment:
+      - DKRON_LOG_LEVEL=debug
+
+  dkron2:
+    image: dkron/dkron
+    container_name: dkron2
+    command: agent -server -join=dkron1,dkron3
+    ports:
+      - "8947:8946"
+      - "6869:6868"
+    volumes:
+      - './data/dkron:/dkron/data'
+    environment:
+      - DKRON_LOG_LEVEL=debug
+
+  dkron3:
+    image: dkron/dkron
+    container_name: dkron3
+    command: agent -server -join=dkron1,dkron2
+    ports:
+      - "8948:8946"
+      - "6870:6868"
+    volumes:
+      - './data/dkron:/dkron/data'
+    environment:
+      - DKRON_LOG_LEVEL=debug
+
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "3100:3000"
     depends_on:
       - prometheus
       - tempo
