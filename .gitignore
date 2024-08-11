@@ -213,4 +213,7 @@ $RECYCLE.BIN/
 # env file
 .env
 
+# api folder
+api/tmp/build-errors.log
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,windows,rust,rust-analyzer,jetbrains+iml,go

@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"errors"
-	"github.com/labstack/echo/v4"
+	"time"
+
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
@@ -14,7 +14,6 @@ import (
 	"go.opentelemetry.io/otel/sdk/log"
 	"go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/trace"
-	"time"
 )
 
 // setupOTelSDK bootstraps the OpenTelemetry pipeline.
@@ -118,26 +117,4 @@ func newLoggerProvider() (*log.LoggerProvider, error) {
 		log.WithProcessor(log.NewBatchProcessor(logExporter)),
 	)
 	return loggerProvider, nil
-}
-
-// This middleware is used to start and end a tracing span for each HTTP request
-func tracingMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		tracer := otel.Tracer("echo-server")
-		ctx, span := tracer.Start(c.Request().Context(), c.Path())
-		defer span.End()
-		req := c.Request().WithContext(ctx)
-		c.SetRequest(req)
-		err := next(c)
-
-		// Set the span status based on the outcome
-		if err != nil {
-			span.SetStatus(codes.Error, err.Error())
-			span.RecordError(err)
-		} else {
-			span.SetStatus(codes.Ok, "OK")
-		}
-
-		return err
-	}
 }
