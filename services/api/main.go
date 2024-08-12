@@ -90,7 +90,7 @@ func main() {
 	// Middleware
 	e.Use(appmiddleware.RequestCounterMiddleware)
 	e.Use(appmiddleware.AddRouteToCTXMiddleware)
-	// If load is too much fail before we process anything else, this may need to be moved after logging
+	// If load is too high, fail before we process anything else. this may need to be moved after logging
 	e.Use(echo.WrapMiddleware(loadshedhttp.NewHandlerMiddleware(appmiddleware.CreateShedder(), loadshedhttp.HandlerOptionCallback(&appmiddleware.RejectionHandler{}))))
 
 	e.Use(appmiddleware.TracingMiddleware)
