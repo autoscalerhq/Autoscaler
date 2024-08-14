@@ -2,8 +2,18 @@ module github.com/autoscalerhq/autoscaler
 
 go 1.22
 
+replace (
+	github.com/autoscalerhq/autoscaler/lib/dkron => ./lib/dkron
+	github.com/autoscalerhq/autoscaler/lib/math => ./lib/math
+	github.com/autoscalerhq/autoscaler/services/api/middleware => ./services/api/middleware
+	github.com/autoscalerhq/autoscaler/services/api/monitoring => ./services/api/monitoring
+	github.com/autoscalerhq/autoscaler/services/api/routes => ./services/api/routes
+)
+
 require (
-	github.com/earthly/earthly/examples/go-monorepo/libs/hello v0.0.0-20240716165806-c70b2701415f
+	github.com/asecurityteam/rolling v2.0.4+incompatible
+	github.com/go-co-op/gocron v1.37.0
+	github.com/grafana/pyroscope-go v1.1.1
 	github.com/joho/godotenv v1.5.1
 	github.com/kevinconway/loadshed/v2 v2.0.0
 	github.com/labstack/echo/v4 v4.12.0
@@ -27,10 +37,8 @@ require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
-	github.com/asecurityteam/rolling v2.0.4+incompatible // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
-	github.com/go-co-op/gocron v1.37.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
@@ -40,7 +48,6 @@ require (
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/grafana/pyroscope-go v1.1.1 // indirect
 	github.com/grafana/pyroscope-go/godeltaprof v0.1.6 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kevinconway/rolling/v3 v3.0.0 // indirect

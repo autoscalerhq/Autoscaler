@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	_ "github.com/autoscalerhq/autoscaler/services/api/docs"
 	"github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/monitoring"
 	"github.com/autoscalerhq/autoscaler/services/api/routes"

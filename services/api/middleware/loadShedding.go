@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/asecurityteam/rolling"
-	internalMath "github.com/autoscalerhq/autoscaler/internal/math"
+	internalMath "github.com/autoscalerhq/autoscaler/lib/math"
 	"github.com/kevinconway/loadshed/v2"
 	loadshedhttp "github.com/kevinconway/loadshed/v2/stdlib/net/http"
 	"github.com/shirou/gopsutil/cpu"
