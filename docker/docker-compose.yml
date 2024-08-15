@@ -86,3 +86,17 @@ services:
     ports:
       - "31311:31311"
 
+  flagd:
+    image: ghcr.io/open-feature/flagd:v0.11.1
+    command:
+      - start
+      - --cors-origin
+      - '*'
+      - --sources
+      - '[{"uri":"etc/flagd/flags.json","provider":"file","selector":"etc/flagd/flags.json"}]'
+    volumes:
+      - ./../configs/flags.json:/etc/flagd/flags.json
+    ports:
+      - '8013:8013'
+      - '8016:8016'
+

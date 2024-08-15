@@ -9,6 +9,8 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
+	"github.com/open-feature/go-sdk/openfeature"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
@@ -37,6 +39,38 @@ func main() {
 		// Todo this should be handled better before going to production
 		//log.Fatal("Error loading .env file")
 	}
+
+	providerOptions := []flagd.ProviderOption{
+		flagd.WithBasicInMemoryCache(),
+		flagd.WithRPCResolver(),
+		flagd.WithHost("localhost"),
+		flagd.WithPort(8013),
+	}
+
+	provider := flagd.NewProvider(providerOptions...)
+
+	err = openfeature.SetProvider(provider)
+	if err != nil {
+		println("Open Feature flag setup err: ", err.Error())
+		return
+	}
+
+	// Create an empty evaluation context
+	evalContext := openfeature.NewEvaluationContext("key", map[string]interface{}{})
+
+	err = provider.Init(evalContext)
+	if err != nil {
+		println("Unable to init", err.Error())
+		return
+	}
+
+	// Wait for the provider to be ready
+	ready := waitForProvider(provider, 10*time.Second, 500*time.Millisecond)
+	if !ready {
+		println("Provider not ready after waiting")
+		return
+	}
+
 	// Handle SIGINT (CTRL+C) gracefully.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
@@ -94,5 +128,20 @@ func main() {
 	defer cancel()
 	if err := e.Shutdown(ctx); err != nil {
 		e.Logger.Fatal(err)
+	}
+}
+
+// waitForProvider waits for the provider to be ready, with a maximum wait time and retry interval.
+func waitForProvider(provider *flagd.Provider, maxWait time.Duration, interval time.Duration) bool {
+	start := time.Now()
+	for {
+		println("status", provider.Status())
+		if provider.Status() == "READY" {
+			return true
+		}
+		if time.Since(start) > maxWait {
+			return false
+		}
+		time.Sleep(interval)
 	}
 }
