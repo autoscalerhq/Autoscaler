@@ -15,6 +15,7 @@ import (
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
 	"time"
@@ -111,7 +112,23 @@ func main() {
 	// swag init -g ./main.go --output ./docs
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+	// Start server
+	go func() {
+		if err := e.Start(":8888"); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			e.Logger.Fatal("shutting down the server")
+		}
+	}()
+
+	// Wait for the interrupt signal to gracefully shut down the server with a timeout of 10 seconds.
+	<-ctx.Done()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
+	}
 }
 
 // waitForProvider waits for the provider to be ready, with a maximum wait time and retry interval.

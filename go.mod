@@ -63,6 +63,7 @@ require (
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/open-feature/flagd-schemas v0.2.9-0.20240408192555-ea4f119d2bd7 // indirect
 	github.com/open-feature/flagd/core v0.9.1 // indirect
+	github.com/open-feature/go-sdk v1.12.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/swaggo/files/v2 v2.0.0 // indirect
 	github.com/twmb/murmur3 v1.1.8 // indirect
