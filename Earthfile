@@ -1,8 +1,17 @@
-VERSION  0.8
+VERSION 0.8
 
-#---
-# Dev
-#---
+all-unit-test:
+    BUILD ./libs/hello+unit-test
+    BUILD ./services/api+unit-test
+    BUILD ./services/worker+unit-test
+
+all-docker:
+    BUILD ./services/api+docker
+    BUILD ./services/worker+docker
+
+all-release:
+    BUILD ./services/api+release
+    BUILD ./services/worker+release
 
 dev-up:
     LOCALLY
@@ -12,43 +21,10 @@ dev-down:
     LOCALLY
     RUN docker-compose -f ./docker/docker-compose.yml down
 
-#---
-# Building
-#---
+mon-up:
+    LOCALLY
+    RUN docker-compose -f ./docker/docker-compose.monitoring.yml up
 
-build-all-platforms:
-     BUILD \
-            --platform=linux/amd64 \
-            --platform=linux/arm/v7 \
-            --platform=linux/arm64 \
-            --platform=linux/arm/v6 \
-            +build-image
-
-setup-deps:
-    FROM golang:1.22-alpine3.20
-    WORKDIR /app
-    RUN apk update && apk add --no-cache git
-    COPY go.mod go.sum .
-    COPY ./services ./services
-    COPY ./lib ./lib
-    RUN go mod download
-    RUN go mod tidy
-
-build:
-    FROM +setup-deps
-    ARG GOOS=linux
-    ARG GOARCH=amd64
-    ARG VARIANT
-    RUN GOARM=${VARIANT#v} go build -o app services/api/main.go
-    SAVE ARTIFACT ./app
-
-build-image:
-    ARG TARGETPLATFORM
-    ARG TARGETARCH
-    ARG TARGETVARIANT
-    FROM --platform=$TARGETPLATFORM alpine:3.20
-    COPY \
-        --platform=$TARGETPLATFORM \
-         (+build/app --GOARCH=$TARGETARCH --VARIANT=$TARGETVARIANT) ./app
-    ENTRYPOINT ["/app"]
-    SAVE IMAGE --without-earthly-labels --push autoscaler/api:latest
+mon-down:
+    LOCALLY
+    RUN docker-compose -f ./docker/docker-compose.monitoring.yml down
