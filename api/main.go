@@ -6,15 +6,18 @@ import (
 	_ "github.com/autoscalerhq/autoscaler/api/docs"
 	"github.com/autoscalerhq/autoscaler/api/middleware"
 	"github.com/autoscalerhq/autoscaler/api/routes"
+	"github.com/autoscalerhq/autoscaler/internal/nats"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/nats-io/nats.go/jetstream"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
 	"log/slog"
 	"os"
 	"os/signal"
+	"time"
 )
 
 // These variables are to be used throughout the application, for logging, tracing, and metrics.
@@ -61,6 +64,8 @@ func main() {
 	e := echo.New()
 
 	// Middleware
+	kv, ctx := nats.NewKeyValueStream(jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+	e.Use(appmiddleware.IdempotencyMiddleware(kv, ctx))
 	e.Use(appmiddleware.TracingMiddleware)
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
@@ -74,6 +79,9 @@ func main() {
 	})
 
 	// swag init -g ./main.go --output ./docs
+	e.POST("/Post", func(c echo.Context) error {
+		return c.String(200, "POST")
+	})
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.Logger.Fatal(e.Start(":8080"))
