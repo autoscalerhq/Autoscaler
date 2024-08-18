@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/autoscalerhq/autoscaler/internal/dkron"
+	"github.com/autoscalerhq/autoscaler/lib/dkron"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"time"

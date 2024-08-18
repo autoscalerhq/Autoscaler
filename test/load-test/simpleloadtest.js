@@ -10,9 +10,18 @@ export let options = {
 };
 
 export default function () {
-    let res = http.get('https://test-api.k6.io/public/crocodiles/');
+    let res = http.get('http://localhost:8888/health-check');
     check(res, {
         'status is 200': (r) => r.status === 200,
     });
+    if (res.status !== 200){
+        console.error("status is: ", res.status)
+        console.error('Response Headers:');
+        for (const [key, value] of Object.entries(res.headers)) {
+            if (key.startsWith('X')) {
+                console.error(`${key}: ${value}`);
+            }
+        }
+    }
     sleep(1); // Simulate user think time of 1 second
 }
