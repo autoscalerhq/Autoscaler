@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func NewKeyValueStream(config jetstream.KeyValueConfig) (jetstream.KeyValue, context.Context) {
+func NewJetStream() (jetstream.JetStream, context.Context) {
 	url := os.Getenv("NATS_URL")
 	if url == "" {
 		url = nats.DefaultURL
@@ -20,11 +20,8 @@ func NewKeyValueStream(config jetstream.KeyValueConfig) (jetstream.KeyValue, con
 		}
 	}(nc)
 	js, _ := jetstream.New(nc)
-
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	kv, _ := js.CreateKeyValue(ctx, config)
-
-	return kv, ctx
+	return js, ctx
 }

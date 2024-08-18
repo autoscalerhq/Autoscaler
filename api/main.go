@@ -64,7 +64,13 @@ func main() {
 	e := echo.New()
 
 	// Middleware
-	kv, ctx := nats.NewKeyValueStream(jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+	js, ctx := nats.NewJetStream()
+	kv, err := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+	if err != nil {
+		if !errors.Is(err, jetstream.ErrBucketExists) {
+			e.Logger.Fatal(err)
+		}
+	}
 	e.Use(appmiddleware.IdempotencyMiddleware(kv, ctx))
 	e.Use(appmiddleware.TracingMiddleware)
 	e.Use(middleware.Logger())
@@ -84,5 +90,5 @@ func main() {
 	})
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":8090"))
 }

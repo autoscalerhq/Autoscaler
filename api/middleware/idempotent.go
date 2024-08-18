@@ -15,7 +15,7 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 		return func(c echo.Context) error {
 			if c.Request().Method == "POST" || c.Request().Method == "PATCH" {
 				// Check if the request is idempotent
-				key := c.Response().Header().Get("Idempotency_key")
+				key := c.Response().Header().Get("Idempotency-key")
 				if key == "" {
 					return next(c)
 				}

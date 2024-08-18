@@ -3,13 +3,18 @@ package middleware
 import (
 	"bytes"
 	"fmt"
+	"github.com/google/uuid"
 	"io"
 	"net/http"
 	"testing"
 )
 
 func TestPostIdempotency(t *testing.T) {
-	resp, err := http.Post("http://localhost:8080/Post", "application/json", bytes.NewBuffer([]byte(`{"name": "John Doe"}`)))
+	header := http.Header{}
+	idempotentUuid := uuid.New()
+	header.Add("Idempotency-key", idempotentUuid.String())
+
+	resp, err := http.Post("http://localhost:8090/Post", "application/json", bytes.NewBuffer([]byte(`{"name": "John Doe"}`)))
 	if err != nil {
 		t.Error(err)
 	}
@@ -30,5 +35,4 @@ func TestPostIdempotency(t *testing.T) {
 	}
 	fmt.Println("Response Body:", string(body))
 	fmt.Println("Response Headers:", headers)
-
 }
