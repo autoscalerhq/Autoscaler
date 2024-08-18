@@ -2,11 +2,23 @@ module github.com/autoscalerhq/autoscaler
 
 go 1.22
 
+replace (
+	github.com/autoscalerhq/autoscaler/lib/dkron => ./lib/dkron
+	github.com/autoscalerhq/autoscaler/lib/math => ./lib/math
+	github.com/autoscalerhq/autoscaler/services/api/middleware => ./services/api/middleware
+	github.com/autoscalerhq/autoscaler/services/api/monitoring => ./services/api/monitoring
+	github.com/autoscalerhq/autoscaler/services/api/routes => ./services/api/routes
+)
+
 require (
-	github.com/earthly/earthly/examples/go-monorepo/libs/hello v0.0.0-20240716165806-c70b2701415f
+	github.com/asecurityteam/rolling v2.0.4+incompatible
+	github.com/go-co-op/gocron v1.37.0
+	github.com/grafana/pyroscope-go v1.1.1
 	github.com/joho/godotenv v1.5.1
+	github.com/kevinconway/loadshed/v2 v2.0.0
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/nats-io/nats.go v1.36.0
+	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/open-feature/go-sdk v1.12.0
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.2.2
 	github.com/swaggo/echo-swagger v1.4.1
@@ -32,13 +44,16 @@ require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
+	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/barkimedes/go-deepcopy v0.0.0-20220514131651-17c30cfc62df // indirect
 	github.com/diegoholiveira/jsonlogic/v3 v3.5.2 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
-	github.com/go-co-op/gocron v1.37.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/go-ole/go-ole v1.2.6 // indirect
+	github.com/go-openapi/jsonpointer v0.19.5 // indirect
+	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-logr/zapr v1.3.0 // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
@@ -48,6 +63,10 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/grafana/pyroscope-go/godeltaprof v0.1.6 // indirect
+	github.com/josharian/intern v1.0.0 // indirect
+	github.com/kevinconway/rolling/v3 v3.0.0 // indirect
+	github.com/klauspost/compress v1.17.3 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -66,6 +85,19 @@ require (
 	github.com/open-feature/go-sdk v1.12.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/swaggo/files/v2 v2.0.0 // indirect
+	github.com/tklauser/go-sysconf v0.3.14 // indirect
+	github.com/tklauser/numcpus v0.8.0 // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/valyala/fasttemplate v1.2.2 // indirect
+	github.com/yusufpapurcu/wmi v1.2.4 // indirect
+	go.uber.org/atomic v1.9.0 // indirect
+	golang.org/x/crypto v0.22.0 // indirect
+	golang.org/x/exp v0.0.0-20240110193028-0dcbfd608b1e // indirect
+	golang.org/x/net v0.24.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/text v0.15.0 // indirect
+	golang.org/x/time v0.5.0 // indirect
+	golang.org/x/tools v0.16.0 // indirect
 	github.com/twmb/murmur3 v1.1.8 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect

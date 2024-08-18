@@ -72,7 +72,7 @@ services:
     container_name: dkron1
     command: agent --server --bootstrap-expect=1 --enable-prometheus --node-name=node1
     ports:
-      - "8080:8080"
+      - "8090:8080"
       - "8946:8946"
       - "6868:6868"
     volumes:
@@ -85,7 +85,7 @@ services:
     restart: always
     ports:
       - "31311:31311"
-
+  
   flagd:
     image: ghcr.io/open-feature/flagd:v0.11.1
     command:
@@ -100,3 +100,46 @@ services:
       - '8013:8013'
       - '8016:8016'
 
+# monitoring
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3050:3000"
+    depends_on:
+      - prometheus
+      - tempo
+      - loki
+      - pyroscope
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - './config/prometheus.yml:/etc/prometheus/prometheus.yml'
+      - './data/prometheus:/prometheus'
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+    ports:
+      - "3200:3200"
+    volumes:
+      - './data/tempo:/var/tempo'
+      - './config/tempo-config.yaml:/etc/tempo/tempo.yaml'
+    command: [ "-config.file=/etc/tempo/tempo.yaml" ]
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+
+  pyroscope:
+    image: pyroscope/pyroscope:latest
+    container_name: pyroscope
+    ports:
+      - "4040:4040"
+    command: ["server"]
