@@ -1,8 +1,7 @@
 package main
 
 import (
-	"context"
-	"errors"
+	"fmt"
 	_ "github.com/autoscalerhq/autoscaler/api/docs"
 	"github.com/autoscalerhq/autoscaler/api/middleware"
 	"github.com/autoscalerhq/autoscaler/api/routes"
@@ -15,8 +14,6 @@ import (
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
 	"log/slog"
-	"os"
-	"os/signal"
 	"time"
 )
 
@@ -55,7 +52,6 @@ func main() {
 
 	// initializing global variables before the application starts.
 	// TODO this needs to be re thought the name should be set based off the file that is using these variables
-
 	//_, file, _, _ := runtime.Caller(1)
 	//name = filepath.Base(file)
 	//tracer = otel.Tracer(name)
@@ -63,16 +59,19 @@ func main() {
 	//logger = otelslog.NewLogger(name) // Replace with actual logger initialization
 	e := echo.New()
 
-	// Middleware
-	js, ctx := nats.NewJetStream()
-	kv, err := js.CreateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
-	if err != nil {
-		if !errors.Is(err, jetstream.ErrBucketExists) {
-			e.Logger.Fatal(err)
+	//Middleware
+	nc, err := natutils.GetNatsConn()
+	defer func(nc *nats.Conn) {
+		err := nc.Drain()
+		if err != nil {
 		}
+	}(nc)
+	kv, idempotentCtx, err := natutils.NewKeyValueStore(jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+	if err != nil {
+		e.Logger.Fatal(fmt.Errorf("error getting new key value store: %w", err))
 	}
-	e.Use(appmiddleware.IdempotencyMiddleware(kv, ctx))
-	e.Use(appmiddleware.TracingMiddleware)
+	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
+	e.Use(appmiddleware.TracingMiddleware())
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())

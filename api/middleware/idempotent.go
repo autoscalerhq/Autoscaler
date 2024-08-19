@@ -3,6 +3,7 @@ package appmiddleware
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/nats-io/nats.go/jetstream"
@@ -10,12 +11,17 @@ import (
 	"strconv"
 )
 
+const (
+	IdempotencyKey = "Idempotency-Key"
+)
+
 func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			fmt.Print("Idempotency Middleware Has been CALLED")
 			if c.Request().Method == "POST" || c.Request().Method == "PATCH" {
 				// Check if the request is idempotent
-				key := c.Response().Header().Get("Idempotency-key")
+				key := c.Request().Header.Get(IdempotencyKey)
 				if key == "" {
 					return next(c)
 				}
@@ -30,34 +36,35 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 				value, err := kv.Get(ctx, idempotentUUID.String())
 				if err != nil {
 					if !errors.Is(err, jetstream.ErrKeyNotFound) {
-						return err
+						return fmt.Errorf("failed to get key %s from KeyValueStore: %w", idempotentUUID.String(), err)
 					}
 				}
 
 				// check if the request has already been processed or is being processed
 				if value != nil {
-					status, err := strconv.Atoi(string(value.Value()))
+					status := string(value.Value())
+					statusCode, err := strconv.Atoi(status)
 					if err != nil {
-						return err
+						return fmt.Errorf("failed converting key -> value from []byte to int :%w", err)
 					}
-
-					if status == http.StatusAccepted {
+					if statusCode == http.StatusAccepted {
 						return c.String(http.StatusConflict, "Request is being processed")
 					}
 
-					return c.String(status, "Request has already been processed")
+					return c.String(statusCode, "Request has already been processed")
 				}
 
 				// If the request has not been processed, store the request
-				_, err = kv.Put(ctx, idempotentUUID.String(), []byte(string(rune(http.StatusAccepted))))
+
+				_, err = kv.Put(ctx, idempotentUUID.String(), []byte(strconv.Itoa(http.StatusAccepted)))
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to put new key %s into KeyValueStore: %w", idempotentUUID.String(), err)
 				}
 
 				// Process the request update status to the response status
-				_, err = kv.Put(ctx, idempotentUUID.String(), []byte(string(rune(c.Response().Status))))
+				_, err = kv.Put(ctx, idempotentUUID.String(), []byte(strconv.Itoa(c.Response().Status)))
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to update key %s with response status code: %w", idempotentUUID.String(), err)
 				}
 			}
 			return next(c)
