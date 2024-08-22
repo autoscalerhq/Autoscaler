@@ -5,10 +5,11 @@ import (
 	_ "github.com/autoscalerhq/autoscaler/api/docs"
 	"github.com/autoscalerhq/autoscaler/api/middleware"
 	"github.com/autoscalerhq/autoscaler/api/routes"
-	"github.com/autoscalerhq/autoscaler/internal/nats"
+	natutils "github.com/autoscalerhq/autoscaler/internal/nats"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	m "go.opentelemetry.io/otel/metric"
@@ -36,19 +37,19 @@ func main() {
 		//log.Fatal("Error loading .env file")
 	}
 	// Handle SIGINT (CTRL+C) gracefully.
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer stop()
+	//ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	//defer stop()
 
 	// Set up OpenTelemetry.
-	otelShutdown, err := setupOTelSDK(ctx)
-	if err != nil {
-		return
-	}
+	//otelShutdown, err := setupOTelSDK(ctx)
+	//if err != nil {
+	//	return
+	//}
 
 	// Handle shutdown properly so nothing leaks.
-	defer func() {
-		err = errors.Join(err, otelShutdown(context.Background()))
-	}()
+	//defer func() {
+	//	err = errors.Join(err, otelShutdown(context.Background()))
+	//}()
 
 	// initializing global variables before the application starts.
 	// TODO this needs to be re thought the name should be set based off the file that is using these variables
@@ -70,6 +71,8 @@ func main() {
 	if err != nil {
 		e.Logger.Fatal(fmt.Errorf("error getting new key value store: %w", err))
 	}
+
+	// extend the echo.Context to include custom context
 	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
 	e.Use(appmiddleware.TracingMiddleware())
 	e.Use(middleware.Logger())

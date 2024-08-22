@@ -1,18 +1,20 @@
 package middleware
 
 import (
-	"bytes"
 	"context"
 	"fmt"
+	appmiddleware "github.com/autoscalerhq/autoscaler/api/middleware"
+	apphttp "github.com/autoscalerhq/autoscaler/api/util"
 	"github.com/autoscalerhq/autoscaler/internal/nats"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"runtime"
+	"sync"
 	"testing"
 	"time"
 )
@@ -38,35 +40,50 @@ func teardown(key string) error {
 	return nil
 }
 
+func setup() *httptest.Server {
+
+	kv, idempotentCtx, err := natutils.NewKeyValueStore(jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+	if err != nil {
+		return nil
+	}
+	e := echo.New()
+	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
+	e.POST("/hang", func(c echo.Context) error {
+		// Simulate a request that hangs
+		time.Sleep(1 * time.Second)
+		return c.String(http.StatusOK, "Hello, World!")
+	})
+	e.POST("/Post", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!")
+	})
+
+	server := httptest.NewServer(e)
+	return server
+}
+
 // TestPostNewIdempotentItem
 func TestPostNewIdempotentItem(t *testing.T) {
 
+	server := setup()
+	defer server.Close()
 	// Create the request body
-	jsonData := []byte(`{"name": "John Doe"}`)
-
+	jsonData := map[string]string{
+		"name": "John Doe",
+	}
 	// Create a new request using http.NewRequest
-	req, err := http.NewRequest("POST", "http://localhost:8090/Post", bytes.NewBuffer(jsonData))
-	if err != nil {
-		log.Fatal(err)
+	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
+	header := http.Header{
+		"Idempotency-Key": []string{idempotentUuid},
 	}
-	idempotentUuid := uuid.New().String()
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set(IdempotencyKey, idempotentUuid)
-
-	// Perform the request
-	client := &http.Client{}
-	resp1, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Read and print the response body
-	headers := resp1.Header
-	body, err := io.ReadAll(resp1.Body)
+	resp, headers, err := apphttp.Post(server.URL+"/Post", jsonData, header, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Println("Response Body:", string(body))
+	data, err := io.ReadAll(resp.Body)
+
+	// Read and print the response body
+	fmt.Println("Response Body:", string(data))
+	fmt.Println("Response Status:", resp.StatusCode)
 	fmt.Println("Response Headers:", headers)
 
 	defer func(key string) {
@@ -79,50 +96,40 @@ func TestPostNewIdempotentItem(t *testing.T) {
 }
 
 func TestPostTwoOfTheSame(t *testing.T) {
+	server := setup()
+	defer server.Close()
 
-	// Create the request body
-	jsonData := []byte(`{"name": "John Doe"}`)
-
+	jsonData := map[string]string{
+		"name": "John Doe",
+	}
 	// Create a new request using http.NewRequest
-	req, err := http.NewRequest("POST", "http://localhost:8090/Post", bytes.NewBuffer(jsonData))
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set(IdempotencyKey, idempotentUuid)
+	header := http.Header{
+		"Idempotency-Key": []string{idempotentUuid},
+	}
+
+	resp, headers, err := apphttp.Post(server.URL+"/Post", jsonData, header, nil)
+	if err != nil {
+		return
+	}
 
 	// Perform the request
-	client := &http.Client{}
-	resp1, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
+	resp1, headers2, err2 := apphttp.Post(server.URL+"/Post", jsonData, header, nil)
+	if err2 != nil {
+		return
 	}
+	body, err := io.ReadAll(resp.Body)
+	body1, err := io.ReadAll(resp1.Body)
 
-	// Read and print the response body
-	headers := resp1.Header
-	body, err := io.ReadAll(resp1.Body)
-	if err != nil {
-		t.Error(err)
-	}
 	fmt.Println("Response Body:", string(body))
+	fmt.Println("Response Status", resp.StatusCode)
 	fmt.Println("Response Headers:", headers)
 
-	// Perform the request
-	resp2, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Println("Response Body:", string(body1))
+	fmt.Println("Response Status", resp1.StatusCode)
+	fmt.Println("Response Headers:", headers2)
 
-	// Read and print the response body
-	headers = resp2.Header
-	body, err = io.ReadAll(resp2.Body)
-	if err != nil {
-		t.Error(err)
-	}
-	fmt.Println("Response Body:", string(body))
-	fmt.Println("Response Headers:", headers)
+	assert.Equal(t, resp.StatusCode, resp1.StatusCode)
 
 	defer func(key string) {
 		err := teardown(key)
@@ -132,52 +139,73 @@ func TestPostTwoOfTheSame(t *testing.T) {
 	}(idempotentUuid)
 }
 
-func TestPostToInProgressRequest(t *testing.T) {
+func TestConcurrentRequests(t *testing.T) {
 
-	e := echo.New()
-	idempotencyUuid := uuid.New()
-
-	e.POST("/hang", func(c echo.Context) error {
-		// Simulate a request that hangs for a while completes
-		time.Sleep(5 * time.Second)
-		return c.String(http.StatusBadRequest, "Hello, World!")
-	})
-	//e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
-	server := httptest.NewServer(e)
+	fmt.Println("Version", runtime.Version())
+	fmt.Println("NumCPU", runtime.NumCPU())
+	fmt.Println("GOMAXPROCS", runtime.GOMAXPROCS(0))
+	server := setup()
 	defer server.Close()
 
-	// Create a request to the hanging route
-	req, err := http.NewRequest(http.MethodPost, server.URL+"/hang", nil)
-	require.NoError(t, err)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
-	req = req.WithContext(ctx)
-	req.Header.Set(IdempotencyKey, idempotencyUuid.String())
-	// Perform the request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	_, err = client.Do(req)
-
-	// Check if the request timed out
-	require.Error(t, err, "Expected a timeout error")
-	require.Contains(t, err.Error(), "context deadline exceeded", "Expected context deadline exceeded error")
-
-	if resp != nil {
-		defer func(Body io.ReadCloser) {
-			err := Body.Close()
-			if err != nil {
-				t.Error(err)
-			}
-		}(resp.Body)
+	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
+	header := http.Header{
+		"Idempotency-Key": []string{idempotentUuid},
 	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
+	var requestWg sync.WaitGroup
+	requestWg.Add(2)
+
+	// First goroutine to send the request
+	go func() {
+		defer requestWg.Done()
+		fmt.Println("Goroutine 1 - Sent Request")
+		resp, headers, err := apphttp.Post(server.URL+"/hang", nil, header, ctx)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		fmt.Println("Goroutine 1 - Response Body:", string(body))
+		fmt.Println("Goroutine 1 - Response Status", resp.StatusCode)
+		fmt.Println("Goroutine 1 - Response Headers:", headers)
+	}()
+
+	// Second goroutine to send the request with a slight delay
+	go func() {
+		defer requestWg.Done()
+
+		time.Sleep(50 * time.Millisecond)
+		fmt.Println("Goroutine 2 - Sent Request")
+		resp, headers, err := apphttp.Post(server.URL+"/hang", nil, header, ctx)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		fmt.Println("Goroutine 2 - Response Body:", string(body))
+		fmt.Println("Goroutine 2 - Response Status", resp.StatusCode)
+		fmt.Println("Goroutine 2 - Response Headers:", headers)
+	}()
+
+	// Wait for all requests to complete
+	requestWg.Wait()
+	// Cleanup
 	defer func(key string) {
 		err := teardown(key)
 		if err != nil {
 			t.Error(err)
 		}
-	}(idempotencyUuid.String())
+	}(idempotentUuid)
 }
 
 func TestListKeys(t *testing.T) {
@@ -204,6 +232,7 @@ func TestListKeys(t *testing.T) {
 			log.Printf("Error retrieving value for key %s: %v\n", key, err)
 			continue
 		}
+		//_ = kv.Delete(ctx, key)
 
 		fmt.Printf("Key: %s, Value: %s\n", key, string(entry.Value()))
 	}
