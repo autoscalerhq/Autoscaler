@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
@@ -40,4 +42,14 @@ func Post(requestUrl string, body interface{}, header http.Header, ctx context.C
 	}
 
 	return send(req)
+}
+
+func CustomHttpErrorHandler(err error, c echo.Context) {
+	// Todo send error to monitoring system
+	code := http.StatusInternalServerError
+	var httpE *echo.HTTPError
+	if errors.As(err, &httpE) {
+		code = httpE.Code
+	}
+	c.Logger().Errorf("Code: %d, Exception: %s", code, err.Error())
 }

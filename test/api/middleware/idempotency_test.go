@@ -47,6 +47,7 @@ func setup() *httptest.Server {
 		return nil
 	}
 	e := echo.New()
+	e.HTTPErrorHandler = apphttp.CustomHttpErrorHandler
 	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
 	e.POST("/hang", func(c echo.Context) error {
 		// Simulate a request that hangs
@@ -73,7 +74,7 @@ func TestPostNewIdempotentItem(t *testing.T) {
 	// Create a new request using http.NewRequest
 	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
 	header := http.Header{
-		"Idempotency-Key": []string{idempotentUuid},
+		IdempotencyKey: []string{idempotentUuid},
 	}
 	resp, headers, err := apphttp.Post(server.URL+"/Post", jsonData, header, nil)
 	if err != nil {
@@ -105,7 +106,7 @@ func TestPostTwoOfTheSame(t *testing.T) {
 	// Create a new request using http.NewRequest
 	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
 	header := http.Header{
-		"Idempotency-Key": []string{idempotentUuid},
+		IdempotencyKey: []string{idempotentUuid},
 	}
 
 	resp, headers, err := apphttp.Post(server.URL+"/Post", jsonData, header, nil)
@@ -124,7 +125,6 @@ func TestPostTwoOfTheSame(t *testing.T) {
 	fmt.Println("Response Body:", string(body))
 	fmt.Println("Response Status", resp.StatusCode)
 	fmt.Println("Response Headers:", headers)
-
 	fmt.Println("Response Body:", string(body1))
 	fmt.Println("Response Status", resp1.StatusCode)
 	fmt.Println("Response Headers:", headers2)
@@ -149,7 +149,7 @@ func TestConcurrentRequests(t *testing.T) {
 
 	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
 	header := http.Header{
-		"Idempotency-Key": []string{idempotentUuid},
+		IdempotencyKey: []string{idempotentUuid},
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

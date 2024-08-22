@@ -7,6 +7,7 @@ import (
 	"github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/monitoring"
 	"github.com/autoscalerhq/autoscaler/services/api/routes"
+	apphttp "github.com/autoscalerhq/autoscaler/services/api/util"
 	"github.com/go-co-op/gocron"
 	"github.com/joho/godotenv"
 	loadshedhttp "github.com/kevinconway/loadshed/v2/stdlib/net/http"
@@ -15,6 +16,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
+	"github.com/open-feature/go-sdk/openfeature"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
@@ -36,6 +38,7 @@ var (
 	logger *slog.Logger
 )
 
+// For local development, Nats 1, 2 And flagd must be running
 func main() {
 
 	err := godotenv.Load()
@@ -44,37 +47,36 @@ func main() {
 		//log.Fatal("Error loading .env file")
 	}
 
-	// TODO this is broken and needs to be fixed Error : Unable to init provider initialization failed: grpc connection establishment failed
-	//providerOptions := []flagd.ProviderOption{
-	//	flagd.WithBasicInMemoryCache(),
-	//	flagd.WithRPCResolver(),
-	//	flagd.WithHost("localhost"),
-	//	flagd.WithPort(8013),
-	//}
+	providerOptions := []flagd.ProviderOption{
+		flagd.WithBasicInMemoryCache(),
+		flagd.WithRPCResolver(),
+		flagd.WithHost("localhost"),
+		flagd.WithPort(8013),
+	}
 
-	//provider := flagd.NewProvider(providerOptions...)
+	provider := flagd.NewProvider(providerOptions...)
 	//
-	//err = openfeature.SetProvider(provider)
-	//if err != nil {
-	//	println("Open Feature flag setup err: ", err.Error())
-	//	return
-	//}
-	//
-	//// Create an empty evaluation context
-	//evalContext := openfeature.NewEvaluationContext("key", map[string]interface{}{})
-	//
-	//err = provider.Init(evalContext)
-	//if err != nil {
-	//	println("Unable to init", err.Error())
-	//	return
-	//}
+	err = openfeature.SetProvider(provider)
+	if err != nil {
+		println("Open Feature flag setup err: ", err.Error())
+		return
+	}
 
-	// Wait for the provider to be ready
-	//ready := waitForProvider(provider, 10*time.Second, 500*time.Millisecond)
-	//if !ready {
-	//	println("Provider not ready after waiting")
-	//	return
-	//}
+	// Create an empty evaluation context
+	evalContext := openfeature.NewEvaluationContext("key", map[string]interface{}{})
+
+	err = provider.Init(evalContext)
+	if err != nil {
+		println("Unable to init", err.Error())
+		return
+	}
+
+	//Wait for the provider to be ready
+	ready := waitForProvider(provider, 10*time.Second, 500*time.Millisecond)
+	if !ready {
+		println("Provider not ready after waiting")
+		return
+	}
 
 	// Handle SIGINT (CTRL+C) gracefully.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -136,19 +138,19 @@ func main() {
 	}
 
 	e := echo.New()
+	e.HTTPErrorHandler = apphttp.CustomHttpErrorHandler
 
 	// Middleware
-	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
 	e.Use(appmiddleware.RequestCounterMiddleware)
 	e.Use(appmiddleware.AddRouteToCTXMiddleware)
 	// If load is too high, fail before we process anything else. this may need to be moved after logging
 	e.Use(echo.WrapMiddleware(loadshedhttp.NewHandlerMiddleware(appmiddleware.CreateShedder(), loadshedhttp.HandlerOptionCallback(&appmiddleware.RejectionHandler{}))))
-
+	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
+	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
 	e.Use(appmiddleware.TracingMiddleware())
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
-	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
 
 	// TODO define routes in another method
 	// Routes

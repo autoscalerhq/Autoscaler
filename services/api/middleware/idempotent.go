@@ -59,8 +59,7 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 				existingKey, err := kv.Get(ctx, idempotentUUID.String())
 				if err != nil {
 					if !errors.Is(err, jetstream.ErrKeyNotFound) {
-						// TODO report these kind of errors to a monitoring system
-						return c.JSON(http.StatusInternalServerError, Message{Body: "Internal Server Error, please try again later"})
+						return err
 					}
 				}
 
@@ -69,8 +68,7 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 					var result Message
 					err := json.Unmarshal(existingKey.Value(), &result)
 					if err != nil {
-						// TODO report these kind of errors to a monitoring system
-						return c.JSON(http.StatusInternalServerError, Message{Body: "Internal Server Error, please try again later"})
+						return err
 					}
 
 					// If the request is being processed, return status code 409
@@ -91,12 +89,11 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 				data, err := json.Marshal(msg)
 				if err != nil {
 					// TODO report these kind of errors to a monitoring system
-					return c.JSON(http.StatusInternalServerError, Message{Body: "Internal Server Error, please try again later"})
+					return err
 				}
 				_, err = kv.Put(ctx, idempotentUUID.String(), data)
 				if err != nil {
-					// TODO report these kind of errors to a monitoring system
-					return c.JSON(http.StatusInternalServerError, Message{Body: "Internal Server Error, please try again later"})
+					return err
 				}
 
 				// Process the request then update status to the response status
@@ -108,14 +105,12 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 							Body:       capturingWriter.Body.String(),
 						})
 					if respErr != nil {
-						// TODO report these kind of errors to a monitoring system
-						return c.JSON(http.StatusInternalServerError, Message{Body: "Internal Server Error, please try again later"})
+						return err
 					}
 
 					_, err = kv.Put(ctx, idempotentUUID.String(), resp)
 					if err != nil {
-						// TODO report these kind of errors to a monitoring system
-						return c.JSON(http.StatusInternalServerError, Message{Body: "Internal Server Error, please try again later"})
+						return err
 					}
 				}
 				return err
