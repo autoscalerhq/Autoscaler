@@ -15,7 +15,6 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
-	"github.com/open-feature/go-sdk/openfeature"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
@@ -23,6 +22,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"time"
 )
 
@@ -45,36 +45,37 @@ func main() {
 		//log.Fatal("Error loading .env file")
 	}
 
-	providerOptions := []flagd.ProviderOption{
-		flagd.WithBasicInMemoryCache(),
-		flagd.WithRPCResolver(),
-		flagd.WithHost("localhost"),
-		flagd.WithPort(8013),
-	}
+	// TODO this is broken and needs to be fixed Error : Unable to init provider initialization failed: grpc connection establishment failed
+	//providerOptions := []flagd.ProviderOption{
+	//	flagd.WithBasicInMemoryCache(),
+	//	flagd.WithRPCResolver(),
+	//	flagd.WithHost("localhost"),
+	//	flagd.WithPort(8013),
+	//}
 
-	provider := flagd.NewProvider(providerOptions...)
-
-	err = openfeature.SetProvider(provider)
-	if err != nil {
-		println("Open Feature flag setup err: ", err.Error())
-		return
-	}
-
-	// Create an empty evaluation context
-	evalContext := openfeature.NewEvaluationContext("key", map[string]interface{}{})
-
-	err = provider.Init(evalContext)
-	if err != nil {
-		println("Unable to init", err.Error())
-		return
-	}
+	//provider := flagd.NewProvider(providerOptions...)
+	//
+	//err = openfeature.SetProvider(provider)
+	//if err != nil {
+	//	println("Open Feature flag setup err: ", err.Error())
+	//	return
+	//}
+	//
+	//// Create an empty evaluation context
+	//evalContext := openfeature.NewEvaluationContext("key", map[string]interface{}{})
+	//
+	//err = provider.Init(evalContext)
+	//if err != nil {
+	//	println("Unable to init", err.Error())
+	//	return
+	//}
 
 	// Wait for the provider to be ready
-	ready := waitForProvider(provider, 10*time.Second, 500*time.Millisecond)
-	if !ready {
-		println("Provider not ready after waiting")
-		return
-	}
+	//ready := waitForProvider(provider, 10*time.Second, 500*time.Millisecond)
+	//if !ready {
+	//	println("Provider not ready after waiting")
+	//	return
+	//}
 
 	// Handle SIGINT (CTRL+C) gracefully.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -163,11 +164,14 @@ func main() {
 	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 	// Start server
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
 	go func() {
 		if err := e.Start(":8888"); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			e.Logger.Fatal("shutting down the server")
 		}
 	}()
+	wg.Wait()
 
 	// Wait for the interrupt signal to gracefully shut down the server with a timeout of 10 seconds.
 	<-ctx.Done()
