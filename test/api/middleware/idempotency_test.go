@@ -3,9 +3,9 @@ package middleware
 import (
 	"context"
 	"fmt"
-	appmiddleware "github.com/autoscalerhq/autoscaler/api/middleware"
-	apphttp "github.com/autoscalerhq/autoscaler/api/util"
 	"github.com/autoscalerhq/autoscaler/internal/nats"
+	appmiddleware "github.com/autoscalerhq/autoscaler/services/api/middleware"
+	apphttp "github.com/autoscalerhq/autoscaler/services/api/util"
 	"github.com/labstack/echo/v4"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/assert"

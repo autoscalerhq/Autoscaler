@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	natutils "github.com/autoscalerhq/autoscaler/internal/nats"
 	"github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/monitoring"
 	"github.com/autoscalerhq/autoscaler/services/api/routes"
@@ -11,6 +12,8 @@ import (
 	loadshedhttp "github.com/kevinconway/loadshed/v2/stdlib/net/http"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -119,15 +122,29 @@ func main() {
 	//tracer = otel.Tracer(name)
 	//meter = otel.Meter(name)
 	//logger = otelslog.NewLogger(name) // Replace with actual logger initialization
+
+	nc, err := natutils.GetNatsConn()
+	defer func(nc *nats.Conn) {
+		err := nc.Drain()
+		if err != nil {
+		}
+	}(nc)
+	kv, idempotentCtx, err := natutils.NewKeyValueStore(jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+	if err != nil {
+		println(err.Error(), "error getting new key value store")
+		return
+	}
+
 	e := echo.New()
 
 	// Middleware
+	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
 	e.Use(appmiddleware.RequestCounterMiddleware)
 	e.Use(appmiddleware.AddRouteToCTXMiddleware)
 	// If load is too high, fail before we process anything else. this may need to be moved after logging
 	e.Use(echo.WrapMiddleware(loadshedhttp.NewHandlerMiddleware(appmiddleware.CreateShedder(), loadshedhttp.HandlerOptionCallback(&appmiddleware.RejectionHandler{}))))
 
-	e.Use(appmiddleware.TracingMiddleware)
+	e.Use(appmiddleware.TracingMiddleware())
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
