@@ -22,7 +22,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"time"
 )
 
@@ -164,14 +163,11 @@ func main() {
 	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 	// Start server
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
 	go func() {
 		if err := e.Start(":8888"); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			e.Logger.Fatal("shutting down the server")
 		}
 	}()
-	wg.Wait()
 
 	// Wait for the interrupt signal to gracefully shut down the server with a timeout of 10 seconds.
 	<-ctx.Done()
