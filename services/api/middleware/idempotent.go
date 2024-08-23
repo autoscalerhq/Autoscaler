@@ -6,7 +6,6 @@ import (
 	"crypto"
 	"encoding/json"
 	"errors"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/nats-io/nats.go/jetstream"
 	"io"
@@ -28,18 +27,18 @@ func (w *CapturingResponseWriter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
-type IdempotencyStatus string
+type IdempotencyStatus int
 
 const (
-	Processing IdempotencyStatus = "Processing"
-	Completed  IdempotencyStatus = "Completed"
+	Processing IdempotencyStatus = iota
+	Completed
 )
 
 type Message struct {
 	StatusCode        int               `json:"statusCode,omitempty"`
 	Body              string            `json:"body,omitempty"`
-	IdempotencyStatus IdempotencyStatus `json:"-"`
-	Hash              string            `json:"-"`
+	IdempotencyStatus IdempotencyStatus `json:"idempotencyStatus,omitempty"`
+	Hash              []byte            `json:"hash,omitempty"`
 }
 
 //TODO 422 Unprocessable Entity missing case If there's an attempt to reuse an idempotency key with a different request payload.
@@ -61,12 +60,6 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 					return next(c)
 				}
 
-				// Validate the idempotency key is a valid UUID
-				idempotentUUID, err := uuid.Parse(key)
-				if err != nil {
-					return c.JSON(http.StatusBadRequest, Message{Body: "Idempotency key must be a valid UUID"})
-				}
-
 				requestBody, err := io.ReadAll(c.Request().Body)
 				if err != nil {
 					return err
@@ -79,9 +72,8 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 					return err
 				}
 				hashRequestBody := h.Sum(nil)
-
 				// get key if it exists
-				existingKey, err := kv.Get(ctx, idempotentUUID.String())
+				existingKey, err := kv.Get(ctx, key)
 				if err != nil {
 					if !errors.Is(err, jetstream.ErrKeyNotFound) {
 						return err
@@ -95,9 +87,8 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 					if err != nil {
 						return err
 					}
-
-					// if the request body has changed, but uuid has not return status code 422
-					if string(hashRequestBody) != result.Hash {
+					// if the request body has changed
+					if !bytes.Equal(hashRequestBody, result.Hash) {
 						return c.JSON(http.StatusUnprocessableEntity, Message{Body: "Request body does not match the original request"})
 					}
 
@@ -113,7 +104,7 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 				// If the request has not been processed, store the request with the status code accepted,
 				// signifying that the request is being processed
 				msg := Message{
-					Hash:              string(hashRequestBody),
+					Hash:              hashRequestBody,
 					IdempotencyStatus: Processing,
 				}
 				data, err := json.Marshal(msg)
@@ -121,7 +112,7 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 					// TODO report these kind of errors to a monitoring system
 					return err
 				}
-				_, err = kv.Put(ctx, idempotentUUID.String(), data)
+				_, err = kv.Put(ctx, key, data)
 				if err != nil {
 					return err
 				}
@@ -133,14 +124,14 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 						Message{
 							StatusCode:        c.Response().Status,
 							Body:              capturingWriter.Body.String(),
-							Hash:              string(hashRequestBody),
+							Hash:              hashRequestBody,
 							IdempotencyStatus: Completed,
 						})
 					if respErr != nil {
 						return err
 					}
 
-					_, err = kv.Put(ctx, idempotentUUID.String(), resp)
+					_, err = kv.Put(ctx, key, resp)
 					if err != nil {
 						return err
 					}

@@ -6,6 +6,7 @@ import (
 	"github.com/autoscalerhq/autoscaler/internal/nats"
 	appmiddleware "github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/util/apphttp"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/assert"
@@ -72,7 +73,7 @@ func TestPostNewIdempotentItem(t *testing.T) {
 		"name": "John Doe",
 	}
 	// Create a new request using http.NewRequest
-	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
+	idempotentUuid := uuid.New().String()
 	header := http.Header{
 		IdempotencyKey: []string{idempotentUuid},
 	}
@@ -104,7 +105,7 @@ func TestPostTwoOfTheSame(t *testing.T) {
 		"name": "John Doe",
 	}
 	// Create a new request using http.NewRequest
-	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
+	idempotentUuid := uuid.New().String()
 	header := http.Header{
 		IdempotencyKey: []string{idempotentUuid},
 	}
@@ -149,7 +150,7 @@ func TestPostTwoOfTheSame_DifferentRequestPayloads(t *testing.T) {
 		"name": "Jane Doe",
 	}
 	// Create a new request using http.NewRequest
-	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
+	idempotentUuid := uuid.New().String()
 	header := http.Header{
 		IdempotencyKey: []string{idempotentUuid},
 	}
@@ -193,7 +194,7 @@ func TestConcurrentRequests(t *testing.T) {
 	server := setup()
 	defer server.Close()
 
-	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
+	idempotentUuid := uuid.New().String()
 	header := http.Header{
 		IdempotencyKey: []string{idempotentUuid},
 	}
