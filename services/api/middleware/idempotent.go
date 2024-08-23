@@ -106,7 +106,7 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 						return c.JSON(http.StatusConflict, Message{Body: "Request is being processed"})
 					}
 
-					// If the request has already been processed return original response from nats
+					// If the request has already been processed return original response from kv
 					return c.JSON(result.StatusCode, result.Body)
 				}
 
