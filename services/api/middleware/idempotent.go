@@ -41,8 +41,6 @@ type Message struct {
 	Hash              []byte            `json:"hash,omitempty"`
 }
 
-//TODO 422 Unprocessable Entity missing case If there's an attempt to reuse an idempotency key with a different request payload.
-
 func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
