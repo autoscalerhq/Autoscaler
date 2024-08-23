@@ -7,7 +7,7 @@ import (
 	"github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/monitoring"
 	"github.com/autoscalerhq/autoscaler/services/api/routes"
-	apphttp "github.com/autoscalerhq/autoscaler/services/api/util"
+	"github.com/autoscalerhq/autoscaler/services/api/util/apphttp"
 	"github.com/go-co-op/gocron"
 	"github.com/joho/godotenv"
 	loadshedhttp "github.com/kevinconway/loadshed/v2/stdlib/net/http"

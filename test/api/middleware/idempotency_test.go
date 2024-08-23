@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/autoscalerhq/autoscaler/internal/nats"
 	appmiddleware "github.com/autoscalerhq/autoscaler/services/api/middleware"
-	apphttp "github.com/autoscalerhq/autoscaler/services/api/util"
+	"github.com/autoscalerhq/autoscaler/services/api/util/apphttp"
 	"github.com/labstack/echo/v4"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/assert"
@@ -86,7 +86,7 @@ func TestPostNewIdempotentItem(t *testing.T) {
 	fmt.Println("Response Body:", string(data))
 	fmt.Println("Response Status:", resp.StatusCode)
 	fmt.Println("Response Headers:", headers)
-
+	assert.Equal(t, resp.StatusCode, http.StatusOK)
 	defer func(key string) {
 		err := teardown(key)
 		if err != nil {
@@ -130,6 +130,52 @@ func TestPostTwoOfTheSame(t *testing.T) {
 	fmt.Println("Response Headers:", headers2)
 
 	assert.Equal(t, resp.StatusCode, resp1.StatusCode)
+	defer func(key string) {
+		err := teardown(key)
+		if err != nil {
+			t.Error(err)
+		}
+	}(idempotentUuid)
+}
+
+func TestPostTwoOfTheSame_DifferentRequestPayloads(t *testing.T) {
+	server := setup()
+	defer server.Close()
+
+	jsonData1 := map[string]string{
+		"name": "John Doe",
+	}
+	jsonData2 := map[string]string{
+		"name": "Jane Doe",
+	}
+	// Create a new request using http.NewRequest
+	idempotentUuid := "038a3382-d1ec-4ffb-b2bc-cd4230ffb208"
+	header := http.Header{
+		IdempotencyKey: []string{idempotentUuid},
+	}
+
+	resp, headers, err := apphttp.Post(server.URL+"/Post", jsonData1, header, nil)
+	if err != nil {
+		return
+	}
+
+	// Perform the request
+	resp1, headers2, err2 := apphttp.Post(server.URL+"/Post", jsonData2, header, nil)
+	if err2 != nil {
+		return
+	}
+	body, err := io.ReadAll(resp.Body)
+	body1, err := io.ReadAll(resp1.Body)
+
+	fmt.Println("Response Body:", string(body))
+	fmt.Println("Response Status", resp.StatusCode)
+	fmt.Println("Response Headers:", headers)
+	fmt.Println("Response Body:", string(body1))
+	fmt.Println("Response Status", resp1.StatusCode)
+	fmt.Println("Response Headers:", headers2)
+
+	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, resp1.StatusCode, http.StatusUnprocessableEntity)
 
 	defer func(key string) {
 		err := teardown(key)
@@ -174,6 +220,7 @@ func TestConcurrentRequests(t *testing.T) {
 		fmt.Println("Goroutine 1 - Response Body:", string(body))
 		fmt.Println("Goroutine 1 - Response Status", resp.StatusCode)
 		fmt.Println("Goroutine 1 - Response Headers:", headers)
+		assert.Equal(t, resp.StatusCode, http.StatusOK)
 	}()
 
 	// Second goroutine to send the request with a slight delay
@@ -195,6 +242,7 @@ func TestConcurrentRequests(t *testing.T) {
 		fmt.Println("Goroutine 2 - Response Body:", string(body))
 		fmt.Println("Goroutine 2 - Response Status", resp.StatusCode)
 		fmt.Println("Goroutine 2 - Response Headers:", headers)
+		assert.Equal(t, resp.StatusCode, http.StatusConflict)
 	}()
 
 	// Wait for all requests to complete

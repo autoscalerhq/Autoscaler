@@ -3,11 +3,13 @@ package appmiddleware
 import (
 	"bytes"
 	"context"
+	"crypto"
 	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/nats-io/nats.go/jetstream"
+	"io"
 	"net/http"
 )
 
@@ -26,9 +28,18 @@ func (w *CapturingResponseWriter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
+type IdempotencyStatus string
+
+const (
+	Processing IdempotencyStatus = "Processing"
+	Completed  IdempotencyStatus = "Completed"
+)
+
 type Message struct {
-	StatusCode int    `json:"statusCode,omitempty"`
-	Body       string `json:"body"`
+	StatusCode        int               `json:"statusCode,omitempty"`
+	Body              string            `json:"body,omitempty"`
+	IdempotencyStatus IdempotencyStatus `json:"-"`
+	Hash              string            `json:"-"`
 }
 
 //TODO 422 Unprocessable Entity missing case If there's an attempt to reuse an idempotency key with a different request payload.
@@ -36,13 +47,14 @@ type Message struct {
 func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			capturingWriter := &CapturingResponseWriter{
-				ResponseWriter: c.Response().Writer,
-				Body:           new(bytes.Buffer),
-			}
-			c.Response().Writer = capturingWriter
-
 			if c.Request().Method == "POST" || c.Request().Method == "PATCH" {
+
+				capturingWriter := &CapturingResponseWriter{
+					ResponseWriter: c.Response().Writer,
+					Body:           new(bytes.Buffer),
+				}
+				c.Response().Writer = capturingWriter
+
 				// Check if the request is idempotent
 				key := c.Request().Header.Get(IdempotencyKey)
 				if key == "" {
@@ -54,6 +66,19 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 				if err != nil {
 					return c.JSON(http.StatusBadRequest, Message{Body: "Idempotency key must be a valid UUID"})
 				}
+
+				requestBody, err := io.ReadAll(c.Request().Body)
+				if err != nil {
+					return err
+				}
+
+				// Creating hashed request key
+				h := crypto.BLAKE2b_512.New()
+				_, err = h.Write(requestBody)
+				if err != nil {
+					return err
+				}
+				hashRequestBody := h.Sum(nil)
 
 				// get key if it exists
 				existingKey, err := kv.Get(ctx, idempotentUUID.String())
@@ -71,8 +96,13 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 						return err
 					}
 
+					// if the request body has changed, but uuid has not return status code 422
+					if string(hashRequestBody) != result.Hash {
+						return c.JSON(http.StatusUnprocessableEntity, Message{Body: "Request body does not match the original request"})
+					}
+
 					// If the request is being processed, return status code 409
-					if http.StatusAccepted == result.StatusCode {
+					if result.IdempotencyStatus == Processing {
 						return c.JSON(http.StatusConflict, Message{Body: "Request is being processed"})
 					}
 
@@ -83,8 +113,8 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 				// If the request has not been processed, store the request with the status code accepted,
 				// signifying that the request is being processed
 				msg := Message{
-					StatusCode: http.StatusAccepted,
-					Body:       "Request is being processed",
+					Hash:              string(hashRequestBody),
+					IdempotencyStatus: Processing,
 				}
 				data, err := json.Marshal(msg)
 				if err != nil {
@@ -101,8 +131,10 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 				if err == nil {
 					resp, respErr := json.Marshal(
 						Message{
-							StatusCode: c.Response().Status,
-							Body:       capturingWriter.Body.String(),
+							StatusCode:        c.Response().Status,
+							Body:              capturingWriter.Body.String(),
+							Hash:              string(hashRequestBody),
+							IdempotencyStatus: Completed,
 						})
 					if respErr != nil {
 						return err
