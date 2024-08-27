@@ -1,11 +1,10 @@
 "use client";
+import {useRouter} from 'next/navigation';
+import {useEffect, useState} from 'react';
+import Session from 'supertokens-auth-react/recipe/session';
+import SuperTokens from 'supertokens-auth-react';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Session from "supertokens-auth-react/recipe/session";
-import SuperTokens from "supertokens-auth-react";
-
-export const TryRefreshComponent = () => {
+export const TryRefreshClientComponent = () => {
   const router = useRouter();
   const [didError, setDidError] = useState(false);
 

@@ -1,10 +1,13 @@
-import { HomePage } from "./components/home";
+import {HomeComponent} from './components/home';
 import styles from "./page.module.css";
+import {AuthWrapper} from '@/app/config/supertokens/components/SuperTokensAuthWrapper';
 
 export default function Home() {
   return (
-    <main className={styles.main}>
-      <HomePage />
-    </main>
+    <AuthWrapper>
+      <main className={styles.main}>
+        <HomeComponent />
+      </main>
+    </AuthWrapper>
   );
 }

@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { SuperTokensProvider } from "./components/supertokensProvider";
+import { SuperTokensProvider } from "./config/supertokens/components/supertokensProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -1,5 +1,5 @@
 export const appInfo = {
-  appName: "SuperTokens Next.js demo app",
+  appName: "AutoScaler",
   apiDomain: "http://localhost:4000",
   websiteDomain: "http://localhost:3000",
   apiBasePath: "/auth",

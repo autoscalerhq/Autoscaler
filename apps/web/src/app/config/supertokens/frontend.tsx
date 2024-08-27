@@ -8,7 +8,7 @@ import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/p
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import SuperTokensReact from 'supertokens-auth-react';
 import SuperTokens from 'supertokens-node';
-import {backendConfig} from '@/app/config/backend';
+import {backendConfig} from '@/app/config/supertokens/backend';
 
 const routerInfo: { router?: ReturnType<typeof useRouter>; pathName?: string } =
   {};
@@ -33,6 +33,11 @@ export function ensureFrontendSuperTokensInit() {
 export const frontendConfig = (): SuperTokensConfig => {
   return {
     appInfo,
+    style: `
+        [data-supertokens~="superTokensBranding"] {
+            display: none !important;
+        }
+    `,
     recipeList: [
       EmailPasswordReact.init(),
       ThirdPartyReact.init({

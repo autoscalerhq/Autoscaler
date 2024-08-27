@@ -1,7 +1,7 @@
 "use client";
 import styles from "../page.module.css";
 import { BlogsIcon, GuideIcon, SignOutIcon } from "../../assets/images";
-import { recipeDetails } from "../config/frontend";
+import { recipeDetails } from "../config/supertokens/frontend";
 import Link from "next/link";
 import Image from "next/image";
 import Session from "supertokens-auth-react/recipe/session";
