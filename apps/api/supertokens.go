@@ -8,19 +8,42 @@ import (
 	"strings"
 )
 
-func InitSuperTokens() error {
+type SuperTokensEnv struct {
+	// connectionUri is the URL of the SuperTokens core instance
+	connectionUri string
+	// api token to communicate with SuperTokens core instance
+	apiKey  string
+	appInfo SuperTokensAppInfoEnv
+}
+type SuperTokensAppInfoEnv struct {
+	// appName is the name of the app
+	apiDomain     string
+	websiteDomain string
+}
+
+func makeDefaultSuperTokensAppInfoEnv() SuperTokensEnv {
+	return SuperTokensEnv{
+		connectionUri: "http://localhost:3567",
+		apiKey:        "",
+		appInfo: SuperTokensAppInfoEnv{
+			apiDomain:     "http://localhost:8080",
+			websiteDomain: "http://localhost:3000",
+		},
+	}
+}
+
+func InitSuperTokens(env SuperTokensEnv) error {
 	apiBasePath := "/auth"
 	websiteBasePath := "/auth"
 	err := supertokens.Init(supertokens.TypeInput{
 		Supertokens: &supertokens.ConnectionInfo{
-			// https://try.supertokens.com is for demo purposes. Replace this with the address of your core instance (sign up on supertokens.com), or self host a core.
-			ConnectionURI: "http://localhost:3567",
-			// APIKey: <API_KEY(if configured)>,
+			ConnectionURI: env.connectionUri,
+			APIKey:        env.apiKey,
 		},
 		AppInfo: supertokens.AppInfo{
 			AppName:         "autoscaler",
-			APIDomain:       "http://localhost:8080",
-			WebsiteDomain:   "http://localhost:3000",
+			APIDomain:       env.appInfo.apiDomain,
+			WebsiteDomain:   env.appInfo.websiteDomain,
 			APIBasePath:     &apiBasePath,
 			WebsiteBasePath: &websiteBasePath,
 		},

@@ -7,13 +7,26 @@ import (
 	"net/http"
 )
 
+type Environment struct {
+	supertokens   SuperTokensEnv
+	listenAddress string
+}
+
+func makeDefaultEnv() Environment {
+	return Environment{
+		supertokens:   makeDefaultSuperTokensAppInfoEnv(),
+		listenAddress: "localhost:4000",
+	}
+}
+
 func main() {
-	err := InitSuperTokens()
+	env := makeDefaultEnv()
+	err := InitSuperTokens(env.supertokens)
 	if err != nil {
 		panic(err.Error())
 	}
 	fmt.Print("Server running on port 4000")
-	err = http.ListenAndServe("localhost:4000", CorsMiddleware(
+	err = http.ListenAndServe(env.listenAddress, CorsMiddleware(
 		supertokens.Middleware(RouterMux())))
 	if err != nil {
 		panic(err.Error())
