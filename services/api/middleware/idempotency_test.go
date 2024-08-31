@@ -1,10 +1,9 @@
-package middleware
+package appmiddleware
 
 import (
 	"context"
 	"fmt"
 	"github.com/autoscalerhq/autoscaler/internal/nats"
-	appmiddleware "github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/util/apphttp"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -23,7 +22,7 @@ import (
 // tests the idempotency middleware ensure both nats1 and nats 2 docker containers are running
 
 const (
-	IdempotencyKey    = "Idempotency-Key"
+	//IdempotencyKey    = "Idempotency-Key"
 	IdempotencyBucket = "idempotent_requests"
 )
 
@@ -49,7 +48,7 @@ func setup() *httptest.Server {
 	}
 	e := echo.New()
 	e.HTTPErrorHandler = apphttp.CustomHttpErrorHandler
-	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
+	e.Use(IdempotencyMiddleware(kv, idempotentCtx))
 	e.POST("/hang", func(c echo.Context) error {
 		// Simulate a request that hangs
 		time.Sleep(1 * time.Second)
@@ -366,4 +365,44 @@ func TestListKeys(t *testing.T) {
 
 		fmt.Printf("Key: %s, Value: %s\n", key, string(entry.Value()))
 	}
+}
+
+func TestPostLargeBody(t *testing.T) {
+	server := setup()
+	defer server.Close()
+
+	// Generate a large request body
+	// Echo defaults to 4MB for the maximum body size. Adjust according to your specific configuration if necessary.
+	largeBody := make(map[string]string)
+	largeContent := make([]byte, 4*1024*1024) // 4MB body
+	for i := 0; i < 4*1024*1024; i++ {
+		largeContent[i] = 'a'
+	}
+	largeBody["content"] = string(largeContent)
+
+	// Create a new request using http.NewRequest
+	idempotentUuid := uuid.New().String()
+	header := http.Header{
+		IdempotencyKey: []string{idempotentUuid},
+	}
+	resp, _, err := apphttp.Post(server.URL+"/Post", largeBody, header, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Read and print the response body
+	fmt.Println("Response Body:", string(data))
+	fmt.Println("Response Status:", resp.StatusCode)
+	assert.Equal(t, resp.StatusCode, http.StatusOK)
+
+	defer func(key string) {
+		err := teardown(key)
+		if err != nil {
+			t.Error(err)
+		}
+	}(idempotentUuid)
 }

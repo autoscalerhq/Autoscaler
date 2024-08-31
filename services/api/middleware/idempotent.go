@@ -41,6 +41,29 @@ type Message struct {
 	Hash              []byte            `json:"hash,omitempty"`
 }
 
+// Function that handles the hashing and capturing of the request body
+func hashAndCaptureBody(body io.ReadCloser) ([]byte, *bytes.Buffer, error) {
+	// Create a new buffer to store the request body
+	buf := new(bytes.Buffer)
+
+	// Creating hashed request key
+	h := crypto.BLAKE2b_512.New()
+
+	// Create a MultiWriter that writes to both the buffer and the hash
+	multiWriter := io.MultiWriter(buf, h)
+
+	// Read the request body from the original request into the MultiWriter
+	_, err := io.Copy(multiWriter, body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// Compute the hash
+	hashRequestBody := h.Sum(nil)
+
+	return hashRequestBody, buf, nil
+}
+
 func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -62,18 +85,15 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 					return c.JSON(http.StatusUnprocessableEntity, Message{Body: "Idempotency key is too long"})
 				}
 
-				requestBody, err := io.ReadAll(c.Request().Body)
+				// Hash the request body and capture it for later use
+				hashRequestBody, requestBody, err := hashAndCaptureBody(c.Request().Body)
 				if err != nil {
 					return err
 				}
 
-				// Creating hashed request key
-				h := crypto.BLAKE2b_512.New()
-				_, err = h.Write(requestBody)
-				if err != nil {
-					return err
-				}
-				hashRequestBody := h.Sum(nil)
+				// Restore the request body to the original state so it can be read again downstream
+				c.Request().Body = io.NopCloser(requestBody)
+
 				// get key if it exists
 				existingKey, err := kv.Get(ctx, key)
 				if err != nil {
