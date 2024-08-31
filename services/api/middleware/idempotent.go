@@ -58,6 +58,10 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 					return next(c)
 				}
 
+				if len(key) > 255 {
+					return c.JSON(http.StatusUnprocessableEntity, Message{Body: "Idempotency key is too long"})
+				}
+
 				requestBody, err := io.ReadAll(c.Request().Body)
 				if err != nil {
 					return err
@@ -92,9 +96,12 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 
 					// If the request is being processed, return status code 409
 					if result.IdempotencyStatus == Processing {
+						c.Response().Header().Set("Retry-After", "60") // header describes when client should retry in seconds
 						return c.JSON(http.StatusConflict, Message{Body: "Request is being processed"})
 					}
 
+					// set the response header
+					c.Response().Header().Set("Idempotency-Replay", "true")
 					// If the request has already been processed return original response from kv
 					return c.JSON(result.StatusCode, result.Body)
 				}
@@ -105,6 +112,7 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 					Hash:              hashRequestBody,
 					IdempotencyStatus: Processing,
 				}
+
 				data, err := json.Marshal(msg)
 				if err != nil {
 					// TODO report these kind of errors to a monitoring system
@@ -116,6 +124,7 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 				}
 
 				// Process the request then update status to the response status
+				c.Response().Header().Set("Idempotency-Replay", "false")
 				err = next(c)
 				if err == nil {
 					resp, respErr := json.Marshal(
@@ -125,6 +134,7 @@ func IdempotencyMiddleware(kv jetstream.KeyValue, ctx context.Context) echo.Midd
 							Hash:              hashRequestBody,
 							IdempotencyStatus: Completed,
 						})
+
 					if respErr != nil {
 						return err
 					}

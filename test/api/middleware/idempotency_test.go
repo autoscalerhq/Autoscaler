@@ -131,6 +131,8 @@ func TestPostTwoOfTheSame(t *testing.T) {
 	fmt.Println("Response Headers:", headers2)
 
 	assert.Equal(t, resp.StatusCode, resp1.StatusCode)
+	assert.Equal(t, resp.Header.Get("Idempotency-Replay"), "false")
+	assert.Equal(t, resp1.Header.Get("Idempotency-Replay"), "true")
 	defer func(key string) {
 		err := teardown(key)
 		if err != nil {
@@ -186,7 +188,7 @@ func TestPostTwoOfTheSame_DifferentRequestPayloads(t *testing.T) {
 	}(idempotentUuid)
 }
 
-func TestConcurrentRequests(t *testing.T) {
+func TestTwoIdenticalConcurrentRequests(t *testing.T) {
 
 	fmt.Println("Version", runtime.Version())
 	fmt.Println("NumCPU", runtime.NumCPU())
@@ -244,6 +246,7 @@ func TestConcurrentRequests(t *testing.T) {
 		fmt.Println("Goroutine 2 - Response Status", resp.StatusCode)
 		fmt.Println("Goroutine 2 - Response Headers:", headers)
 		assert.Equal(t, resp.StatusCode, http.StatusConflict)
+		assert.Equal(t, resp.Header.Get("Retry-After"), "60")
 	}()
 
 	// Wait for all requests to complete
@@ -255,6 +258,84 @@ func TestConcurrentRequests(t *testing.T) {
 			t.Error(err)
 		}
 	}(idempotentUuid)
+}
+
+func TestTwoDifferentKeysSameBodiesConcurrentRequests(t *testing.T) {
+	server := setup()
+	defer server.Close()
+
+	idempotentUuid := uuid.New().String()
+	idempotentUuid1 := uuid.New().String()
+	header := http.Header{
+		IdempotencyKey: []string{idempotentUuid},
+	}
+	header1 := http.Header{
+		IdempotencyKey: []string{idempotentUuid1},
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	var requestWg sync.WaitGroup
+	requestWg.Add(2)
+
+	// First goroutine to send the request
+	go func() {
+		defer requestWg.Done()
+		defer func(key string) {
+			err := teardown(key)
+			if err != nil {
+				t.Error(err)
+			}
+		}(idempotentUuid)
+		fmt.Println("Goroutine 1 - Sent Request")
+		resp, headers, err := apphttp.Post(server.URL+"/hang", nil, header, ctx)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		fmt.Println("Goroutine 1 - Response Body:", string(body))
+		fmt.Println("Goroutine 1 - Response Status", resp.StatusCode)
+		fmt.Println("Goroutine 1 - Response Headers:", headers)
+		assert.Equal(t, resp.StatusCode, http.StatusOK)
+		assert.Equal(t, resp.Header.Get("Idempotency-Replay"), "false")
+	}()
+
+	// Second goroutine to send the request with a slight delay
+	go func() {
+		defer requestWg.Done()
+		defer func(key string) {
+			err := teardown(key)
+			if err != nil {
+				t.Error(err)
+			}
+		}(idempotentUuid1)
+
+		time.Sleep(50 * time.Millisecond)
+		fmt.Println("Goroutine 2 - Sent Request")
+		resp, headers, err := apphttp.Post(server.URL+"/hang", nil, header1, ctx)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		fmt.Println("Goroutine 2 - Response Body:", string(body))
+		fmt.Println("Goroutine 2 - Response Status", resp.StatusCode)
+		fmt.Println("Goroutine 2 - Response Headers:", headers)
+		assert.Equal(t, resp.StatusCode, http.StatusOK)
+		assert.Equal(t, resp.Header.Get("Idempotency-Replay"), "false")
+	}()
+	// Wait for all requests to complete
+	requestWg.Wait()
 }
 
 func TestListKeys(t *testing.T) {
