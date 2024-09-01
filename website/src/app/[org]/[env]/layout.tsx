@@ -8,7 +8,7 @@ import {
     ChevronsLeftRight,
     GitPullRequestDraft,
     LucideLayoutDashboard,
-    PencilRuler,
+    PencilRuler, Search,
     Settings,
     SquareDashedKanban,
 } from "lucide-react";
@@ -23,11 +23,13 @@ import {
 } from "~/components/ui/dropdown-menu";
 import Feedback from "~/components/feedback/PageExperience";
 import {ModelSwitcher} from "~/components/navigation/model-switcher";
+import Header from "~/components/navigation/header";
 
 
 export default function Layout({children, params}: { children: ReactNode, params: { org: string, env: string } }) {
 
     const base_link = `/${params.org}/${params.env}/`
+    const org_link = `/${params.org}/`
 
     return (
         <div className="flex ">
@@ -50,8 +52,8 @@ export default function Layout({children, params}: { children: ReactNode, params
                             links={[
                                 {
                                     title: "Settings",
-                                    href: base_link + "settings",
-                                    icon: Settings,
+                                    href: org_link + "settings",
+                                    icon: Search,
                                     variant: "ghost",
                                 },
                                 {
@@ -190,34 +192,7 @@ export default function Layout({children, params}: { children: ReactNode, params
             </nav>
 
             <div className="flex flex-col w-full">
-                <header
-                    className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 border-gray-200">
-
-                    <Feedback className={"ml-auto"}/>
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="overflow-hidden rounded-full"
-                            >
-                                <Avatar>
-                                    <AvatarImage src="https://github.com/shadcn.png"/>
-                                    <AvatarFallback>CN</AvatarFallback>
-                                </Avatar>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                            <DropdownMenuSeparator/>
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
-                            <DropdownMenuItem>Support</DropdownMenuItem>
-                            <DropdownMenuSeparator/>
-                            <DropdownMenuItem>Logout</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </header>
+                <Header/>
 
                 <main className="flex-1 p-4 overflow-auto min-w-full ">
                     {children}
