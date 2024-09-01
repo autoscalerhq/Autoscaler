@@ -7,6 +7,7 @@ import React from 'react';
 
 import {SuperTokensProvider} from "~/components/supertokensProvider";
 import {CSPostHogProvider} from "~/app/providers";
+import {Toaster} from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Autoscaler App",
@@ -22,7 +23,10 @@ export default function RootLayout({
       <SuperTokensProvider>
         <CSPostHogProvider>
           <body className={"overflow-hidden"}>
+            <main>
               {children}
+            </main>
+            <Toaster />
           </body>
         </CSPostHogProvider>
       </SuperTokensProvider>
