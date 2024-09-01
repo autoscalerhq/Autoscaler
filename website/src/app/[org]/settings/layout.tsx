@@ -2,6 +2,7 @@ import {ReactNode} from "react";
 import {BookDashed, Search, SquareDashedKanban,} from "lucide-react";
 import {Nav} from "~/components/navigation/vertical-nav";
 import Header from "~/components/navigation/header";
+import {Label} from "~/components/ui/label";
 
 
 export default function Layout({children, params}: { children: ReactNode, params: { org: string, env: string } }) {
@@ -12,6 +13,7 @@ export default function Layout({children, params}: { children: ReactNode, params
         <div className="flex ">
             <nav className="w-64 bg-gray-100 py-4 px-2 h-screen overflow-auto flex flex-col justify-between">
 
+                <Label > Settings</Label>
                 <Nav
                     isCollapsed={false}
                     links={[
