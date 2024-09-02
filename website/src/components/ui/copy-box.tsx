@@ -14,7 +14,7 @@ export default function CopyBox(props: CopyBoxProps) {
     const clipboard = useClipboard({ timeout: 500 });
 
     return (
-        <div className={cn("flex items-center bg-gray-200 h-6 rounded", className)}>
+        <div className={cn("inline-flex items-center bg-gray-200 h-6 rounded", className)}>
             <p className="text-gray-600 font-mono rounded px-2 text-xs">
                 {props.content}
             </p>
