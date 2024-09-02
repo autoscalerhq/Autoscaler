@@ -1,8 +1,7 @@
 import {ReactNode} from "react";
-import {BookDashed, Search, SquareDashedKanban,} from "lucide-react";
 import {Nav} from "~/components/navigation/vertical-nav";
 import Header from "~/components/navigation/header";
-import {Label} from "~/components/ui/label";
+import SettingsBack from "~/components/navigation/settings-back";
 
 
 export default function Layout({children, params}: { children: ReactNode, params: { org: string, env: string } }) {
@@ -10,11 +9,15 @@ export default function Layout({children, params}: { children: ReactNode, params
     const setting_link = `/${params.org}/settings/`
 
     return (
-        <div className="flex ">
-            <nav className="w-64 bg-gray-100 py-4 px-2 h-screen overflow-auto flex flex-col justify-between">
+        <div className="flex">
+            <nav className="w-64 bg-gray-100 py-4 px-2 h-screen overflow-auto flex flex-col">
+                <div className="flex flex-row justify-center">
+                    <SettingsBack/>
+                    <p className={" flex items-center text-2xl mr-auto"}> Settings</p>
+                </div>
 
-                <Label > Settings</Label>
                 <Nav
+                    className="ml-10"
                     isCollapsed={false}
                     links={[
                         {
