@@ -67,9 +67,9 @@ export default function Layout({children, params}: { children: ReactNode, params
             <div className="flex flex-col w-full">
                 <Header/>
 
-                <main className="flex-1 p-4 overflow-auto min-w-full ">
+                <div className="flex-1 p-4 overflow-auto min-w-full ">
                     {children}
-                </main>
+                </div>
             </div>
 
         </div>
