@@ -2,6 +2,7 @@ import Link from "next/link";
 import {Separator} from "~/components/ui/separator";
 import {Copy} from "lucide-react";
 import TimezonePicker from "~/components/ui/timezone-picker";
+import CopyBox from "~/components/ui/copy-box";
 
 
 export default function HomePage() {
@@ -34,14 +35,7 @@ export default function HomePage() {
                         <div>
                             <p className="text-gray-400 w-40">Account ID</p>
                         </div>
-                        <div className="flex items-center bg-gray-200 w-auto rounded">
-                            <p className=" text-gray-600 font-mono rounded px-2 text-sm">
-                                6b03f8e5-8a03-44c7-9bed-b748ddaad124
-                            </p>
-                            <button className="ml-2 p-1 rounded bg-gray-300">
-                                <Copy className={"w-4 h-4"}/>
-                            </button>
-                        </div>
+                        <CopyBox  content={"6b03f8e5-8a03-44c7-9bed-b748ddaad124"}/>
                     </div>
                     <div className="flex ">
                         <div>
