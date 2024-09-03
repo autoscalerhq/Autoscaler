@@ -3,6 +3,7 @@
 import {usePathname} from "next/navigation";
 import {Nav, NavLinks} from "~/components/navigation/vertical-nav";
 import {
+    ArrowDownUp,
     Bell,
     BookUp,
     Boxes,
@@ -46,6 +47,12 @@ export default function EnvNav({org, env}: { org: string; env: string }) {
             title: "Polices",
             href: base_link + "policies",
             icon: PencilRuler,
+            variant: "ghost",
+        },
+        {
+            title: "Scalers",
+            href: base_link + "scalers",
+            icon: ArrowDownUp,
             variant: "ghost",
         },
         {

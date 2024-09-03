@@ -1,28 +1,10 @@
-import {Avatar, AvatarFallback, AvatarImage} from "~/components/ui/avatar";
-import {Button} from "~/components/ui/button";
 import {ReactNode} from "react";
 import {
-    Bell,
-    BookDashed,
-    BookUp, Boxes,
-    ChevronsLeftRight,
-    GitPullRequestDraft,
-    LucideLayoutDashboard,
-    PencilRuler, Search,
+    GitPullRequestDraft, MessageSquareText,
     Settings,
-    SquareDashedKanban,
 } from "lucide-react";
 import {Nav} from "~/components/navigation/vertical-nav";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "~/components/ui/dropdown-menu";
-import Feedback from "~/components/feedback/PageExperience";
-import {ModelSwitcher} from "~/components/navigation/model-switcher";
+import {ModelSwitcher} from "~/app/[org]/[env]/model-switcher";
 import Header from "~/components/navigation/header";
 import OrgNav from "~/app/[org]/[env]/org-nav";
 import EnvNav from "~/app/[org]/[env]/env-nav";
@@ -106,8 +88,14 @@ export default function Layout({children, params}: { children: ReactNode, params
                             },
                             {
                                 title: "Docs",
-                                href: "https://docs.autoscaler.dev",
+                                href: "https://autoscaler.dev/docs",
                                 icon: Settings,
+                                variant: "ghost",
+                            },
+                            {
+                                title: "Help",
+                                href: "#",
+                                icon: MessageSquareText,
                                 variant: "ghost",
                             },
                         ]}
