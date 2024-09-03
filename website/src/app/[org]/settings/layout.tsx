@@ -1,8 +1,7 @@
 import { ReactNode } from "react";
 import Header from "~/components/navigation/header";
 import SettingsBack from "~/app/[org]/settings/settings-back";
-import SettingsNav from "~/app/[org]/settings/SettingsNav";
-import {env} from "~/env";
+import SettingsNav from "~/app/[org]/settings/settings-nav";
 
 export default function Layout({ children, params }: { children: ReactNode, params: { org: string, env: string } }) {
 
