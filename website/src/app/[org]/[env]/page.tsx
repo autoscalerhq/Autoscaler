@@ -1,9 +1,18 @@
-import Link from "next/link";
+// src/app/org/[env]/page.tsx
 
-// TODO redirect to default env policy
+import { redirect } from 'next/navigation';
 
-export default function HomePage() {
-    return (
-      <p>test</p>
-    );
+interface Params {
+    env: string;
 }
+
+const OrgEnvPage = ({ params }: { params: Params }) => {
+    const { env } = params;
+
+    // Redirect to /org/env/overview
+    redirect(`/org/${env}/overview`);
+
+    return null;
+};
+
+export default OrgEnvPage;

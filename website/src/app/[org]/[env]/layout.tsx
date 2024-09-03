@@ -24,6 +24,8 @@ import {
 import Feedback from "~/components/feedback/PageExperience";
 import {ModelSwitcher} from "~/components/navigation/model-switcher";
 import Header from "~/components/navigation/header";
+import OrgNav from "~/app/[org]/[env]/org-nav";
+import EnvNav from "~/app/[org]/[env]/env-nav";
 
 
 export default function Layout({children, params}: { children: ReactNode, params: { org: string, env: string } }) {
@@ -45,41 +47,9 @@ export default function Layout({children, params}: { children: ReactNode, params
                             },
                         ]} isCollapsed={false} ariaLabel={""} defaultItemName={"Autoscaler"}/>
 
-                        {/*<Separator title={"test"} className={"bg-gray-700 mt-1.5"}/>*/}
-
-                        <Nav
-                            isCollapsed={false}
-                            links={[
-                                {
-                                    title: "Settings",
-                                    href: org_link + "settings",
-                                    icon: Search,
-                                    variant: "ghost",
-                                },
-                                {
-                                    title: "System Templates",
-                                    href: base_link + "system-templates",
-                                    icon: BookDashed,
-                                    variant: "ghost",
-                                },
-                                {
-                                    title: "Service Templates",
-                                    href: base_link + "service-templates",
-                                    icon: SquareDashedKanban,
-                                    variant: "ghost",
-                                },
-                                {
-                                    title: "Search",
-                                    href: "",
-                                    label: "CMD + K",
-                                    icon: SquareDashedKanban,
-                                    variant: "ghost",
-                                },
-                            ]}
-                        />
+                        <OrgNav org={params.org} env={params.env}/>
                     </div>
 
-                    {/*<Separator title={"test"} className={"bg-gray-700"}/>*/}
 
                     <div className="mt-4">
                         {/*Env*/}
@@ -120,53 +90,7 @@ export default function Layout({children, params}: { children: ReactNode, params
                             className={"mt-4"}
                         />
 
-                        <Nav
-                            isCollapsed={false}
-                            links={[
-                                {
-                                    title: "Overview",
-                                    href: base_link + "overview",
-                                    icon: Boxes,
-                                    variant: "ghost",
-                                },
-                                {
-                                    title: "Pull",
-                                    href: base_link + "pull",
-                                    icon: GitPullRequestDraft,
-                                    variant: "ghost",
-                                },
-                                {
-                                    title: "Streaming",
-                                    href: base_link + "stream",
-                                    icon: ChevronsLeftRight,
-                                    variant: "ghost",
-                                },
-                                {
-                                    title: "Push",
-                                    href: base_link + "push",
-                                    icon: BookUp,
-                                    variant: "ghost",
-                                },
-                                {
-                                    title: "Polices",
-                                    href: base_link + "policies",
-                                    icon: PencilRuler,
-                                    variant: "ghost",
-                                },
-                                {
-                                    title: "Analytics",
-                                    href: base_link + "analytics",
-                                    icon: LucideLayoutDashboard,
-                                    variant: "ghost",
-                                },
-                                {
-                                    title: "Alerts",
-                                    href: base_link + "alerts",
-                                    icon: Bell,
-                                    variant: "ghost",
-                                },
-                            ]}
-                        />
+                       <EnvNav org={params.org} env={params.env}/>
                     </div>
                 </div>
 
