@@ -4,16 +4,18 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {buttonVariants} from "~/components/ui/button";
 import {cn} from "~/lib/utils";
 
+export interface NavLinks {
+    title: string
+    label?: string
+    href: string
+    icon?: LucideIcon
+    variant: "default" | "ghost"
+}
+
 interface NavProps {
     isCollapsed: boolean
     className?: string,
-    links: {
-        title: string
-        label?: string
-        href: string
-        icon?: LucideIcon
-        variant: "default" | "ghost"
-    }[]
+    links: NavLinks[]
 }
 
 export function /**/Nav({links, isCollapsed, className}: NavProps) {
