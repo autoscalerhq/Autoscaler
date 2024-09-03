@@ -1,5 +1,6 @@
 import {ReactNode} from "react";
 import {
+    CirclePlay,
     GitPullRequestDraft, MessageSquareText,
     Settings,
 } from "lucide-react";
@@ -83,7 +84,7 @@ export default function Layout({children, params}: { children: ReactNode, params
                             {
                                 title: "Get started",
                                 href: base_link + "get-started",
-                                icon: Settings,
+                                icon: CirclePlay,
                                 variant: "ghost",
                             },
                             {
