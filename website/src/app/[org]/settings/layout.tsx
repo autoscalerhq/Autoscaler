@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import Header from "~/components/navigation/header";
 import SettingsBack from "~/app/[org]/settings/settings-back";
 import SettingsNav from "~/app/[org]/settings/SettingsNav";
+import {env} from "~/env";
 
 export default function Layout({ children, params }: { children: ReactNode, params: { org: string, env: string } }) {
 
@@ -9,7 +10,7 @@ export default function Layout({ children, params }: { children: ReactNode, para
         <div className="flex">
             <nav className="w-64 bg-gray-100 py-4 px-2 h-screen overflow-auto flex flex-col">
                 <div className="flex flex-row justify-center">
-                    <SettingsBack />
+                    <SettingsBack org={params.org}  />
                     <p className="flex items-center text-2xl mr-auto">Settings</p>
                 </div>
 
