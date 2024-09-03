@@ -52,7 +52,7 @@ export default function Layout({children, params}: { children: ReactNode, params
                         },
                         {
                             title: "Service Tokens",
-                            href: setting_link + "service-tokens",
+                            href: setting_link + "access-tokens",
                             variant: "ghost",
                         },
                     ]}
