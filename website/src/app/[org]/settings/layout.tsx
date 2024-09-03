@@ -1,7 +1,7 @@
 import {ReactNode} from "react";
 import {Nav} from "~/components/navigation/vertical-nav";
 import Header from "~/components/navigation/header";
-import SettingsBack from "~/components/navigation/settings-back";
+import SettingsBack from "~/app/[org]/settings/settings-back";
 
 
 export default function Layout({children, params}: { children: ReactNode, params: { org: string, env: string } }) {
@@ -37,7 +37,7 @@ export default function Layout({children, params}: { children: ReactNode, params
                         },
                         {
                             title: "Security",
-                            href: setting_link + "environments",
+                            href: setting_link + "security",
                             variant: "ghost",
                         },
                         {
@@ -48,11 +48,6 @@ export default function Layout({children, params}: { children: ReactNode, params
                         {
                             title: "Audit Log",
                             href: setting_link + "audit-log",
-                            variant: "ghost",
-                        },
-                        {
-                            title: "Security",
-                            href: setting_link + "security",
                             variant: "ghost",
                         },
                         {
