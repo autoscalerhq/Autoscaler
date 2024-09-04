@@ -9,6 +9,7 @@ import {ModelSwitcher} from "~/app/[org]/[env]/model-switcher";
 import Header from "~/components/navigation/header";
 import OrgNav from "~/app/[org]/[env]/org-nav";
 import EnvNav from "~/app/[org]/[env]/env-nav";
+import {Command} from "~/components/navigation/command-dialog";
 
 
 export default function Layout({children, params}: { children: ReactNode, params: { org: string, env: string } }) {
@@ -111,6 +112,7 @@ export default function Layout({children, params}: { children: ReactNode, params
                     {children}
                 </main>
             </div>
+            <Command/>
 
         </div>
     );

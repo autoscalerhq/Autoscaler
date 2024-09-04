@@ -10,7 +10,7 @@ import {
     ChevronsLeftRight,
     GitPullRequestDraft,
     LucideLayoutDashboard,
-    PencilRuler
+    PencilRuler, SquareLibrary
 } from "lucide-react";
 
 export default function EnvNav({org, env}: { org: string; env: string }) {
@@ -56,9 +56,9 @@ export default function EnvNav({org, env}: { org: string; env: string }) {
             variant: "ghost",
         },
         {
-            title: "Analytics",
-            href: base_link + "analytics",
-            icon: LucideLayoutDashboard,
+            title: "Monitoring",
+            href: base_link + "monitoring",
+            icon: SquareLibrary,
             variant: "ghost",
         },
         {
