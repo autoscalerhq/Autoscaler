@@ -2,14 +2,15 @@
 
 import styles from "../page.module.css";
 
-export const CallAPIButton = () => {
-  const fetchUserData = async () => {
-    const userInfoResponse = await fetch("http://localhost:3000/api/user");
-    const anotherResponse = await fetch("http://localhost:4000/comment", {
-      headers: {
+import {useApiOnClient, useNextJsApiOnClient} from '@/app/api-client/client-hooks';
 
-      }
-    });
+export const CallAPIButton = () => {
+  const api = useApiOnClient();
+  const nextJsApi = useNextJsApiOnClient();
+  const fetchUserData = async () => {
+
+    const userInfoResponse = await nextJsApi.getUser();
+    const anotherResponse = await api.getComment()
 
     alert(JSON.stringify(await userInfoResponse.json()));
     alert(JSON.stringify(await anotherResponse.text()));

@@ -8,7 +8,7 @@ const client = jwksClient({
   jwksUri: `${appInfo.apiDomain}${appInfo.apiBasePath}/jwt/jwks.json`,
 });
 
-function getAccessToken(): string | undefined {
+export function getAccessToken(): string | undefined {
   return cookies().get("sAccessToken")?.value;
 }
 
