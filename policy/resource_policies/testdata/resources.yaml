@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/TestFixture/Resources.schema.json
+# docs: https://docs.cerbos.dev/cerbos/latest/policies/compile#_sharing_test_fixtures
+
+resources:
+  org#1:
+    id: org#1
+    kind: org
+    attr: {}
+  Service#2:
+    id: Service#2
+    kind: Service
+    attr: {}
+  System#3:
+    id: System#3
+    kind: System
+    attr: {}
+  Env#4:
+    id: Env#4
+    kind: Env
+    attr: {}
+  cron#5:
+    id: cron#5
+    kind: cron
+    attr: {}
+  streaming#6:
+    id: streaming#6
+    kind: streaming
+    attr: {}
+  api#7:
+    id: api#7
+    kind: api
+    attr: {}
+  analytics#8:
+    id: analytics#8
+    kind: analytics
+    attr: {}
+  scaler#9:
+    id: scaler#9
+    kind: scaler
+    attr: {}
+  logging#10:
+    id: logging#10
+    kind: logging
+    attr: {}

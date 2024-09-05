@@ -1,0 +1,15 @@
+instances:
+  - url: https://cliftonz.docs.buildwithfern.com
+title: Autoscaler | Documentation
+
+colors:
+  accentPrimary: '#ffffff'
+  background: '#000000'
+
+navigation:
+  - page: "Hello World"
+    path: "../docs/hello-world.mdx"
+  - section: Overview
+    layout:
+      - page: QuickStart
+        path: "../docs/pages/hello-world.mdx"

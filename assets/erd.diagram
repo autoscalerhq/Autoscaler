@@ -1,0 +1,111 @@
+erDiagram
+  ORG {
+    int org_id
+    string name
+  }
+
+  SYSTEM {
+    int system_id
+    string name
+    int org_id
+    int system_template_id
+  }
+
+  SERVICE {
+    int service_id
+    string name
+    int system_id
+    int service_template_id
+  }
+
+  ENV {
+    int env_id
+    string name
+    int service_id
+  }
+
+  CRON {
+    int cron_id
+    string schedule
+    int env_id
+    int cron_template_id
+  }
+
+  STREAMS {
+    int stream_id
+    string name
+    int env_id
+  }
+
+  PUSH_API {
+    int push_api_id
+    string name
+    int env_id
+  }
+
+  RULES {
+    int rule_id
+    string name
+    int env_id
+  }
+
+  SCALERS {
+    int scaler_id
+    string type
+    int env_id
+  }
+
+  ANALYTICS_CONNECTORS {
+    int analytics_connector_id
+    string name
+    int env_id
+    int analytics_connectors_template_id
+  }
+
+  LOGGERS {
+    int logger_id
+    string type
+    int env_id
+    int loggers_template_id
+  }
+
+  SYSTEM_TEMPLATE {
+    int system_template_id
+    string template_name
+  }
+
+  SERVICE_TEMPLATE {
+    int service_template_id
+    string template_name
+  }
+
+  CRON_TEMPLATE {
+    int cron_template_id
+    string template_name
+  }
+
+  ANALYTICS_CONNECTORS_TEMPLATE {
+    int analytics_connectors_template_id
+    string template_name
+  }
+
+  LOGGERS_TEMPLATE {
+    int loggers_template_id
+    string template_name
+  }
+
+  ORG ||--o{ SYSTEM: holds
+  SYSTEM ||--o{ SERVICE: provides
+  SERVICE ||--o{ ENV: includes
+  SYSTEM ||--|| SYSTEM_TEMPLATE: uses
+  SERVICE ||--|| SERVICE_TEMPLATE: uses
+  ENV ||--o{ CRON: schedules
+  CRON ||--|| CRON_TEMPLATE: uses
+  ENV ||--o{ STREAMS: contains
+  ENV ||--o{ PUSH_API: includes
+  ENV ||--o{ RULES: enforces
+  ENV ||--o{ SCALERS: scales
+  ENV ||--o{ ANALYTICS_CONNECTORS: integrates
+  ANALYTICS_CONNECTORS ||--|| ANALYTICS_CONNECTORS_TEMPLATE: uses
+  ENV ||--o{ LOGGERS: logs
+  LOGGERS ||--|| LOGGERS_TEMPLATE: uses

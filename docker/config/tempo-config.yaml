@@ -1,0 +1,34 @@
+server:
+  http_listen_port: 3200
+
+distributor:
+  ring:
+    kvstore:
+      store: inmemory
+
+ingester:
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+
+compactor:
+  compaction:
+    block_retention: 48h
+
+querier:
+  frontend_worker:
+    frontend_address: querier:9095
+
+query_frontend:
+  max_outstanding_per_tenant: 100
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /var/tempo/traces
+
+overrides:
+  max_traces_per_user: 100000

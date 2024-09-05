@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/TestSuite.schema.json
+# docs: https://docs.cerbos.dev/cerbos/latest/policies/compile#testing
+
+name: SystemTestSuite
+description: Tests for verifying the System resource policy
+tests:
+  - name: System actions
+    input:
+      principals:
+        - admin#1
+        - engineer#2
+        - reader#3
+      resources:
+        - System#3
+      actions:
+        - create
+        - read
+        - update
+        - delete
+        - duplicate
+        - template
+    expected:
+      - resource: System#3
+        principal: admin#1
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_ALLOW
+          duplicate: EFFECT_ALLOW
+          template: EFFECT_ALLOW
+      - resource: System#3
+        principal: engineer#2
+        actions:
+          create: EFFECT_ALLOW
+          read: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          delete: EFFECT_ALLOW
+          duplicate: EFFECT_ALLOW
+          template: EFFECT_ALLOW
+      - resource: System#3
+        principal: reader#3
+        actions:
+          create: EFFECT_DENY
+          read: EFFECT_ALLOW
+          update: EFFECT_DENY
+          delete: EFFECT_DENY
+          duplicate: EFFECT_DENY
+          template: EFFECT_DENY
