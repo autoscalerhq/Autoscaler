@@ -123,7 +123,7 @@ export default function EnvironmentManager() {
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 defaultValue={selectedEnvironment?.color}
                             />
-                            <ColorPicker value={selectedEnvironment?.color ?? "#000000"} onChange={ () =>{}}/>
+                            <ColorPicker value={selectedEnvironment?.color ?? "#000000"} onChange={ (value) =>{ console.log(value) }} />
                             <p className="mt-2 text-sm text-gray-500">
                                 The color to assign this environment. Used in sidebar navigation.
                             </p>
@@ -156,7 +156,7 @@ export default function EnvironmentManager() {
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 placeholder="Staging"
                             />
-                            <ColorPicker value={selectedEnvironment?.color ?? "#000000"} onChange={ () =>{}}/>
+                            <ColorPicker value={selectedEnvironment?.color ?? "#000000"} onChange={  (value) =>{ console.log(value) }}/>
                             <p className="mt-2 text-sm text-gray-500">A unique name for this environment.</p>
                         </div>
                         <div className="mb-4">

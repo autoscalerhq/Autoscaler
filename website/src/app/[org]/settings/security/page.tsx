@@ -71,7 +71,7 @@ export default function HomePage() {
                                 <Label className=" px-2 py-2 bg-green-200 rounded-full">Enterprise</Label>
                             </div>
                             <p className="mt-2 text-sm text-gray-500">
-                            Provision and deprovision your organization's users using an Identity Management Platform (IdP).
+                            Provision and deprovision your organization&apos;s users using an Identity Management Platform (IdP).
                             </p>
                         </div>
                         <Button className={"ml-auto mt-2"} >

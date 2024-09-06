@@ -9,6 +9,7 @@ import {
     addEdge,
     Node,
     Edge,
+    OnConnectStartParams, Connection
 } from '@xyflow/react';
 
 import {ArrowDownUp, Bell, BookUp, ChevronsLeftRight, File, GitPullRequestDraft, SquareLibrary} from 'lucide-react';
@@ -17,6 +18,7 @@ import './index.css';
 import TurboNode, { TurboNodeData } from './TurboNode';
 import TurboEdge from './TurboEdge';
 import FunctionIcon from './FunctionIcon';
+import {EdgeBase} from "@xyflow/system";
 
 const initialNodes: Node<TurboNodeData>[] = [
     {
@@ -124,8 +126,8 @@ const Flow = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
     const onConnect = useCallback(
-        (params: any) => setEdges((els) => addEdge(params, els)),
-        [],
+        (params: Connection | EdgeBase) => setEdges((els) => addEdge(params, els)),
+        []
     );
 
     return (

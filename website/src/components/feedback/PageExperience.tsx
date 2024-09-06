@@ -3,9 +3,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { FormEvent, useState } from 'react';
 import {
     Dialog,
-    DialogClose,
     DialogContent,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger
@@ -16,7 +14,6 @@ import { Textarea } from "~/components/ui/textarea";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { toast } from "sonner"
-
 
 interface Question {
     type: string;
@@ -70,7 +67,7 @@ export default function Feedback(props: FeedbackProps) {
 
         const response = survey.questions[currentQuestionIndex]?.type === 'open'
             ? formElements.feedback.value
-            : (formElements.choice.value || '');
+            : (formElements.choice?.value || '');
 
         console.log("Response:", response);
 
@@ -131,14 +128,14 @@ export default function Feedback(props: FeedbackProps) {
                                 <Label htmlFor={`question`} className="">
                                     {currentQuestion?.question}
                                 </Label>
-                            {currentQuestion?.choices && currentQuestion.choices.map((choice, index) => (
-                                <div key={index} className={"flex flex-row justify-left pt-4"}>
-                                    <Input type="radio" id={`choice${index}`} name="choice" value={choice} required className={"w-4 h-4"} />
-                                    <Label htmlFor={`choice${index}`} className="cursor-pointer ml-2">
-                                        {choice}
-                                    </Label>
-                                </div>
-                            ))}
+                                {currentQuestion?.choices?.map((choice, index) => (
+                                    <div key={index} className={"flex flex-row justify-left pt-4"}>
+                                        <Input type="radio" id={`choice${index}`} name="choice" value={choice} required className={"w-4 h-4"} />
+                                        <Label htmlFor={`choice${index}`} className="cursor-pointer ml-2">
+                                            {choice}
+                                        </Label>
+                                    </div>
+                                ))}
                             </>
                         )}
                         <div className="flex justify-between mt-4">

@@ -20,6 +20,7 @@ const config = {
     },
     // This is required to support PostHog trailing slash API requests
     skipTrailingSlashRedirect: true,
+    output: 'standalone',
 };
 
 export default config;

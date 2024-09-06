@@ -1,6 +1,6 @@
 import React, { memo, ReactNode } from 'react';
 import { Handle, NodeProps, Position, Node } from '@xyflow/react';
-import {Cloud} from "lucide-react";
+import { Cloud } from "lucide-react";
 
 export type TurboNodeData = {
     title: string;
@@ -8,7 +8,7 @@ export type TurboNodeData = {
     subline?: string;
 };
 
-export default memo(({ data }: NodeProps<Node<TurboNodeData>>) => {
+const TurboNode = memo(({ data }: NodeProps<Node<TurboNodeData>>) => {
     return (
         <>
             <div className="cloud gradient">
@@ -32,3 +32,7 @@ export default memo(({ data }: NodeProps<Node<TurboNodeData>>) => {
         </>
     );
 });
+
+TurboNode.displayName = 'TurboNode';
+
+export default TurboNode;

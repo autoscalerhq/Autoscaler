@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import {EllipsisVertical, Plus, Send} from "lucide-react";
+import { EllipsisVertical, Send } from "lucide-react"; // Removed 'Plus'
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "~/components/ui/table";
 import {
     DropdownMenu,
@@ -12,25 +12,25 @@ import {
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogFooter } from "~/components/ui/dialog";
-import {Label} from "~/components/ui/label";
-import {Input} from "~/components/ui/input";
-import {Select, SelectContent, SelectGroup, SelectItem} from "~/components/ui/select";
-import {Textarea} from "~/components/ui/textarea";
+import { Label } from "~/components/ui/label";
+import { Input } from "~/components/ui/input";
+import { Select, SelectContent, SelectGroup, SelectItem } from "~/components/ui/select";
+import { Textarea } from "~/components/ui/textarea";
 
 interface IMembers {
     name: string;
-    email:  string;
-    role:  string;
-    addedAt:  string;
+    email: string;
+    role: string;
+    addedAt: string;
 }
 
 interface IPendingMembers {
-    email:  string;
-    role:  string;
-    createdAt:  string;
+    email: string;
+    role: string;
+    createdAt: string;
 }
 
-export default function membersManager() {
+export default function MembersManager() { // Renamed to MembersManager
     const members: IMembers[] = [
         {
             email: "zac16530@gmail.com",
@@ -80,7 +80,7 @@ export default function membersManager() {
                             <TableHead>Name</TableHead>
                             <TableHead>Role</TableHead>
                             <TableHead>Added At</TableHead>
-                            <TableHead/>
+                            <TableHead />
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -185,7 +185,6 @@ export default function membersManager() {
                 </DialogContent>
             </Dialog>
 
-
             <Dialog open={isPendingInvitesDialogOpen} onOpenChange={(isOpen) => setPendingInvitesDialogOpen(isOpen)}>
                 <DialogContent>
                     <DialogHeader>
@@ -198,7 +197,7 @@ export default function membersManager() {
                                     <TableHead>Email</TableHead>
                                     <TableHead>Role</TableHead>
                                     <TableHead>Added At</TableHead>
-                                    <TableHead/>
+                                    <TableHead />
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
