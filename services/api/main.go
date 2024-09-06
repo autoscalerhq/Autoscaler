@@ -3,14 +3,18 @@ package main
 import (
 	"context"
 	"errors"
+	natutils "github.com/autoscalerhq/autoscaler/internal/nats"
 	"github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/monitoring"
 	"github.com/autoscalerhq/autoscaler/services/api/routes"
+	"github.com/autoscalerhq/autoscaler/services/api/util/apphttp"
 	"github.com/go-co-op/gocron"
 	"github.com/joho/godotenv"
 	loadshedhttp "github.com/kevinconway/loadshed/v2/stdlib/net/http"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
 	echoSwagger "github.com/swaggo/echo-swagger"
@@ -34,6 +38,7 @@ var (
 	logger *slog.Logger
 )
 
+// For local development, Nats 1, 2 And flagd must be running
 func main() {
 
 	err := godotenv.Load()
@@ -50,7 +55,7 @@ func main() {
 	}
 
 	provider := flagd.NewProvider(providerOptions...)
-
+	//
 	err = openfeature.SetProvider(provider)
 	if err != nil {
 		println("Open Feature flag setup err: ", err.Error())
@@ -66,7 +71,7 @@ func main() {
 		return
 	}
 
-	// Wait for the provider to be ready
+	//Wait for the provider to be ready
 	ready := waitForProvider(provider, 10*time.Second, 500*time.Millisecond)
 	if !ready {
 		println("Provider not ready after waiting")
@@ -119,19 +124,33 @@ func main() {
 	//tracer = otel.Tracer(name)
 	//meter = otel.Meter(name)
 	//logger = otelslog.NewLogger(name) // Replace with actual logger initialization
+
+	nc, err := natutils.GetNatsConn()
+	defer func(nc *nats.Conn) {
+		err := nc.Drain()
+		if err != nil {
+		}
+	}(nc)
+	kv, idempotentCtx, err := natutils.NewKeyValueStore(jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+	if err != nil {
+		println(err.Error(), "error getting new key value store")
+		return
+	}
+
 	e := echo.New()
+	e.HTTPErrorHandler = apphttp.CustomHttpErrorHandler
 
 	// Middleware
 	e.Use(appmiddleware.RequestCounterMiddleware)
 	e.Use(appmiddleware.AddRouteToCTXMiddleware)
 	// If load is too high, fail before we process anything else. this may need to be moved after logging
 	e.Use(echo.WrapMiddleware(loadshedhttp.NewHandlerMiddleware(appmiddleware.CreateShedder(), loadshedhttp.HandlerOptionCallback(&appmiddleware.RejectionHandler{}))))
-
-	e.Use(appmiddleware.TracingMiddleware)
+	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
+	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
+	e.Use(appmiddleware.TracingMiddleware())
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
-	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
 
 	// TODO define routes in another method
 	// Routes
