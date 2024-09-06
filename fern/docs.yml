@@ -2,14 +2,26 @@ instances:
   - url: https://cliftonz.docs.buildwithfern.com
 title: Autoscaler | Documentation
 
+logo:
+  href: autoscaler.dev
+  dark: ../website/public/favicon.ico
+  light: ../website/public/favicon.ico
+
 colors:
   accentPrimary: '#ffffff'
   background: '#000000'
+
+analytics:
+  posthog:
+    api-key: ${POSTHOG_API_KEY} # reads your api key from environment variables
+    # Optional
+    endpoint: ${POSTHOG_API_HOST} # e.g. https://analytics.example.com or https://eu.i.posthog.com
+
 
 navigation:
   - page: "Hello World"
     path: "../docs/hello-world.mdx"
   - section: Overview
-    layout:
+    contents:
       - page: QuickStart
-        path: "../docs/pages/hello-world.mdx"
+        path: "../docs/overview/hello-world.mdx"
