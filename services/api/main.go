@@ -129,9 +129,18 @@ func main() {
 	defer func(nc *nats.Conn) {
 		err := nc.Drain()
 		if err != nil {
+			println(err.Error(), "error draining nats connection")
 		}
 	}(nc)
-	kv, idempotentCtx, err := natutils.NewKeyValueStore(jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+
+	kv, idempotentCtx, err := natutils.NewKeyValueStore(
+		nc,
+		jetstream.KeyValueConfig{
+			Bucket: "idempotent_requests_api",
+			TTL:    time.Hour * 24,
+		},
+	)
+
 	if err != nil {
 		println(err.Error(), "error getting new key value store")
 		return
@@ -143,7 +152,7 @@ func main() {
 	// Middleware
 	e.Use(appmiddleware.RequestCounterMiddleware)
 	e.Use(appmiddleware.AddRouteToCTXMiddleware)
-	// If load is too high, fail before we process anything else. this may need to be moved after logging
+	// If the load is too high, fail before we process anything else. This may need to be moved after logging
 	e.Use(echo.WrapMiddleware(loadshedhttp.NewHandlerMiddleware(appmiddleware.CreateShedder(), loadshedhttp.HandlerOptionCallback(&appmiddleware.RejectionHandler{}))))
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
 	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
@@ -164,6 +173,7 @@ func main() {
 
 	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
+
 	// Start server
 	go func() {
 		if err := e.Start(":8888"); err != nil && !errors.Is(err, http.ErrServerClosed) {
