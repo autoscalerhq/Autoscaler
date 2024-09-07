@@ -23,6 +23,7 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
+	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -57,6 +58,9 @@ func makeDefaultEnv() Environment {
 func main() {
 
 	err := app_supertokens.InitSuperTokens(app_supertokens.MakeDefaultSuperTokensAppInfoEnv())
+	if err != nil {
+		log.Fatal(err)
+	}
 	err = godotenv.Load()
 	if err != nil {
 		// Todo this should be handled better before going to production
