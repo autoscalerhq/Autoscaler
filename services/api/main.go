@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	natutils "github.com/autoscalerhq/autoscaler/internal/nats"
+	"github.com/autoscalerhq/autoscaler/services/api/auth"
 	"github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/monitoring"
 	"github.com/autoscalerhq/autoscaler/services/api/routes"
@@ -17,6 +18,8 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
+	"github.com/supertokens/supertokens-golang/recipe/session"
+	"github.com/supertokens/supertokens-golang/supertokens"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
@@ -38,10 +41,23 @@ var (
 	logger *slog.Logger
 )
 
+type Environment struct {
+	supertokens   app_supertokens.SuperTokensEnv
+	listenAddress string
+}
+
+func makeDefaultEnv() Environment {
+	return Environment{
+		supertokens:   app_supertokens.MakeDefaultSuperTokensAppInfoEnv(),
+		listenAddress: "localhost:4000",
+	}
+}
+
 // For local development, Nats 1, 2 And flagd must be running
 func main() {
 
-	err := godotenv.Load()
+	err := app_supertokens.InitSuperTokens(app_supertokens.MakeDefaultSuperTokensAppInfoEnv())
+	err = godotenv.Load()
 	if err != nil {
 		// Todo this should be handled better before going to production
 		//log.Fatal("Error loading .env file")
@@ -143,6 +159,8 @@ func main() {
 	// Middleware
 	e.Use(appmiddleware.RequestCounterMiddleware)
 	e.Use(appmiddleware.AddRouteToCTXMiddleware)
+	e.Use(echo.WrapMiddleware(supertokens.Middleware))
+	e.Use(echo.WrapMiddleware(app_supertokens.CorsMiddleware))
 	// If load is too high, fail before we process anything else. this may need to be moved after logging
 	e.Use(echo.WrapMiddleware(loadshedhttp.NewHandlerMiddleware(appmiddleware.CreateShedder(), loadshedhttp.HandlerOptionCallback(&appmiddleware.RejectionHandler{}))))
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
@@ -152,6 +170,8 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
+	authRoutes := e.Group("")
+	authRoutes.Use(echo.WrapMiddleware(app_supertokens.VerifySessionMiddleware))
 	// TODO define routes in another method
 	// Routes
 	e.GET("/health-check", routes.HealthCheck)
@@ -159,6 +179,11 @@ func main() {
 		return c.String(200, "Hello!")
 	})
 
+	authRoutes.GET("/comment", func(c echo.Context) error {
+		sessionContainer := session.GetSessionFromRequestContext(c.Request().Context())
+		userID := sessionContainer.GetUserID()
+		return c.String(200, "Hello "+userID)
+	})
 	// swag init -g ./main.go --output ./docs
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
@@ -166,7 +191,7 @@ func main() {
 	defer stop()
 	// Start server
 	go func() {
-		if err := e.Start(":8888"); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := e.Start(":4000"); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			e.Logger.Fatal("shutting down the server")
 		}
 	}()

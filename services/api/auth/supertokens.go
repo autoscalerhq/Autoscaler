@@ -1,4 +1,4 @@
-package main
+package app_supertokens
 
 import (
 	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
@@ -21,7 +21,13 @@ type SuperTokensAppInfoEnv struct {
 	websiteDomain string
 }
 
-func makeDefaultSuperTokensAppInfoEnv() SuperTokensEnv {
+func VerifySessionMiddleware(theirHandler http.Handler) http.Handler {
+	return session.VerifySession(nil, func(writer http.ResponseWriter, request *http.Request) {
+		theirHandler.ServeHTTP(writer, request)
+	})
+}
+
+func MakeDefaultSuperTokensAppInfoEnv() SuperTokensEnv {
 	return SuperTokensEnv{
 		connectionUri: "http://localhost:3567",
 		apiKey:        "",
