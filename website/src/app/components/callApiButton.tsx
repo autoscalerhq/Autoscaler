@@ -13,7 +13,7 @@ export const CallAPIButton = () => {
     const anotherResponse = await api.getComment()
 
     alert(JSON.stringify(await userInfoResponse.json()));
-    alert(JSON.stringify(await anotherResponse.text()));
+    alert(anotherResponse);
   };
 
   return (

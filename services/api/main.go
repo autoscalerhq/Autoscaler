@@ -157,24 +157,26 @@ func main() {
 		return
 	}
 
+	supertokens.DebugEnabled = true
 	e := echo.New()
 	e.HTTPErrorHandler = apphttp.CustomHttpErrorHandler
+	e.Use(middleware.Logger())
 
 	// Middleware
 	e.Use(appmiddleware.RequestCounterMiddleware)
 	e.Use(appmiddleware.AddRouteToCTXMiddleware)
-	e.Use(echo.WrapMiddleware(supertokens.Middleware))
 	e.Use(echo.WrapMiddleware(app_supertokens.CorsMiddleware))
+	e.Use(echo.WrapMiddleware(supertokens.Middleware))
 	// If load is too high, fail before we process anything else. this may need to be moved after logging
 	e.Use(echo.WrapMiddleware(loadshedhttp.NewHandlerMiddleware(appmiddleware.CreateShedder(), loadshedhttp.HandlerOptionCallback(&appmiddleware.RejectionHandler{}))))
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
 	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
 	e.Use(appmiddleware.TracingMiddleware())
-	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
 	authRoutes := e.Group("")
+	authRoutes.Use(echo.WrapMiddleware(app_supertokens.CorsMiddleware))
 	authRoutes.Use(echo.WrapMiddleware(app_supertokens.VerifySessionMiddleware))
 	// TODO define routes in another method
 	// Routes
