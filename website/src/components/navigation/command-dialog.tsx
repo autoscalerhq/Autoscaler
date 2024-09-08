@@ -93,6 +93,16 @@ export function Command() {
                     <CommandSeparator />
                     <CommandGroup heading="Env Links">
                         <CommandItem
+                            onSelect={(value) => {setSelected("i") }}
+                        >
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Integrations</span>
+                            <CommandShortcut><Kbd>⌘</Kbd> <Kbd>i</Kbd></CommandShortcut>
+                        </CommandItem>
+                    </CommandGroup>
+                    <CommandSeparator />
+                    <CommandGroup heading="Service Links">
+                        <CommandItem
                             onSelect={(value) => {setSelected("1") }}
                         >
                             <Boxes className="mr-2 h-4 w-4" />

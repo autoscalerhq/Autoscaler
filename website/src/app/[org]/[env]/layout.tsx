@@ -4,9 +4,10 @@ import {Nav} from "~/components/navigation/vertical-nav";
 import {ModelSwitcher} from "~/app/[org]/[env]/model-switcher";
 import Header from "~/components/navigation/header";
 import OrgNav from "~/app/[org]/[env]/org-nav";
-import EnvNav from "~/app/[org]/[env]/env-nav";
+import ServiceNav from "~/app/[org]/[env]/service-nav";
 import {Command} from "~/components/navigation/command-dialog";
 import {CommandProvider} from "~/components/navigation/command-context";
+import EnvNav from "~/app/[org]/env-nav";
 
 
 export default function Layout({children, params}: { children: ReactNode, params: { org: string, env: string } }) {
@@ -40,6 +41,9 @@ export default function Layout({children, params}: { children: ReactNode, params
                                 isCollapsed={false}
                                 ariaLabel={""}/>
 
+                            <EnvNav org={params.org} env={params.env}/>
+
+                            {/*Service*/}
                             <ModelSwitcher
                                 defaultItemName={"Api"}
                                 items={[{
@@ -52,7 +56,7 @@ export default function Layout({children, params}: { children: ReactNode, params
                                 className={"mt-4"}
                             />
 
-                            <EnvNav org={params.org} env={params.env}/>
+                            <ServiceNav org={params.org} env={params.env}/>
                         </div>
                     </div>
 

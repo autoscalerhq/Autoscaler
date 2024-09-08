@@ -8,7 +8,7 @@ import * as console from "node:console";
 
 import { useCommand } from "~/components/navigation/command-context"
 
-export default function OrgNav({org, env}: { org: string; env: string }) {
+export default function EnvNav({org, env}: { org: string; env: string }) {
     const pathname = usePathname();
 
     const org_link = `/${org}/`;
@@ -18,19 +18,11 @@ export default function OrgNav({org, env}: { org: string; env: string }) {
 
     const links: NavLinks[] = ([
         {
-            title: "Settings",
-            href: org_link + "settings/",
-            icon: Settings,
+            title: "Integrations",
+            href: base_link + "integrations",
+            icon: ArrowRightLeft,
             variant: "ghost",
-        },
-        {
-            title: "Search",
-            href: "",
-            label: <CommandShortcut>⌘ + J</CommandShortcut>,
-            icon: Search,
-            variant: "ghost",
-            type: "action",
-            action: () => setOpen(true)
+            type: "link"
         },
     ].map(link => ({
         ...link,

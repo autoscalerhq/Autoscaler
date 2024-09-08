@@ -13,7 +13,7 @@ import {
     PencilRuler, SquareLibrary
 } from "lucide-react";
 
-export default function EnvNav({org, env}: { org: string; env: string }) {
+export default function ServiceNav({org, env}: { org: string; env: string }) {
     const pathname = usePathname();
 
     const base_link = `/${org}/${env}/`;
