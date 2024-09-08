@@ -128,6 +128,25 @@ export function Command() {
                             <CommandShortcut><Kbd>⌘</Kbd>  <Kbd>5</Kbd></CommandShortcut>
                         </CommandItem>
                     </CommandGroup>
+
+                    <CommandSeparator />
+
+                    <CommandGroup heading="Links">
+                        <CommandItem
+                            onSelect={(value) => {setSelected("1") }}
+                        >
+                            <Boxes className="mr-2 h-4 w-4" />
+                            <span>Docs</span>
+                            <CommandShortcut><Kbd>⌘</Kbd> <Kbd>d</Kbd></CommandShortcut>
+                        </CommandItem>
+                        <CommandItem
+                            onSelect={(value) => {setSelected("2") }}
+                        >
+                            <GitPullRequestDraft className="mr-2 h-4 w-4" />
+                            <span>Help</span>
+                            <CommandShortcut><Kbd>⌘</Kbd> <Kbd>h</Kbd></CommandShortcut>
+                        </CommandItem>
+                    </CommandGroup>
                 </CommandList>
 
                 <DialogFooter className="flex flex-col text-sm border border-t-1 ">

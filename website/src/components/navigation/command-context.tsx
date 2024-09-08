@@ -67,6 +67,16 @@ export const CommandProvider = ({ children, org, env }: ICommanderProvider ) => 
                 router.push(settings_link+'members');
                 setOpen(false);
                 break;
+            case "i":
+                e.preventDefault();
+                router.push(base_link+'integrations');
+                setOpen(false);
+                break;
+            case "d":
+                e.preventDefault();
+                router.push("https://autoscaler.dev/docs");
+                setOpen(false);
+                break;
             case "delete":
             case "backspace":
                 e.preventDefault();
