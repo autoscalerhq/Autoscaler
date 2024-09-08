@@ -6,7 +6,7 @@ import Overview from "~/app/[org]/[env]/overview/overview";
 // Sample react component with Tailwind CSS
 const YourComponent = () => {
     return (
-        <Tabs>
+        <Tabs defaultValue={"overview"}>
             <TabsList>
                 <TabsTrigger value="overview">Overview</TabsTrigger>
             </TabsList>
