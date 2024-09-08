@@ -1,9 +1,5 @@
 import {ReactNode} from "react";
-import {
-    CirclePlay,
-    GitPullRequestDraft, MessageSquareText,
-    Settings,
-} from "lucide-react";
+import {CirclePlay, GitPullRequestDraft, MessageSquareText, Settings,} from "lucide-react";
 import {Nav} from "~/components/navigation/vertical-nav";
 import {ModelSwitcher} from "~/app/[org]/[env]/model-switcher";
 import Header from "~/components/navigation/header";
@@ -18,106 +14,75 @@ export default function Layout({children, params}: { children: ReactNode, params
     const base_link = `/${params.org}/${params.env}/`
     const org_link = `/${params.org}/`
 
-    return (
-        <div className="flex ">
+    return (<div className="flex ">
             <CommandProvider>
-            <nav className="w-64 bg-gray-100 py-4 px-2 h-screen overflow-auto flex flex-col justify-between">
-                <div>
+                <nav className="w-64 bg-gray-100 py-4 px-2 h-screen overflow-auto flex flex-col justify-between">
                     <div>
-                        {/*Project*/}
-                        <ModelSwitcher items={[
-                            {
-                                name: "Autoscaler",
-                                label: "Autoscaler",
-                                shortname: "prod"
-                            },
-                        ]} isCollapsed={false} ariaLabel={""} defaultItemName={"Autoscaler"}/>
+                        <div>
+                            {/*Project*/}
+                            <ModelSwitcher items={[{
+                                name: "Autoscaler", label: "Autoscaler", shortname: "prod"
+                            },]} isCollapsed={false} ariaLabel={""} defaultItemName={"Autoscaler"}/>
 
-                        <OrgNav org={params.org} env={params.env}/>
+                            <OrgNav org={params.org} env={params.env}/>
+                        </div>
+
+
+                        <div className="mt-4">
+                            {/*Env*/}
+                            <ModelSwitcher
+                                defaultItemName={"Development"}
+                                items={[{
+                                    name: "Production", label: "Prod", icon: <GitPullRequestDraft/>, shortname: "prod"
+                                }, {
+                                    name: "Development", label: "Dev", shortname: "dev"
+                                },]}
+                                isCollapsed={false}
+                                ariaLabel={""}/>
+
+                            <ModelSwitcher
+                                defaultItemName={"Api"}
+                                items={[{
+                                    name: "Api", label: "Api", shortname: "api"
+                                }, {
+                                    name: "Webhook", label: "Wh", shortname: "wh"
+                                },]}
+                                isCollapsed={false}
+                                ariaLabel={""}
+                                className={"mt-4"}
+                            />
+
+                            <EnvNav org={params.org} env={params.env}/>
+                        </div>
                     </div>
 
-
-                    <div className="mt-4">
-                        {/*Env*/}
-                        <ModelSwitcher
-                            defaultItemName={"Development"}
-                            items={[
-                                {
-                                    name: "Production",
-                                    label: "Prod",
-                                    icon: <GitPullRequestDraft/>,
-                                    shortname: "prod"
-                                },
-                                {
-                                    name: "Development",
-                                    label: "Dev",
-                                    shortname: "dev"
-                                },
-                            ]}
+                    <div className="mt-auto">
+                        <Nav
                             isCollapsed={false}
-                         ariaLabel={""}/>
-
-                        <ModelSwitcher
-                            defaultItemName={"Api"}
-                            items={[
-                                {
-                                    name: "Api",
-                                    label: "Api",
-                                    shortname: "api"
-                                },
-                                {
-                                    name: "Webhook",
-                                    label: "Wh",
-                                    shortname: "wh"
-                                },
-                            ]}
-                            isCollapsed={false}
-                            ariaLabel={""}
-                            className={"mt-4"}
-                        />
-
-                       <EnvNav org={params.org} env={params.env}/>
-                    </div>
-                </div>
-
-                <div className="mt-auto">
-                    <Nav
-                        isCollapsed={false}
-                        links={[
-                            {
+                            links={[{
                                 title: "Get started",
                                 href: base_link + "get-started",
                                 icon: CirclePlay,
                                 variant: "ghost",
-                            },
-                            {
-                                title: "Docs",
-                                href: "https://autoscaler.dev/docs",
-                                icon: Settings,
-                                variant: "ghost",
-                            },
-                            {
-                                title: "Help",
-                                href: "#",
-                                icon: MessageSquareText,
-                                variant: "ghost",
-                            },
-                        ]}
-                    />
+                            }, {
+                                title: "Docs", href: "https://autoscaler.dev/docs", icon: Settings, variant: "ghost",
+                            }, {
+                                title: "Help", href: "#", icon: MessageSquareText, variant: "ghost",
+                            },]}
+                        />
+                    </div>
+                </nav>
+
+                <div className="flex flex-col w-full">
+                    <Header/>
+
+                    <main className="flex-1 p-4 overflow-auto min-w-full ">
+                        {children}
+                    </main>
                 </div>
-            </nav>
 
-            <div className="flex flex-col w-full">
-                <Header/>
-
-                <main className="flex-1 p-4 overflow-auto min-w-full ">
-                    {children}
-                </main>
-            </div>
-
-            <Command/>
+                <Command/>
 
             </CommandProvider>
-        </div>
-    );
+        </div>);
 }

@@ -29,6 +29,7 @@ import {
 import { useCommand } from "~/components/navigation/command-context"
 
 export function Command() {
+
     const { open, setOpen } = useCommand();
 
     return (
