@@ -19,7 +19,7 @@ export default function OrgNav({org, env}: { org: string; env: string }) {
     const links: NavLinks[] = ([
         {
             title: "Settings",
-            href: org_link + "settings",
+            href: org_link + "settings/",
             icon: Settings,
             variant: "ghost",
         },
