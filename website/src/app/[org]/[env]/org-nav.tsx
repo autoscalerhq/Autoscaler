@@ -3,6 +3,7 @@
 import {usePathname} from "next/navigation";
 import {Nav, NavLinks} from "~/components/navigation/vertical-nav";
 import {ArrowRightLeft, BookDashed, Search, Settings, SquareDashedKanban} from "lucide-react";
+import {CommandShortcut} from "~/components/ui/command";
 
 export default function OrgNav({org, env}: { org: string; env: string }) {
     const pathname = usePathname();
@@ -24,21 +25,12 @@ export default function OrgNav({org, env}: { org: string; env: string }) {
             variant: "ghost",
         },
         {
-            title: "System Templates",
-            href: base_link + "system-templates",
-            icon: BookDashed,
-            variant: "ghost",
-        },
-        {
-            title: "Service Templates",
-            href: base_link + "service-templates",
-            icon: SquareDashedKanban,
-            variant: "ghost",
-        },
-        {
             title: "Search",
             href: "",
-            label: "CMD + K",
+            label:
+                <>
+                    <CommandShortcut>⌘ + J</CommandShortcut>
+                </>,
             icon: Search,
             variant: "ghost",
         },

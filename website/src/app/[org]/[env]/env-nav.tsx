@@ -20,27 +20,27 @@ export default function EnvNav({org, env}: { org: string; env: string }) {
 
     const links: NavLinks[] = ([
         {
+            title: "Actions",
+            href: base_link + "actions",
+            icon: Bell,
+            variant: "ghost",
+        },
+        {
             title: "Overview",
             href: base_link + "overview",
             icon: Boxes,
             variant: "ghost",
         },
         {
-            title: "Pull",
-            href: base_link + "pull",
+            title: "Analytics",
+            href: base_link + "analytics",
+            icon: SquareLibrary,
+            variant: "ghost",
+        },
+        {
+            title: "Inputs",
+            href: base_link + "inputs",
             icon: GitPullRequestDraft,
-            variant: "ghost",
-        },
-        {
-            title: "Streaming",
-            href: base_link + "stream",
-            icon: ChevronsLeftRight,
-            variant: "ghost",
-        },
-        {
-            title: "Push",
-            href: base_link + "push",
-            icon: BookUp,
             variant: "ghost",
         },
         {
@@ -49,24 +49,15 @@ export default function EnvNav({org, env}: { org: string; env: string }) {
             icon: PencilRuler,
             variant: "ghost",
         },
+
         {
             title: "Scalers",
             href: base_link + "scalers",
             icon: ArrowDownUp,
             variant: "ghost",
         },
-        {
-            title: "Monitoring",
-            href: base_link + "monitoring",
-            icon: SquareLibrary,
-            variant: "ghost",
-        },
-        {
-            title: "Alerts",
-            href: base_link + "alerts",
-            icon: Bell,
-            variant: "ghost",
-        },
+
+
     ].map(link => ({
         ...link,
         variant: (pathname === link.href) ? "default" : "ghost",

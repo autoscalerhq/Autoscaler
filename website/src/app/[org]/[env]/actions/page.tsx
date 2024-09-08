@@ -8,69 +8,36 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { Badge } from "~/components/ui/badge";
 
-interface IIntegrations {
+interface IActions {
     id: string;
     name: string;
+    type: string;
+    service: string;
     createdAt: string;
     status: string;
+    response?: string; // New property for responses
 }
 
-export default function IntegrationManager({params}: { params: { org: string, env: string } }) {
+export default function Manager({params}: { params: { org: string, env: string } }) {
 
-    const integrations: IIntegrations[] = [
+    const integrations: IActions[] = [
         {
             id: "0",
-            name: "Webhook - Scaling",
+            name: "Increase network requests",
+            type: "Scale up",
+            service: "web",
             createdAt: "2023-01-01",
             status: "Active",
+            response: "Scaling up process started"
         },
         {
             id: "1",
-            name: "Prometheus",
-            createdAt: "2023-01-01",
-            status: "Inactive",
-        },
-        {
-            id: "2",
-            name: "Datadog",
+            name: "Increase ",
+            type: "Scale up",
+            service: "worker",
             createdAt: "2023-01-01",
             status: "Active",
-        },
-        {
-            id: "3",
-            name: "Snowball",
-            createdAt: "2023-01-01",
-            status: "Active",
-        },
-        {
-            id: "4",
-            name: "Dynatrace",
-            createdAt: "2023-01-01",
-            status: "Inactive",
-        },
-        {
-            id: "5",
-            name: "Honeycomb",
-            createdAt: "2023-01-01",
-            status: "Active",
-        },
-        {
-            id: "6",
-            name: "Cloudwatch",
-            createdAt: "2023-01-01",
-            status: "Inactive",
-        },
-        {
-            id: "7",
-            name: "New Relic",
-            createdAt: "2023-01-01",
-            status: "Inactive",
-        },
-        {
-            id: "8",
-            name: "Better Stack",
-            createdAt: "2023-01-01",
-            status: "Inactive",
+            response: "Scaling up process started"
         },
 
     ];
@@ -85,7 +52,8 @@ export default function IntegrationManager({params}: { params: { org: string, en
         (integration) =>
             (integration.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 integration.createdAt.includes(searchTerm) ||
-                integration.status.toLowerCase().includes(searchTerm.toLowerCase())) &&
+                integration.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (integration.response && integration.response.toLowerCase().includes(searchTerm.toLowerCase()))) &&
             (statusFilter === "All" || integration.status === statusFilter)
     );
 
@@ -126,6 +94,7 @@ export default function IntegrationManager({params}: { params: { org: string, en
                             <TableRow>
                                 <TableHead>Name</TableHead>
                                 <TableHead>Created At</TableHead>
+                                <TableHead>Response</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead>Options</TableHead>
                             </TableRow>
@@ -135,6 +104,7 @@ export default function IntegrationManager({params}: { params: { org: string, en
                                 <TableRow key={integration.id}>
                                     <TableCell>{integration.name}</TableCell>
                                     <TableCell>{integration.createdAt}</TableCell>
+                                    <TableCell>{integration.response}</TableCell>
                                     <TableCell>
                                         <Badge variant={integration.status === "Active" ? "default" : "secondary"}>{integration.status}</Badge>
                                     </TableCell>
@@ -142,7 +112,7 @@ export default function IntegrationManager({params}: { params: { org: string, en
                                         <Button
                                             variant="ghost"
                                             onClick={() =>
-                                                router.push(`/${params.org}/${params.env}/integrations/${integration.id}`)
+                                                router.push(`/${params.org}/${params.env}/actions/${integration.id}`)
                                             }
                                         >
                                             Manage

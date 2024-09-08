@@ -6,7 +6,7 @@ import {cn} from "~/lib/utils";
 
 export interface NavLinks {
     title: string
-    label?: string
+    label?: string | React.ReactNode
     href: string
     icon?: LucideIcon
     variant: "default" | "ghost"
@@ -45,11 +45,15 @@ export function /**/Nav({links, isCollapsed, className}: NavProps) {
                                 </TooltipTrigger>
                                 <TooltipContent side="right" className="flex items-center gap-4">
                                     {link.title}
-                                    {link.label && (
+                                    {typeof link.label === "string" ? (
+                                            <span className="ml-auto text-muted-foreground">
+                                                {link.label}
+                                            </span>
+                                        ) :
                                         <span className="ml-auto text-muted-foreground">
                                             {link.label}
                                         </span>
-                                    )}
+                                    }
                                 </TooltipContent>
                             </Tooltip>
                         ) : (

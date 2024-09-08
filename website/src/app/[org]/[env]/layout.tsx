@@ -10,6 +10,7 @@ import Header from "~/components/navigation/header";
 import OrgNav from "~/app/[org]/[env]/org-nav";
 import EnvNav from "~/app/[org]/[env]/env-nav";
 import {Command} from "~/components/navigation/command-dialog";
+import {CommandProvider} from "~/components/navigation/command-context";
 
 
 export default function Layout({children, params}: { children: ReactNode, params: { org: string, env: string } }) {
@@ -19,6 +20,7 @@ export default function Layout({children, params}: { children: ReactNode, params
 
     return (
         <div className="flex ">
+            <CommandProvider>
             <nav className="w-64 bg-gray-100 py-4 px-2 h-screen overflow-auto flex flex-col justify-between">
                 <div>
                     <div>
@@ -112,8 +114,10 @@ export default function Layout({children, params}: { children: ReactNode, params
                     {children}
                 </main>
             </div>
+
             <Command/>
 
+            </CommandProvider>
         </div>
     );
 }
