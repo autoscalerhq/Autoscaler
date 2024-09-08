@@ -15,7 +15,7 @@ export default function Layout({children, params}: { children: ReactNode, params
     const org_link = `/${params.org}/`
 
     return (<div className="flex ">
-            <CommandProvider>
+            <CommandProvider org={params.org} env={params.env}>
                 <nav className="w-64 bg-gray-100 py-4 px-2 h-screen overflow-auto flex flex-col justify-between">
                     <div>
                         <div>

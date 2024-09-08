@@ -26,7 +26,7 @@ export default function SettingsNav({org}: { org: string }) {
         },
         {
             title: "Audit Log",
-            href: setting_link + "audit-log",
+            href: setting_link + "audit-logs",
         },
         {
             title: "Access Tokens",
