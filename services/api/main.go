@@ -153,8 +153,11 @@ func main() {
 	}
 	supertokens.DebugEnabled = true
 	e := echo.New()
-	middleware.ApplyMiddleware(e, middleware.NatsKeyValue{KeyValueStore: kv, Context: idempotentCtx})
-	routes.Route(e)
+	middlewareParams := middleware.MiddlewareParams{
+		Nats: middleware.NatsKeyValue{KeyValueStore: kv, Context: idempotentCtx},
+	}
+	middleware.ApplyMiddleware(e, middlewareParams)
+	routes.Route(e, middlewareParams)
 	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 	// Start server
