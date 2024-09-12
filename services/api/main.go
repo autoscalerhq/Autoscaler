@@ -122,7 +122,7 @@ func main() {
 	}()
 
 	s := gocron.NewScheduler(time.UTC)
-	_, err = s.Every(50).Milliseconds().Do(appmiddleware.GetCPUUsage)
+	_, err = s.Every(50).Milliseconds().Do(middleware.GetCPUUsage)
 	if err != nil {
 		println(err.Error(), "unable to start scheduler for CPU")
 		return
@@ -152,7 +152,7 @@ func main() {
 	}
 	supertokens.DebugEnabled = true
 	e := echo.New()
-	appmiddleware.ApplyMiddleware(e, appmiddleware.NatsKeyValue{KeyValueStore: kv, Context: idempotentCtx})
+	middleware.ApplyMiddleware(e, middleware.NatsKeyValue{KeyValueStore: kv, Context: idempotentCtx})
 	routes.Route(e)
 	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

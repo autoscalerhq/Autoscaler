@@ -9,6 +9,6 @@ import (
 func MakeProtectedRouteGroup(e *echo.Echo) *echo.Group {
 	authRoutes := e.Group("")
 	authRoutes.Use(echo.WrapMiddleware(auth.VerifySessionMiddleware))
-	authRoutes.Use(appmiddleware.CorsMiddleware())
+	authRoutes.Use(middleware.CorsMiddleware())
 	return authRoutes
 }
