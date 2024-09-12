@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import Session from 'supertokens-auth-react/recipe/session';
@@ -10,18 +10,21 @@ export const TryRefreshClientComponent = () => {
   const [didError, setDidError] = useState(false);
 
   useEffect(() => {
-    void Session.attemptRefreshingSession()
-      .then((hasSession) => {
+    async function attemptRefreshingSession() {
+      try {
+        const hasSession = await Session.attemptRefreshingSession();
         if (hasSession) {
           router.refresh();
         } else {
-          void SuperTokens.redirectToAuth();
+          await SuperTokens.redirectToAuth();
         }
-      })
-      .catch((ex) => {
+      } catch (ex) {
         reportException(ex);
         setDidError(true);
-      });
+      }
+    }
+
+    void attemptRefreshingSession();
   }, [router]);
 
   if (didError) {
