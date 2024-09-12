@@ -1,10 +1,11 @@
 import {getAccessToken} from '~/config/supertokens/helpers';
 import {ApiClient} from '~/api-client/ApiClient';
 import {NextJsApiClient} from '~/api-client/NextjsApiClient';
+import {GoBackendUrl} from '~/config';
 
 export function useApiOnServer() {
   const accessTokenPayload = getAccessToken();
-  return new ApiClient('http://localhost:4000', accessTokenPayload);
+  return new ApiClient(GoBackendUrl, accessTokenPayload);
 }
 
 export function useNextJsApiOnServer() {

@@ -45,14 +45,15 @@ type Environment struct {
 func makeDefaultEnv() Environment {
 	return Environment{
 		supertokens:   auth.MakeDefaultSuperTokensAppInfoEnv(),
-		listenAddress: "localhost:4000",
+		listenAddress: ":8888",
 	}
 }
 
 // For local development, Nats 1, 2 And flagd must be running
 func main() {
 
-	err := auth.InitSuperTokens(auth.MakeDefaultSuperTokensAppInfoEnv())
+	env := makeDefaultEnv()
+	err := auth.InitSuperTokens(env.supertokens)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -158,7 +159,7 @@ func main() {
 	defer stop()
 	// Start server
 	go func() {
-		if err := e.Start(":4000"); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := e.Start(env.listenAddress); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			e.Logger.Fatal("shutting down the server")
 		}
 	}()
