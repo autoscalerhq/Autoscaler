@@ -1,27 +1,12 @@
-import {HomeComponent} from '../components/auth/home';
 import styles from "./page.module.css";
-import {AuthWrapper} from '~/components/supertokens/SuperTokensAuthWrapper';
-import {useApiOnServer} from '~/api-client/server-hooks';
+import Link from 'next/link';
 
 export default async function Home() {
   return (
-    <AuthWrapper>
-     <HomeInner />
-    </AuthWrapper>
+   <main className={styles.main}>
+     Home Page
+     <Link href={'/app'}>Go to protected page</Link>
+   </main>
   );
 }
-
-async function HomeInner() {
-   const api = useApiOnServer();
-  const comment = await api.getComment()
-  return (
-    <AuthWrapper>
-      <main className={styles.main}>
-        <span>{comment}</span>
-        <HomeComponent />
-      </main>
-    </AuthWrapper>
-  );
-}
-
 

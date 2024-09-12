@@ -1,5 +1,5 @@
 "use client";
-import styles from "../../app/page.module.css";
+import styles from "~/app/(protected)/app/page.module.css";
 import { BlogsIcon, GuideIcon, SignOutIcon } from "../../assets/images";
 import { recipeDetails } from "~/config/supertokens/frontend";
 import Link from "next/link";

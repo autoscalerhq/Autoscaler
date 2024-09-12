@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "../../app/page.module.css";
+import styles from "~/app/(protected)/app/page.module.css";
 
 import {useApiOnClient, useNextJsApiOnClient} from '~/api-client/client-hooks';
 

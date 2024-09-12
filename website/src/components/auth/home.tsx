@@ -1,5 +1,5 @@
 "use client"
-import styles from "../../app/page.module.css";
+import styles from "~/app/(protected)/app/page.module.css";
 import Image from "next/image";
 import { CelebrateIcon, SeparatorLine } from "../../assets/images";
 import { CallAPIButton } from "./callApiButton";
