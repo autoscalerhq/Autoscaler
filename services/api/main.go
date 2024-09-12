@@ -10,9 +10,7 @@ import (
 	"github.com/autoscalerhq/autoscaler/services/api/routes"
 	"github.com/go-co-op/gocron"
 	"github.com/joho/godotenv"
-	loadshedhttp "github.com/kevinconway/loadshed/v2/stdlib/net/http"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
@@ -154,17 +152,7 @@ func main() {
 	}
 	supertokens.DebugEnabled = true
 	e := echo.New()
-	e.Use(middleware.Logger())
-	// Middleware
-	e.Use(appmiddleware.RequestCounterMiddleware)
-	e.Use(appmiddleware.AddRouteToCTXMiddleware)
-	// If load is too high, fail before we process anything else. this may need to be moved after logging
-	e.Use(echo.WrapMiddleware(loadshedhttp.NewHandlerMiddleware(appmiddleware.CreateShedder(), loadshedhttp.HandlerOptionCallback(&appmiddleware.RejectionHandler{}))))
-	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
-	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
-	e.Use(appmiddleware.TracingMiddleware())
-	e.Use(middleware.Recover())
-	appmiddleware.ApplyAuthAndCorsMiddleware(e)
+	appmiddleware.ApplyMiddleware(e, appmiddleware.NatsKeyValue{KeyValueStore: kv, Context: idempotentCtx})
 	routes.Route(e)
 	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
