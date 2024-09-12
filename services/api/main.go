@@ -164,7 +164,7 @@ func main() {
 	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
 	e.Use(appmiddleware.TracingMiddleware())
 	e.Use(middleware.Recover())
-	auth.ApplyAuthAndCorsMiddleware(e)
+	appmiddleware.ApplyAuthAndCorsMiddleware(e)
 	routes.Route(e)
 	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
