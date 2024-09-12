@@ -47,7 +47,6 @@ func setup() *httptest.Server {
 		return nil
 	}
 	e := echo.New()
-	e.HTTPErrorHandler = apphttp.CustomHttpErrorHandler
 	e.Use(IdempotencyMiddleware(kv, idempotentCtx))
 	e.POST("/hang", func(c echo.Context) error {
 		// Simulate a request that hangs

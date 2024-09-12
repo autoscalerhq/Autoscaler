@@ -166,7 +166,7 @@ Integrations
 - [ ] Proxmox
 
 ## Contributing 🤝
-We welcome contributions from the community! If you want to contribute to AutoScaler, please follow our Contribution Guidelines to get started.
+We welcome contributions from the community! If you want to contribute to AutoScaler, please follow our [Contribution Guidelines](./CONTRIBUTING.md) to get started.
 
 ## License 📜
 AutoScaler is licensed under the [FSL License](./LICENSE).

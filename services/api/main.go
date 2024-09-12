@@ -8,7 +8,6 @@ import (
 	"github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/monitoring"
 	"github.com/autoscalerhq/autoscaler/services/api/routes"
-	"github.com/autoscalerhq/autoscaler/services/api/util/apphttp"
 	"github.com/go-co-op/gocron"
 	"github.com/joho/godotenv"
 	loadshedhttp "github.com/kevinconway/loadshed/v2/stdlib/net/http"
@@ -18,9 +17,7 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
-	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/supertokens"
-	echoSwagger "github.com/swaggo/echo-swagger"
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
 	"log"
@@ -43,13 +40,13 @@ var (
 )
 
 type Environment struct {
-	supertokens   app_supertokens.SuperTokensEnv
+	supertokens   auth.SuperTokensEnv
 	listenAddress string
 }
 
 func makeDefaultEnv() Environment {
 	return Environment{
-		supertokens:   app_supertokens.MakeDefaultSuperTokensAppInfoEnv(),
+		supertokens:   auth.MakeDefaultSuperTokensAppInfoEnv(),
 		listenAddress: "localhost:4000",
 	}
 }
@@ -57,7 +54,7 @@ func makeDefaultEnv() Environment {
 // For local development, Nats 1, 2 And flagd must be running
 func main() {
 
-	err := app_supertokens.InitSuperTokens(app_supertokens.MakeDefaultSuperTokensAppInfoEnv())
+	err := auth.InitSuperTokens(auth.MakeDefaultSuperTokensAppInfoEnv())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -106,8 +103,7 @@ func main() {
 	if err != nil {
 		return
 	}
-
-	// Handle shutdown properly so nothing leaks.
+	// Handle shutting down open telemetry when the program stops
 	defer func() {
 		err = errors.Join(err, otelShutdown(context.Background()))
 		if err != nil {
@@ -119,7 +115,7 @@ func main() {
 	if err != nil {
 		return
 	}
-
+	// Shutdown pyroscope profiling when the application stops.
 	defer func() {
 		err := pscope.Stop()
 		if err != nil {
@@ -156,43 +152,20 @@ func main() {
 		println(err.Error(), "error getting new key value store")
 		return
 	}
-
 	supertokens.DebugEnabled = true
 	e := echo.New()
-	e.HTTPErrorHandler = apphttp.CustomHttpErrorHandler
 	e.Use(middleware.Logger())
-
 	// Middleware
 	e.Use(appmiddleware.RequestCounterMiddleware)
 	e.Use(appmiddleware.AddRouteToCTXMiddleware)
-	e.Use(echo.WrapMiddleware(app_supertokens.CorsMiddleware))
-	e.Use(echo.WrapMiddleware(supertokens.Middleware))
 	// If load is too high, fail before we process anything else. this may need to be moved after logging
 	e.Use(echo.WrapMiddleware(loadshedhttp.NewHandlerMiddleware(appmiddleware.CreateShedder(), loadshedhttp.HandlerOptionCallback(&appmiddleware.RejectionHandler{}))))
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
 	e.Use(appmiddleware.IdempotencyMiddleware(kv, idempotentCtx))
 	e.Use(appmiddleware.TracingMiddleware())
 	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
-
-	authRoutes := e.Group("")
-	authRoutes.Use(echo.WrapMiddleware(app_supertokens.CorsMiddleware))
-	authRoutes.Use(echo.WrapMiddleware(app_supertokens.VerifySessionMiddleware))
-	// TODO define routes in another method
-	// Routes
-	e.GET("/health-check", routes.HealthCheck)
-	e.GET("/Hello", func(c echo.Context) error {
-		return c.String(200, "Hello!")
-	})
-
-	authRoutes.GET("/comment", func(c echo.Context) error {
-		sessionContainer := session.GetSessionFromRequestContext(c.Request().Context())
-		userID := sessionContainer.GetUserID()
-		return c.String(200, "Hello "+userID)
-	})
-	// swag init -g ./main.go --output ./docs
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
-
+	auth.ApplyAuthAndCorsMiddleware(e)
+	routes.Route(e)
 	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 	// Start server
