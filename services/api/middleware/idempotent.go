@@ -1,4 +1,4 @@
-package appmiddleware
+package middleware
 
 import (
 	"bytes"

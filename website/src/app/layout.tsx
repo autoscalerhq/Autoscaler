@@ -5,7 +5,7 @@ import { type Metadata } from "next";
 
 import React from 'react';
 
-import {SuperTokensProvider} from "~/components/supertokensProvider";
+import { SuperTokensProvider } from "~/components/supertokens/supertokensProvider";
 import {CSPostHogProvider} from "~/app/providers";
 
 export const metadata: Metadata = {

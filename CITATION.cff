@@ -6,7 +6,7 @@ message: "If you use this software in your academic work, please use the citatio
 - family-names: "Utria"
   given-names: "Edward"
   orcid: "https://github.com/EdWrld"
-- family-names: "Gallivin"
+- family-names: "Gallavin"
   given-names: "Jason"
   orcid: "https://github.com/jasekiw"
 title: "AutoScaler"

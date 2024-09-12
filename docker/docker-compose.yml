@@ -45,7 +45,8 @@ services:
     ports:
       - "3567:3567"
     environment:
-      POSTGRESQL_CONNECTION_URI: postgresql://postgres:password@timescaledb:5432/postgres
+      POSTGRESQL_CONNECTION_URI: postgresql://postgres:password@timescaledb:5432/autoscaler
+      POSTGRESQL_TABLE_SCHEMA: auth
     depends_on:
       - timescaledb
     restart: unless-stopped
@@ -63,7 +64,7 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: password
-#      POSTGRES_DB: supertokens
+      POSTGRES_DB: autoscaler
     volumes:
       - './data/postgres:/var/lib/postgresql/data'
 
