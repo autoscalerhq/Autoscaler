@@ -6,7 +6,7 @@
 
 ### Prerequisites
 * Install pnpm globally `npm install -g pnpm`
-* Install docker. If using windows, [use docker desktop](https://docs.docker.com/desktop/install/windows-install/). 
+* Install Docker Desktop. [Windows Install](https://docs.docker.com/desktop/install/windows-install/), [Mac Install](https://docs.docker.com/desktop/install/mac-install/)
 
 Install docker and run the following docker compose script
 ```bash
