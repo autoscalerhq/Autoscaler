@@ -24,6 +24,7 @@ export async function middleware(
   }
 
   return withSession(request, async (err, session) => {
+    reportError(err);
     if (err) {
       return NextResponse.json(err, { status: 500 });
     }
