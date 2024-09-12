@@ -1,8 +1,8 @@
 "use client";
 
-import styles from "../page.module.css";
+import styles from "../../app/page.module.css";
 
-import {useApiOnClient, useNextJsApiOnClient} from '~/app/api-client/client-hooks';
+import {useApiOnClient, useNextJsApiOnClient} from '~/api-client/client-hooks';
 
 export const CallAPIButton = () => {
   const api = useApiOnClient();

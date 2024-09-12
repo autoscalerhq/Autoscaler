@@ -1,7 +1,7 @@
 import { TryRefreshClientComponent } from "./tryRefreshClientComponent";
 import { redirect } from "next/navigation";
 import { SessionAuthForNextJS } from "./sessionAuthForNextJS";
-import {getSSRSessionHelper} from '~/app/config/supertokens/helpers';
+import {getSSRSessionHelper} from '~/config/supertokens/helpers';
 import {AuthContextProvider} from './AuthContext';
 
 

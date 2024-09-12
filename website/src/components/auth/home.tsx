@@ -1,11 +1,11 @@
 "use client"
-import styles from "../page.module.css";
+import styles from "../../app/page.module.css";
 import Image from "next/image";
 import { CelebrateIcon, SeparatorLine } from "../../assets/images";
 import { CallAPIButton } from "./callApiButton";
 import { LinksComponent } from "./linksComponent";
 import React from 'react';
-import {useAuthContext} from '~/app/config/supertokens/components/AuthContext';
+import {useAuthContext} from '~/components/supertokens/AuthContext';
 
 
 export function HomeComponent() {

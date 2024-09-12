@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import jwksClient from "jwks-rsa";
 import JsonWebToken from "jsonwebtoken";
 import type { JwtHeader, JwtPayload, SigningKeyCallback } from "jsonwebtoken";
-import {appInfo} from '~/app/config/supertokens/appInfo';
+import {appInfo} from '~/config/supertokens/appInfo';
 
 const client = jwksClient({
   jwksUri: `${appInfo.apiDomain}${appInfo.apiBasePath}/jwt/jwks.json`,

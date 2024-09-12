@@ -1,4 +1,4 @@
-import { ensureSuperTokensInit } from "~/app/config/supertokens/backend";
+import { ensureSuperTokensInit } from "~/config/supertokens/backend";
 import { NextResponse, NextRequest } from "next/server";
 import { withSession } from "supertokens-node/nextjs";
 

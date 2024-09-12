@@ -8,7 +8,7 @@ import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/p
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
 import SuperTokensReact from 'supertokens-auth-react';
 import SuperTokens from 'supertokens-node';
-import {backendConfig} from '~/app/config/supertokens/backend';
+import {backendConfig} from '~/config/supertokens/backend';
 
 const routerInfo: { router?: ReturnType<typeof useRouter>; pathName?: string } =
   {};
@@ -33,10 +33,10 @@ export function ensureFrontendSuperTokensInit() {
 export const frontendConfig = (): SuperTokensConfig => {
   return {
     appInfo,
-     supertokens: {
-      // this is the location of the SuperTokens core.
-      connectionURI: "http://localhost:3567",
-    },
+    // supertokens: {
+    //   // this is the location of the SuperTokens core.
+    //   connectionURI: "http://localhost:3567",
+    // },
     style: `
         [data-supertokens~="superTokensBranding"] {
             display: none !important;

@@ -1,7 +1,7 @@
-import {HomeComponent} from './components/home';
+import {HomeComponent} from '../components/auth/home';
 import styles from "./page.module.css";
-import {AuthWrapper} from '~/app/config/supertokens/components/SuperTokensAuthWrapper';
-import {useApiOnServer} from '~/app/api-client/server-hooks';
+import {AuthWrapper} from '~/components/supertokens/SuperTokensAuthWrapper';
+import {useApiOnServer} from '~/api-client/server-hooks';
 
 export default async function Home() {
   return (

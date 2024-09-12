@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { SessionContainer } from "supertokens-node/recipe/session";
 import { withSession } from "supertokens-node/nextjs";
-import { ensureSuperTokensInit } from "./app/config/supertokens/backend";
+import { ensureSuperTokensInit } from "~/config/supertokens/backend";
 
 ensureSuperTokensInit();
 

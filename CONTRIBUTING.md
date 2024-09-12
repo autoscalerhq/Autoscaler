@@ -35,3 +35,9 @@ You will need to sign up for an account once the project is running.
 * folders and files use lower case one word if possible, if not, use snake_case.
 * All url routes should be kebab-case.
 * function names must be PascalCase when exported, and camelCase when internal.
+
+### Validation
+
+All code must pass the following validation checks:
+* Typescript via the "typ-check" script in the package.json
+* Linting via the "lint" script in the package.json

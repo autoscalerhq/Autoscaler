@@ -4,11 +4,11 @@ import EmailPasswordNode from "supertokens-node/recipe/emailpassword";
 // import Dashboard from "supertokens-node/recipe/dashboard";
 // import UserRoles from "supertokens-node/recipe/userroles";
 import { appInfo } from "./appInfo";
-import { TypeInput } from "supertokens-node/types";
+import { type TypeInput } from "supertokens-node/types";
 import SuperTokens from "supertokens-node";
 import Session from "supertokens-node/recipe/session";
 
-export let backendConfig = (): TypeInput => {
+export const backendConfig = (): TypeInput => {
   return {
     supertokens: {
       // this is the location of the SuperTokens core.

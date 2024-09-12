@@ -1,6 +1,6 @@
-import {getAccessToken} from '~/app/config/supertokens/helpers';
-import {ApiClient} from '~/app/api-client/ApiClient';
-import {NextJsApiClient} from '~/app/api-client/NextjsApiClient';
+import {getAccessToken} from '~/config/supertokens/helpers';
+import {ApiClient} from '~/api-client/ApiClient';
+import {NextJsApiClient} from '~/api-client/NextjsApiClient';
 
 export function useApiOnServer() {
   const accessTokenPayload = getAccessToken();
