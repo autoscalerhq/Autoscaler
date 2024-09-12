@@ -5,7 +5,7 @@
 
 
 ### Prerequisites
-* Install pnpm globally `npm install -g pnpm`
+* [Install bun](https://bun.sh/docs/installation)
 * Install Docker Desktop. [Windows Install](https://docs.docker.com/desktop/install/windows-install/), [Mac Install](https://docs.docker.com/desktop/install/mac-install/)
 
 Install docker and run the following docker compose script
@@ -22,8 +22,8 @@ go run main.go
 Run the frontend/ssr nextjs project
 ```bash
 cd website
-pnpm install
-pnpm run dev
+bun install
+bun run dev
 ```
 
 You will need to sign up for an account once the project is running.

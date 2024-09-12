@@ -3,6 +3,7 @@ import {useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import Session from 'supertokens-auth-react/recipe/session';
 import SuperTokens from 'supertokens-auth-react';
+import {reportException} from '~/lib/errors';
 
 export const TryRefreshClientComponent = () => {
   const router = useRouter();
@@ -14,10 +15,11 @@ export const TryRefreshClientComponent = () => {
         if (hasSession) {
           router.refresh();
         } else {
-          SuperTokens.redirectToAuth();
+          void SuperTokens.redirectToAuth();
         }
       })
-      .catch(() => {
+      .catch((ex) => {
+        reportException(ex);
         setDidError(true);
       });
   }, [router]);
