@@ -44,15 +44,15 @@ export const frontendConfig = (): SuperTokensConfig => {
     `,
     recipeList: [
       EmailPasswordReact.init(),
-      ThirdPartyReact.init({
-        signInAndUpFeature: {
-          providers: [
-            ThirdPartyReact.Google.init(),
-            ThirdPartyReact.Github.init(),
-            ThirdPartyReact.Apple.init(),
-          ],
-        },
-      }),
+      // ThirdPartyReact.init({
+      //   signInAndUpFeature: {
+      //     providers: [
+      //       ThirdPartyReact.Google.init(),
+      //       ThirdPartyReact.Github.init(),
+      //       ThirdPartyReact.Apple.init(),
+      //     ],
+      //   },
+      // }),
       Session.init(),
     ],
     windowHandler: (orig) => {
