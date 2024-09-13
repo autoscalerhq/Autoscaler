@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import Session from 'supertokens-auth-react/recipe/session';
 import SuperTokens from 'supertokens-auth-react';
 import {reportException} from '~/lib/errors';
+import {InitialPageSpinner} from '~/components/util/InitialPageSpinner/InitialPageSpinner';
 
 export const TryRefreshClientComponent = () => {
   const router = useRouter();
@@ -31,5 +32,5 @@ export const TryRefreshClientComponent = () => {
     return <div>Something went wrong, please reload the page</div>;
   }
 
-  return <div>Loading...</div>;
+  return <InitialPageSpinner />;
 };
