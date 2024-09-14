@@ -1,4 +1,6 @@
-![Auto Scaler](assets/AutoScaler.png)
+<p align="center">
+  <img src="assets/AutoScaler.png" />
+</p>
 
 # 🚀 Open-Source Autoscaling for Every System 🚀
 
