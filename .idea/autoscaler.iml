@@ -14,6 +14,9 @@
       <excludeFolder url="file://$MODULE_DIR$/apps/target" />
       <excludeFolder url="file://$MODULE_DIR$/cli/jarvis/target" />
       <excludeFolder url="file://$MODULE_DIR$/cli/jarvy/target" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/web/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/website/.next" />
+      <excludeFolder url="file://$MODULE_DIR$/docker/data" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
