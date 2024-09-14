@@ -31,10 +31,9 @@ You will need to sign up for an account once the project is running.
 
 ### Naming Conventions
 
-
 * folders and files use lower case one word if possible, if not, use snake_case.
 * All url routes should be kebab-case.
-* function names must be PascalCase when exported, and camelCase when internal.
+* function names must be PascalCase when exported, and camelCase when internal. For more information read [Effective Go](https://go.dev/doc/effective_go)
 
 ### Validation
 
