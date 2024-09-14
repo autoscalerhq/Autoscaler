@@ -1,10 +1,7 @@
-<div align="center">
-  <picture>
-    <source media=   srcset="assets/AutoScaler.png">
-    <img src=assets/AutoScaler.png width="500" alt="Auto"/>
-  </picture>
-</div>
-<hr/>
+<p align="center">
+  <img src="assets/AutoScaler.png" />
+</p>
+
 <h1 align="center"> 🚀 Open-Source Autoscaling for Every System 🚀</h1>
 
 ## Why Autoscaler? ✨

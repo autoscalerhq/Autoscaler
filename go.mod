@@ -24,6 +24,7 @@ require (
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.2.2
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/stretchr/testify v1.9.0
+	github.com/supertokens/supertokens-golang v0.24.1
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.3
 	go.opentelemetry.io/otel v1.28.0
@@ -96,7 +97,6 @@ require (
 	github.com/open-feature/flagd/core v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
-	github.com/supertokens/supertokens-golang v0.24.1 // indirect
 	github.com/swaggo/files/v2 v2.0.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
 	github.com/tklauser/numcpus v0.8.0 // indirect
