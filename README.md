@@ -1,10 +1,7 @@
-<div align="center">
-  <picture>
-    <source media=   srcset="assets/AutoScaler.png">
-    <img src=assets/AutoScaler.png width="500" alt="Auto"/>
-  </picture>
-</div>
-<hr/>
+<p align="center">
+  <img src="assets/AutoScaler.png" />
+</p>
+
 <h1 align="center"> 🚀 Open-Source Autoscaling for Every System 🚀</h1>
 
 ## Why Autoscaler? ✨
@@ -166,7 +163,7 @@ Integrations
 - [ ] Proxmox
 
 ## Contributing 🤝
-We welcome contributions from the community! If you want to contribute to AutoScaler, please follow our Contribution Guidelines to get started.
+We welcome contributions from the community! If you want to contribute to AutoScaler, please follow our [Contribution Guidelines](./CONTRIBUTING.md) to get started.
 
 ## License 📜
 AutoScaler is licensed under the [FSL License](./LICENSE).
