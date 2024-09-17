@@ -5,11 +5,13 @@ import (
 	"github.com/autoscalerhq/autoscaler/lib/dkron"
 )
 
-func SyncClientJobs(client *dkron.Client) {
+func SyncClientJob() {
 	// TODO
 	// get every job in the database in batch
 	// per batch put into a stream
 	// workers then resync to dkron
+
+	println("TODO Syncing Client Jobs")
 }
 
 func CreateClientSyncCron(client *dkron.Client) {
@@ -27,8 +29,8 @@ func CreateClientSyncCron(client *dkron.Client) {
 		Concurrency: "forbid",
 		ExecutorConfig: map[string]string{
 			"url":     "nats://host.docker.internal:4222",
-			"message": "",
-			"subject": "sync.client",
+			"message": "job.client",
+			"subject": "job.init",
 		},
 	}
 
@@ -61,8 +63,7 @@ func CreatePricePullCron(client *dkron.Client) {
 		Concurrency: "forbid",
 		ExecutorConfig: map[string]string{
 			"url":     "nats://host.docker.internal:4222",
-			"message": "",
-			"subject": "sync.price",
+			"subject": "job.init",
 		},
 	}
 

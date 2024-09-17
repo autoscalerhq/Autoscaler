@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	natutils "github.com/autoscalerhq/autoscaler/internal/nats"
 	"github.com/autoscalerhq/autoscaler/lib/dkron"
 	"github.com/autoscalerhq/autoscaler/services/worker/jobs"
@@ -31,12 +30,12 @@ func main() {
 		}
 	}(nc)
 
-	//js, err := natutils.NewJetStream(
-	//	nc,
-	//	jetstream.JetStreamOpt{},
-	//)
+	err = jobs.CreateQueues(nc)
+	if err != nil {
+		return
+	}
 
-	ldkv, _, err := natutils.NewKeyValueStore(
+	clusterkv, _, err := natutils.NewKeyValueStore(
 		nc,
 		jetstream.KeyValueConfig{
 			Bucket:   "leadership",
@@ -51,69 +50,6 @@ func main() {
 
 	// Create a new Dkron client
 	DKronclient := dkron.NewClient("http://localhost:8080/v1")
+	jobs.CreateJobs(DKronclient)
 
-	// Create app jobs to keep sync of state
-	name, err := DKronclient.ShowJobByName("example_job_nats")
-	if err != nil {
-		fmt.Println("Error showing job:", err)
-		return
-	}
-
-	fmt.Println("Job name", name)
-
-	jobs.CreateClientSyncCron(DKronclient)
-	jobs.CreatePricePullCron(DKronclient)
-
-	//ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-	//defer cancel()
-
-	//// Getting work jobs
-	//cfg := jetstream.StreamConfig{
-	//	Name:      "EVENTS",
-	//	Retention: jetstream.WorkQueuePolicy,
-	//	Subjects:  []string{"events.>"},
-	//}
-	//
-	//ctx, cancel = context.WithTimeout(context.Background(), 2*time.Minute)
-	//defer cancel()
-	//
-	//stream, err := js.CreateOrUpdateStream(ctx, cfg)
-	//if err != nil {
-	//	println("Create stream err", err.Error())
-	//	return
-	//}
-	//fmt.Println("created the stream")
-	//printStreamState(ctx, stream)
-	//
-	//cons, err := stream.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig{
-	//	Name: "processor-3",
-	//})
-	//
-	//if err != nil {
-	//	println("Create Consumer err", err.Error())
-	//	return
-	//}
-	//
-	//var messageHandler jetstream.MessageHandler = func(msg jetstream.Msg) {
-	//	println("Msg: ", string(msg.Data()))
-	//	println("Msg sub: ", msg.Subject())
-	//	println("Msg headers: ", msg.Headers().Values(""))
-	//	err := msg.Ack()
-	//	if err != nil {
-	//		println(err.Error(), "ack err")
-	//	}
-	//}
-	//
-	//consumeCtx, err := cons.Consume(messageHandler, jetstream.PullMaxMessages(10))
-	//defer consumeCtx.Drain()
-	//
-	//if err != nil {
-	//	println("Consuming messages err", err.Error())
-	//	return
-	//}
-	//
-	//println("Pausing main thread")
-	//
-	//fmt.Println("\n# Stream info with one consumer")
-	//printStreamState(ctx, stream)
 }
