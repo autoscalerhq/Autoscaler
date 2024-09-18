@@ -1,13 +1,10 @@
 package main
 
 import (
-	natutils "github.com/autoscalerhq/autoscaler/internal/nats"
-	"github.com/autoscalerhq/autoscaler/lib/dkron"
+	"context"
 	"github.com/autoscalerhq/autoscaler/services/worker/jobs"
 	"github.com/joho/godotenv"
-	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
-	"time"
+	"strings"
 )
 
 func main() {
@@ -17,39 +14,38 @@ func main() {
 		// Todo this should be handled better before going to production
 		//log.Fatal("Error loading .env file")
 	}
-	// Envs to get Dkron and Nats
 
-	// Set up the NATS DKronclient first
-	// This is to ensure that DKron has something to send to
-	nc, err := natutils.GetNatsConn()
+	jobs.InitializeAppJobs()
 
-	defer func(nc *nats.Conn) {
-		err := nc.Drain()
-		if err != nil {
-			println(err.Error(), "error draining nats connection")
-		}
-	}(nc)
+	// TODO Make this based on a env/refreshable varible
+	// TODO make this able to be configured by env
+	// Determine the subjects to subscribe to
+	// Set up with actual env config
+	subjects := parseJobTypes("*")
+	println("Subscribing to subjects: %v", subjects)
 
-	err = jobs.CreateQueues(nc)
-	if err != nil {
-		return
+	ctx := context.Background()
+
+	// Set up subscriptions for each subject
+	for _, subject := range subjects {
+		go jobs.StartConsumer(ctx, subject)
 	}
 
-	clusterkv, _, err := natutils.NewKeyValueStore(
-		nc,
-		jetstream.KeyValueConfig{
-			Bucket:   "leadership",
-			TTL:      time.Hour * 24,
-			MaxBytes: 1024 * 1024,
-		},
-	)
+	// Wait indefinitely
+	select {}
 
-	if err != nil {
-		println(err)
+}
+
+func parseJobTypes(jobTypes string) []string {
+	if jobTypes == "*" {
+		return []string{"jobs.>"}
 	}
 
-	// Create a new Dkron client
-	DKronclient := dkron.NewClient("http://localhost:8080/v1")
-	jobs.CreateJobs(DKronclient)
-
+	types := strings.Split(jobTypes, ",")
+	subjects := make([]string, len(types))
+	for i, t := range types {
+		t = strings.TrimSpace(t)
+		subjects[i] = "jobs." + t
+	}
+	return subjects
 }
