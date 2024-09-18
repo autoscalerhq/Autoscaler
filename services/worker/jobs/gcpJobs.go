@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"google.golang.org/api/option"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -14,23 +13,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
-// CloudPricing represents the cloud_pricing table schema
-type CloudPricing struct {
-	ID              uint      `gorm:"primaryKey"`
-	Provider        string    `gorm:"size:50;not null"`
-	ServiceName     string    `gorm:"size:100;not null"`
-	ResourceType    string    `gorm:"size:100"`
-	Region          string    `gorm:"size:100"`
-	UnitPrice       float64   `gorm:"type:numeric(10,6);not null"`
-	Currency        string    `gorm:"size:10;default:'USD'"`
-	Unit            string    `gorm:"size:50"`
-	Cores           int       `gorm:"type:int"`
-	MemoryGB        float64   `gorm:"type:numeric(10,2)"`
-	StorageType     string    `gorm:"size:100"`
-	PricePerStorage float64   `gorm:"type:numeric(10,6)"`
-	RetrievalDate   time.Time `gorm:"autoCreateTime"`
-}
 
 // GCPServiceDetails defines the service-specific information needed for fetching pricing
 type GCPServiceDetails struct {
