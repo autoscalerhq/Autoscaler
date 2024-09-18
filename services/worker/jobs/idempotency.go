@@ -2,29 +2,14 @@ package jobs
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"log"
 )
-
-//messageStruct := Message{
-//	Idempotency: "unique-id-1234", // Replace with actual idempotency value
-//	NextSubject: "job.client",
-//}
-//
-//messageBytes, err := json.Marshal(messageStruct)
-//if err != nil {
-//	println("Failed to serialize message: %v", err)
-//}
-//
-//messageString := string(messageBytes)
-
-type IdempotentMessage struct {
-	Idempotency string `json:"idempotency"`
-	Message     string `json:"message"`
-}
 
 // CheckUnique checks if the UUID already exists in JetStream KeyValue store
 func CheckUnique(idempotencyKV jetstream.KeyValue, uuid string) (bool, error) {
@@ -61,4 +46,25 @@ func GetIdempotencyKey(idemptencyKV *jetstream.KeyValue) (string, error) {
 	}
 
 	return newUUID.String(), nil
+}
+
+func addIdempotencyKey(data []byte, idempotencyKey string) ([]byte, error) {
+	// Unmarshal the data into a map
+	var messageMap map[string]interface{}
+	if err := json.Unmarshal(data, &messageMap); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
+	}
+
+	messageMap["idempotency"] = idempotencyKey
+
+	// Add the idempotency key
+	messageMap["idempotency"] = idempotencyKey
+
+	// Marshal the modified map back to a JSON byte array
+	modifiedData, err := json.Marshal(messageMap)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal modified data: %w", err)
+	}
+
+	return modifiedData, nil
 }
