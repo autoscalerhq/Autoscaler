@@ -2,12 +2,16 @@ package jobs
 
 import (
 	"fmt"
-	"github.com/autoscalerhq/autoscaler/lib/dkron"
-	"github.com/nats-io/nats.go"
+	"github.com/autoscalerhq/autoscaler/internal/bootstrap"
 	"time"
+
+	"github.com/nats-io/nats.go"
 )
 
-var QUEUES map[string]nats.StreamConfig = nil
+var (
+	QUEUES    map[string]nats.StreamConfig
+	CONSUMERS map[string]nats.ConsumerConfig
+)
 
 func initQueues() {
 	QUEUES = map[string]nats.StreamConfig{
@@ -15,24 +19,40 @@ func initQueues() {
 			Name:        "JobStream",
 			Description: "A stream for job processing",
 			Subjects:    []string{"jobs.*"},
-			Retention:   0, // Customize as per retention policy
-			//MaxConsumers: 10,
-			//MaxMsgs:      1000,
-			MaxBytes:   1024 * 1024 * 10, // 10 MB
-			Discard:    0,                // Customize as per discard policy
-			MaxAge:     24 * time.Hour,   // 1 day
-			MaxMsgSize: 1024,             // 1 KB
-			Storage:    0,                // Customize as per storage type
-			Replicas:   1,
-			NoAck:      false,
-			Duplicates: 2 * time.Minute,
-			// Add other fields as needed
+			Retention:   nats.WorkQueuePolicy,
+			MaxBytes:    1024 * 1024 * 10, // 10 MB
+			Discard:     nats.DiscardOld,
+			MaxAge:      24 * time.Hour, // 1 day
+			MaxMsgSize:  1024,           // 1 KB
+			Storage:     nats.FileStorage,
+			Replicas:    1,
+			NoAck:       false,
+			Duplicates:  2 * time.Minute,
+		},
+	}
+
+	CONSUMERS = map[string]nats.ConsumerConfig{
+		"JOB_CONSUMER": {
+			Durable:        "JobConsumer",
+			DeliverSubject: "job-queue",
+			DeliverGroup:   "job-worker-group",
+			AckPolicy:      nats.AckExplicitPolicy,
+			MaxAckPending:  1000,
+			ReplayPolicy:   nats.ReplayInstantPolicy,
 		},
 	}
 }
 
-func CreateQueues(nc *nats.Conn) error {
+func CreateQueues() error {
+
 	initQueues()
+
+	nc, err := bootstrap.GetNatsConn()
+
+	if err != nil {
+		println("Failed to connect to NATS: %v", err)
+	}
+
 	// Access JetStream context
 	js, err := nc.JetStream()
 	if err != nil {
@@ -43,40 +63,7 @@ func CreateQueues(nc *nats.Conn) error {
 		println("Creating or keeping queue:", name)
 		_, err := js.StreamInfo(config.Name)
 		if err != nil {
-			_, err = js.AddStream(&nats.StreamConfig{
-				Name:                 config.Name,
-				Description:          config.Description,
-				Subjects:             config.Subjects,
-				Retention:            nats.RetentionPolicy(config.Retention),
-				MaxConsumers:         config.MaxConsumers,
-				MaxMsgs:              config.MaxMsgs,
-				MaxBytes:             config.MaxBytes,
-				Discard:              nats.DiscardPolicy(config.Discard),
-				DiscardNewPerSubject: config.DiscardNewPerSubject,
-				MaxAge:               config.MaxAge,
-				MaxMsgsPerSubject:    config.MaxMsgsPerSubject,
-				MaxMsgSize:           config.MaxMsgSize,
-				Storage:              nats.StorageType(config.Storage),
-				Replicas:             config.Replicas,
-				NoAck:                config.NoAck,
-				Duplicates:           config.Duplicates,
-				Placement:            config.Placement,
-				Mirror:               config.Mirror,
-				Sources:              config.Sources,
-				Sealed:               config.Sealed,
-				DenyDelete:           config.DenyDelete,
-				DenyPurge:            config.DenyPurge,
-				AllowRollup:          config.AllowRollup,
-				Compression:          nats.StoreCompression(config.Compression),
-				FirstSeq:             config.FirstSeq,
-				SubjectTransform:     config.SubjectTransform,
-				RePublish:            config.RePublish,
-				AllowDirect:          config.AllowDirect,
-				MirrorDirect:         config.MirrorDirect,
-				ConsumerLimits:       config.ConsumerLimits,
-				Metadata:             config.Metadata,
-				Template:             config.Template,
-			})
+			_, err = js.AddStream(&config)
 			if err != nil {
 				fmt.Println("Error adding stream:", err)
 			} else {
@@ -85,12 +72,36 @@ func CreateQueues(nc *nats.Conn) error {
 		} else {
 			fmt.Println("Stream exists:", config.Name)
 		}
+
+		// Create consumers for the stream
+		for cname, cconfig := range CONSUMERS {
+			println("Creating consumer:", cname)
+			cconfig.FilterSubject = "jobs.*" // Ensure the consumer is filtering the correct subject
+
+			if _, err := js.AddConsumer(config.Name, &cconfig); err != nil {
+				fmt.Println("Could not add consumer:", err)
+			} else {
+				fmt.Println("Consumer created for stream:", config.Name)
+			}
+		}
 	}
 
 	return nil
 }
 
-func CreateJobs(client *dkron.Client) {
-	CreateClientSyncCron(client)
-	CreatePricePullCron(client)
+func InitializeAppJobs() {
+	client := bootstrap.GetDkronClient()
+	err := CreateClientSyncCron(client)
+	if err != nil {
+		println("Error creating client sync cron")
+	}
+	err = CreatePricePullCron(client)
+	if err != nil {
+		println("Error creating price pull cron")
+	}
+
+	err = CreateQueues()
+	if err != nil {
+		println("Error creating queues ")
+	}
 }
