@@ -14,7 +14,7 @@ func SyncClientJob() {
 	println("TODO Syncing Client Jobs")
 }
 
-func CreateClientSyncCron(client *dkron.Client) {
+func CreateClientSyncCron(client *dkron.Client) error {
 
 	job := dkron.Job{
 		Name:        "CRIT_client_job_sync",
@@ -38,15 +38,16 @@ func CreateClientSyncCron(client *dkron.Client) {
 	createdJob, err := client.CreateOrUpdateJob(job, true)
 
 	if err != nil {
-		fmt.Println("Error creating or updating job:", err)
-		return
+		return err
 	}
 
 	// TODO replace with logging system
 	fmt.Println("Created/Updated Job:", createdJob)
+
+	return nil
 }
 
-func CreatePricePullCron(client *dkron.Client) {
+func CreatePricePullCron(client *dkron.Client) error {
 
 	var clouds = []string{"aws", "azure", "gcp"}
 
@@ -78,12 +79,13 @@ func CreatePricePullCron(client *dkron.Client) {
 		// Create or update the job
 		createdjob, err := client.CreateOrUpdateJob(*sjob, true)
 
+		// FIXME should continue and report error
 		if err != nil {
-			fmt.Println("Error creating or updating job:", err)
-			return
+			return err
 		}
 
 		// TODO replace with logging system
 		fmt.Println("Created/Updated Job:", createdjob)
 	}
+	return nil
 }
