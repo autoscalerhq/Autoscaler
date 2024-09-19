@@ -16,11 +16,13 @@ func SyncClientJob() {
 
 func CreateClientSyncCron(client *dkron.Client) error {
 
+	retries := 1
 	job := dkron.Job{
-		Name:        "CRIT_client_job_sync",
+		Name:        "crit_client_job_sync",
 		DisplayName: "CRIT Client Job Sync",
+		Ephemeral:   false,
 		Owner:       "Autoscaler",
-		Retries:     1,
+		Retries:     &retries,
 		Tags: map[string]string{
 			"critical": "true",
 		},
@@ -34,7 +36,6 @@ func CreateClientSyncCron(client *dkron.Client) error {
 		},
 	}
 
-	// Create or update the job
 	createdJob, err := client.CreateOrUpdateJob(job, true)
 
 	if err != nil {
@@ -51,11 +52,12 @@ func CreatePricePullCron(client *dkron.Client) error {
 
 	var clouds = []string{"aws", "azure", "gcp"}
 
+	retries := 1
 	job := dkron.Job{
-		Name:        "CRIT_Price_Sync",
+		Name:        "crit_price_sync",
 		DisplayName: "CRIT Price Sync",
 		Owner:       "Autoscaler",
-		Retries:     1,
+		Retries:     &retries,
 		Tags: map[string]string{
 			"critical": "true",
 		},
@@ -72,9 +74,9 @@ func CreatePricePullCron(client *dkron.Client) error {
 
 		sjob := DeepCopyJob(&job)
 
-		sjob.Name = fmt.Sprintf("CRIT_Price_Sync_%s", cloud)
+		sjob.Name = fmt.Sprintf("crit_price_sync_%s", cloud)
 		sjob.DisplayName = fmt.Sprintf("CRIT Price Sync %s", cloud)
-		sjob.ExecutorConfig["subject"] = fmt.Sprintf("sync.price.%s", cloud)
+		sjob.ExecutorConfig["message"] = fmt.Sprintf("job.price.%s", cloud)
 
 		// Create or update the job
 		createdjob, err := client.CreateOrUpdateJob(*sjob, true)
