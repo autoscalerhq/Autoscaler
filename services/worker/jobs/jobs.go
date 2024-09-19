@@ -90,7 +90,9 @@ func CreateQueues() error {
 }
 
 func InitializeAppJobs() {
+
 	client := bootstrap.GetDkronClient()
+
 	err := CreateClientSyncCron(client)
 	if err != nil {
 		println("Error creating client sync cron")
