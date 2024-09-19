@@ -78,26 +78,65 @@ func AddIdempotency(subject string, data []byte) {
 		println("Failed to get idempotency kv store: %v", err)
 	}
 
-	idkey, err := GetIdempotencyKey(&idempotencykv)
+	idkey, err := GetIdempotencyKey(idempotencykv)
 
 	if err != nil {
 		println("Failed to get idempotency key: %v", err)
 	}
 
-	newData, err := addIdempotencyKey(data, idkey)
+	newData, newSubject, err := addIdempotencyKey(data, idkey)
 
 	if err != nil {
 		println("Failed to add idempotency key: %v", err)
 	}
 
+	js, err := bootstrap.GetJetStream()
+
+	if err != nil {
+		println("Failed to connect to NATS Jetstream: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	// Publish the message to the JetStream subject.
+	// Send the message to NATS with the message as the subject
+	if _, err := js.Publish(ctx, newSubject, newData); err != nil {
+		println("error publishing", err)
+	}
+}
+
+func PipeSubjectsToJetstream() {
 	nc, err := bootstrap.GetNatsConn()
 
 	if err != nil {
 		println("Failed to connect to NATS: %v", err)
 	}
 
-	// Send the message to NATS with the message as the subject
-	if err := nc.Publish(string(data), newData); err != nil {
-		println("error publishing", err)
+	js, err := bootstrap.GetJetStream()
+
+	if err != nil {
+		println("Failed to connect to NATS Jetstream: %v", err)
+	}
+
+	// Define the standard NATS subject we're subscribed to.
+	standardSubject := "jobs"
+	// Define the JetStream subject.
+	jetStreamSubject := "jobs.init"
+
+	// Subscribe to the standard NATS subject.
+	_, err = nc.Subscribe(standardSubject, func(msg *nats.Msg) {
+		println("Received a message on %s: %s", standardSubject, string(msg.Data))
+
+		ctx := context.Background()
+		// Publish the message to the JetStream subject.
+		_, err := js.Publish(ctx, jetStreamSubject, msg.Data)
+		if err != nil {
+			println("Failed to publish to JetStream: %v", err)
+		} else {
+			println("Message republished to JetStream subject: %s", jetStreamSubject)
+		}
+	})
+	if err != nil {
+		println("Failed to subscribe to subject %s: %v", standardSubject, err)
 	}
 }

@@ -31,7 +31,7 @@ func CreateClientSyncCron(client *dkron.Client) error {
 		Concurrency: "forbid",
 		ExecutorConfig: map[string]string{
 			"url":     "nats://host.docker.internal:4222",
-			"message": "job.client",
+			"message": "{\"newSubject\": \"job.client\"}",
 			"subject": "job.init",
 		},
 	}
@@ -76,7 +76,7 @@ func CreatePricePullCron(client *dkron.Client) error {
 
 		sjob.Name = fmt.Sprintf("crit_price_sync_%s", cloud)
 		sjob.DisplayName = fmt.Sprintf("CRIT Price Sync %s", cloud)
-		sjob.ExecutorConfig["message"] = fmt.Sprintf("job.price.%s", cloud)
+		sjob.ExecutorConfig["message"] = fmt.Sprintf("\"{\\\"newSubject\\\": \\\"job.price.%s\\\"}\",", cloud)
 
 		// Create or update the job
 		createdjob, err := client.CreateOrUpdateJob(*sjob, true)

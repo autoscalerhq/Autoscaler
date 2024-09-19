@@ -31,6 +31,8 @@ func main() {
 		go jobs.StartConsumer(ctx, subject)
 	}
 
+	go jobs.PipeSubjectsToJetstream()
+
 	// Wait indefinitely
 	select {}
 
