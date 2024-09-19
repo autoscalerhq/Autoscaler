@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"google.golang.org/api/compute/v1"
+	"google.golang.org/api/option"
 	"io/ioutil"
 	"net/http"
 	"os"
