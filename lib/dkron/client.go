@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -19,10 +20,11 @@ type Job struct {
 	ErrorCount     int                          `json:"error_count,omitempty"`
 	LastSuccess    string                       `json:"last_success,omitempty"`
 	LastError      string                       `json:"last_error,omitempty"`
-	Disabled       bool                         `json:"disabled,omitempty"`
+	Disabled       bool                         `json:"disabled"`
+	Ephemeral      bool                         `json:"ephemeral"`
 	Tags           map[string]string            `json:"tags,omitempty"`
 	Metadata       map[string]string            `json:"metadata,omitempty"`
-	Retries        int                          `json:"retries,omitempty"`
+	Retries        *int                         `json:"retries,omitempty"`
 	ParentJob      string                       `json:"parent_job,omitempty"`
 	DependentJobs  []string                     `json:"dependent_jobs,omitempty"`
 	Processors     map[string]map[string]string `json:"processors,omitempty"`
@@ -51,6 +53,7 @@ func NewClient(baseURL string) *Client {
 func (c *Client) CreateOrUpdateJob(job Job, runOnCreate bool) (*Job, error) {
 	url := fmt.Sprintf("%s/jobs?runoncreate=%t", c.BaseURL, runOnCreate)
 	jobData, err := json.Marshal(job)
+	println("jobData: ", string(jobData))
 	if err != nil {
 		return nil, err
 	}
@@ -66,10 +69,26 @@ func (c *Client) CreateOrUpdateJob(job Job, runOnCreate bool) (*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			println("failed to close body: ", err)
+		}
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusCreated {
-		return nil, fmt.Errorf("failed to create or update job, status code: %d", resp.StatusCode)
+		// Read the response body
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println("Error reading response body:", err)
+		}
+
+		// Convert the body to a string
+		bodyString := string(body)
+		fmt.Println(bodyString)
+
+		return nil, fmt.Errorf("failed to create or update job, status code: %d, %s", resp.StatusCode, bodyString)
 	}
 
 	var createdJob Job
@@ -181,4 +200,90 @@ func (c *Client) ShowJobByName(jobName string) (*Job, error) {
 	}
 
 	return &job, nil
+}
+
+// GetStatus retrieves the current status of the Dkron node.
+func (c *Client) GetStatus() (map[string]interface{}, error) {
+	url := fmt.Sprintf("%s/", c.BaseURL)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			println("failed to close body: ", err)
+		}
+	}(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get status, status code: %d", resp.StatusCode)
+	}
+
+	var status map[string]interface{}
+	err = json.NewDecoder(resp.Body).Decode(&status)
+	if err != nil {
+		return nil, err
+	}
+
+	return status, nil
+}
+
+// GetLeader retrieves the current leader of the Dkron cluster.
+func (c *Client) GetLeader() (map[string]interface{}, error) {
+	url := fmt.Sprintf("%s/leader", c.BaseURL)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get leader, status code: %d", resp.StatusCode)
+	}
+
+	var leader map[string]interface{}
+	err = json.NewDecoder(resp.Body).Decode(&leader)
+	if err != nil {
+		return nil, err
+	}
+
+	return leader, nil
+}
+
+// GetBusy retrieves the currently running executions.
+func (c *Client) GetBusy() ([]map[string]interface{}, error) {
+	url := fmt.Sprintf("%s/busy", c.BaseURL)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to get busy executions, status code: %d", resp.StatusCode)
+	}
+
+	var executions []map[string]interface{}
+	err = json.NewDecoder(resp.Body).Decode(&executions)
+	if err != nil {
+		return nil, err
+	}
+
+	return executions, nil
 }
