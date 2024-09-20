@@ -12,7 +12,7 @@ var azureLock = &sync.Mutex{}
 var azureCredential azcore.TokenCredential
 
 // GetAzureCredential returns a singleton instance of an Azure credential
-func CetAzureCredential() azcore.TokenCredential {
+func GetAzureCredential() azcore.TokenCredential {
 	if azureCredential == nil {
 		azureLock.Lock()
 		defer azureLock.Unlock()

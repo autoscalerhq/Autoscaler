@@ -12,19 +12,22 @@ var awsLock = &sync.Mutex{}
 var awsSession *session.Session
 
 // GetAWSSession returns a singleton instance of an AWS session
-func GetAWSSession() *session.Session {
+func GetAWSSession() (*session.Session, error) {
 	if awsSession == nil {
 		awsLock.Lock()
 		defer awsLock.Unlock()
 		if awsSession == nil {
 			fmt.Println("Creating single AWS session instance now.")
+
 			sess, err := session.NewSession(&aws.Config{
-				Region: aws.String("us-west-2"), // Change the region as per your requirement
+				Region: aws.String("us-east-1"), // Change the region as per your requirement
 			})
+
 			if err != nil {
 				fmt.Println("Error creating AWS session:", err)
-				return nil
+				return nil, err
 			}
+
 			awsSession = sess
 		} else {
 			fmt.Println("AWS session instance already created.")
@@ -33,5 +36,5 @@ func GetAWSSession() *session.Session {
 		fmt.Println("AWS session instance already created.")
 	}
 
-	return awsSession
+	return awsSession, nil
 }
