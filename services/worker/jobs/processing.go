@@ -57,11 +57,11 @@ func processJob(subject string, data []byte) {
 	case "client":
 		SyncClientJob()
 	case "sync.aws":
-
+		fetchAWSPricing()
 	case "sync.azure":
-
+		fetchAzurePricing()
 	case "sync.gcp":
-
+		fetchGCPPricing()
 	default:
 		println("Unknown job type: %s", jobType)
 	}
