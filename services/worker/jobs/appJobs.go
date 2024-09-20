@@ -26,9 +26,9 @@ func CreateClientSyncCron(client *dkron.Client) error {
 		Tags: map[string]string{
 			"critical": "true",
 		},
-		Schedule:    "0 */15 * * * *",
-		Executor:    "nats",
-		Concurrency: "forbid",
+		Schedule: "0 */15 * * * *",
+		Executor: "nats",
+		//Concurrency: "forbid",
 		ExecutorConfig: map[string]string{
 			"url":     "nats://host.docker.internal:4222",
 			"message": "{\"newSubject\": \"job.client\"}",
@@ -61,9 +61,9 @@ func CreatePricePullCron(client *dkron.Client) error {
 		Tags: map[string]string{
 			"critical": "true",
 		},
-		Schedule:    "@daily",
-		Executor:    "nats",
-		Concurrency: "forbid",
+		Schedule: "@daily",
+		Executor: "nats",
+		//Concurrency: "forbid",
 		ExecutorConfig: map[string]string{
 			"url":     "nats://host.docker.internal:4222",
 			"subject": "job.init",

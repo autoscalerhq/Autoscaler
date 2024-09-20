@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"fmt"
+	"github.com/autoscalerhq/autoscaler/internal/bootstrap"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
@@ -42,7 +43,17 @@ var services = map[string]ServiceDetails{
 	"ElasticBeanstalk": {ServiceCode: "ElasticBeanstalk", ServiceName: "Elastic Beanstalk"},
 }
 
-func fetchAWSPricing(sess *session.Session, db *gorm.DB) {
+func fetchAWSPricing() {
+
+	sess, err := bootstrap.GetAWSSession()
+	if err != nil {
+		fmt.Println("Error getting aws session:", err)
+	}
+
+	db, err := bootstrap.GetDBInstance()
+	if err != nil {
+		fmt.Println("Error getting database session:", err)
+	}
 
 	// Get all regions
 	regions, err := getAllRegions(sess)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/autoscalerhq/autoscaler/internal/bootstrap"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/option"
 	"io/ioutil"
@@ -12,7 +13,6 @@ import (
 	"sync"
 	"time"
 
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -31,16 +31,13 @@ var gcpServices = map[string]GCPServiceDetails{
 	"AppEngine":     {ServiceName: "App Engine"},
 }
 
-func main() {
-	// Connect to the database
-	dsn := "host=localhost user=youruser password=yourpassword dbname=yourdb port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect to database")
-	}
+func fetchGCPPricing() {
+	_ = bootstrap.GetGCPClient()
 
-	// Auto-migrate the schema to the PostgreSQL database
-	db.AutoMigrate(&CloudPricing{})
+	db, err := bootstrap.GetDBInstance()
+	if err != nil {
+		fmt.Println("Error getting database session:", err)
+	}
 
 	// Authenticate with GCP and fetch the list of available regions
 	regions, err := getGCPRegions()

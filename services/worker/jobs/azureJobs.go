@@ -3,7 +3,7 @@ package jobs
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/autoscalerhq/autoscaler/internal/bootstrap"
 	"gorm.io/gorm"
 	"io"
 	"net/http"
@@ -74,7 +74,14 @@ func getAzureRegions(accessToken string) ([]string, error) {
 	return regions, nil
 }
 
-func fetchAzurePricing(sess *session.Session, db *gorm.DB) {
+func fetchAzurePricing() {
+
+	_ = bootstrap.GetAzureCredential()
+
+	db, err := bootstrap.GetDBInstance()
+	if err != nil {
+		fmt.Println("Error getting database session:", err)
+	}
 
 	// List of Azure regions (you can define these or fetch them dynamically)
 	regions := []string{"eastus", "westus", "westeurope", "southeastasia"}
