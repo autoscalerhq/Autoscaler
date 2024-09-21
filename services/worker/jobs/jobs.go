@@ -100,6 +100,7 @@ func InitializeAppJobs() {
 	if err != nil {
 		println("Error creating client sync cron")
 	}
+
 	err = CreatePricePullCron(client)
 	if err != nil {
 		println("Error creating price pull cron")
