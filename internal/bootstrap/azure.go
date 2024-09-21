@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -12,7 +13,12 @@ var azureLock = &sync.Mutex{}
 var azureCredential azcore.TokenCredential
 
 // GetAzureCredential returns a singleton instance of an Azure credential
-func GetAzureCredential() azcore.TokenCredential {
+func GetAzureCredential() (azcore.TokenCredential, error) {
+
+	if shuttingDown {
+		return nil, errors.New("sys shutdown")
+	}
+
 	if azureCredential == nil {
 		azureLock.Lock()
 		defer azureLock.Unlock()
@@ -21,9 +27,15 @@ func GetAzureCredential() azcore.TokenCredential {
 			cred, err := azidentity.NewDefaultAzureCredential(nil)
 			if err != nil {
 				fmt.Println("Error creating Azure credential:", err)
-				return nil
+				return nil, errors.New("error creating credential")
 			}
 			azureCredential = cred
+
+			RegisterCleanup(func() {
+				fmt.Println("Cleanup Azure session resources if needed.")
+				// Add any cleanup logic here for the session if required
+				azureCredential = nil
+			})
 		} else {
 			fmt.Println("Azure credential instance already created.")
 		}
@@ -31,5 +43,5 @@ func GetAzureCredential() azcore.TokenCredential {
 		fmt.Println("Azure credential instance already created.")
 	}
 
-	return azureCredential
+	return azureCredential, nil
 }

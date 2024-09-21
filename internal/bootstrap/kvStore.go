@@ -16,6 +16,10 @@ var kvStoreMap = make(map[string]jetstream.KeyValue)
 // The config is optional; if not provided, a default configuration will be used.
 func GetKVStore(configs ...jetstream.KeyValueConfig) (jetstream.KeyValue, context.Context, error) {
 
+	if shuttingDown {
+		return nil, nil, errors.New("sys shutdown")
+	}
+
 	var config jetstream.KeyValueConfig
 
 	if len(configs) > 0 {
@@ -51,5 +55,13 @@ func GetKVStore(configs ...jetstream.KeyValueConfig) (jetstream.KeyValue, contex
 	}
 
 	kvStoreMap[config.Bucket] = kv
+
+	// Register cleanup function if necessary for session
+	RegisterCleanup(func() {
+		fmt.Println("Cleanup all jetstream instances if needed.")
+		// Add any cleanup logic here for the session if required
+		kvStoreMap = nil
+	})
+
 	return kv, ctx, nil
 }

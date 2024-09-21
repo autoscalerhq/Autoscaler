@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -13,6 +14,11 @@ var olapDbInstance *gorm.DB
 
 // GetOLAPDBInstance returns a singleton instance of a GORM database connection for an OLAP database
 func GetOLAPDBInstance() (*gorm.DB, error) {
+
+	if shuttingDown {
+		return nil, errors.New("sys shutdown")
+	}
+
 	if dbInstance == nil {
 		olapDBLock.Lock()
 		defer olapDBLock.Unlock()
@@ -27,6 +33,21 @@ func GetOLAPDBInstance() (*gorm.DB, error) {
 		} else {
 			fmt.Println("GORM database instance already created.")
 		}
+
+		RegisterCleanup(func() {
+			fmt.Println("Cleanup AWS session resources if needed.")
+			// Add any cleanup logic here for the session if required
+			db, err := olapDbInstance.DB()
+			if err != nil {
+				println("Unable to get database connection")
+			} else {
+				err = db.Close()
+				if err != nil {
+					println("Unable to close database connection")
+				}
+			}
+			olapDbInstance = nil
+		})
 	} else {
 		fmt.Println("GORM database instance already created.")
 	}

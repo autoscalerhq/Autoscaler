@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"errors"
 	"fmt"
 	"github.com/autoscalerhq/autoscaler/lib/dkron"
 	"sync"
@@ -10,7 +11,12 @@ var dlock = &sync.Mutex{}
 var dkronClient *dkron.Client
 
 // GetDkronClient returns a singleton instance of a Dkron client
-func GetDkronClient() *dkron.Client {
+func GetDkronClient() (*dkron.Client, error) {
+
+	if shuttingDown {
+		return nil, errors.New("sys shutdown")
+	}
+
 	if dkronClient == nil {
 		dlock.Lock()
 		defer dlock.Unlock()
@@ -25,6 +31,13 @@ func GetDkronClient() *dkron.Client {
 				panic("Could not connect to Dkron server.")
 			}
 
+			// Register cleanup function if necessary for session
+			RegisterCleanup(func() {
+				fmt.Println("Cleanup AWS session resources if needed.")
+				// Add any cleanup logic here for the session if required
+				dkronClient = nil
+			})
+
 		} else {
 			fmt.Println("Dkron client instance already created.")
 		}
@@ -32,5 +45,5 @@ func GetDkronClient() *dkron.Client {
 		fmt.Println("Dkron client instance already created.")
 	}
 
-	return dkronClient
+	return dkronClient, nil
 }

@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -14,6 +15,11 @@ var flagdProviderInstance *flagd.Provider
 
 // GetFlagdProviderInstance returns a singleton instance of the flagd provider
 func GetFeatureFlagInstance() (*flagd.Provider, error) {
+
+	if shuttingDown {
+		return nil, errors.New("sys shutdown")
+	}
+
 	if flagdProviderInstance == nil {
 		flagdProviderLock.Lock()
 		defer flagdProviderLock.Unlock()
@@ -43,6 +49,15 @@ func GetFeatureFlagInstance() (*flagd.Provider, error) {
 			}
 
 			flagdProviderInstance = provider
+
+			// Register cleanup function if necessary for session
+			RegisterCleanup(func() {
+				fmt.Println("Cleanup FF session resources if needed.")
+				// Add any cleanup logic here for the session if required
+				flagdProviderInstance.Shutdown()
+				flagdProviderInstance = nil
+			})
+
 		} else {
 			fmt.Println("Flagd provider instance already created.")
 		}

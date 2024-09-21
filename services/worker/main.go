@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"github.com/autoscalerhq/autoscaler/internal/bootstrap"
 	"github.com/autoscalerhq/autoscaler/services/worker/jobs"
 	"github.com/joho/godotenv"
+	"os"
+	"os/signal"
 	"strings"
 )
 
@@ -33,9 +36,13 @@ func main() {
 
 	go jobs.PipeSubjectsToJetstream()
 
-	// Wait indefinitely
-	select {}
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
+	// Wait for the interrupt signal to gracefully shut down the server with a timeout of 10 seconds.
+	<-ctx.Done()
+
+	bootstrap.Shutdown()
 }
 
 func parseJobTypes(jobTypes string) []string {

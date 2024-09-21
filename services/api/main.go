@@ -124,8 +124,6 @@ func main() {
 	}
 	middleware.ApplyMiddleware(e, middlewareParams)
 	routes.Route(e, middlewareParams)
-	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
-	defer stop()
 
 	// Start server
 	go func() {
@@ -142,4 +140,6 @@ func main() {
 	if err := e.Shutdown(ctx); err != nil {
 		e.Logger.Fatal(err)
 	}
+
+	bootstrap.Shutdown()
 }

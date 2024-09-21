@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -13,6 +14,11 @@ var awsSession *session.Session
 
 // GetAWSSession returns a singleton instance of an AWS session
 func GetAWSSession() (*session.Session, error) {
+
+	if shuttingDown {
+		return nil, errors.New("sys shutdown")
+	}
+
 	if awsSession == nil {
 		awsLock.Lock()
 		defer awsLock.Unlock()
@@ -29,6 +35,13 @@ func GetAWSSession() (*session.Session, error) {
 			}
 
 			awsSession = sess
+
+			// Register cleanup function if necessary for session
+			RegisterCleanup(func() {
+				fmt.Println("Cleanup AWS session resources if needed.")
+				// Add any cleanup logic here for the session if required
+				awsSession = nil
+			})
 		} else {
 			fmt.Println("AWS session instance already created.")
 		}

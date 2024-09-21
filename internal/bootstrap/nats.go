@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"sync"
@@ -14,6 +15,11 @@ var natsConn *nats.Conn
 
 // GetNatsConn returns a singleton instance of a NATS connection
 func GetNatsConn() (*nats.Conn, error) {
+
+	if shuttingDown {
+		return nil, errors.New("sys shutdown")
+	}
+
 	if natsConn == nil {
 		natsLock.Lock()
 		defer natsLock.Unlock()
@@ -41,6 +47,15 @@ func GetNatsConn() (*nats.Conn, error) {
 				return nil, fmt.Errorf("failed to connect to nats: %w", err)
 			}
 			natsConn = nc
+
+			// Register cleanup function if necessary for session
+			RegisterCleanup(func() {
+				fmt.Println("Cleanup jetstream if needed.")
+				// Add any cleanup logic here for the session if required
+				natsConn.Close()
+				natsConn = nil
+			})
+
 		} else {
 			fmt.Println("NATS connection instance already created.")
 		}
