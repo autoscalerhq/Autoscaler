@@ -53,7 +53,6 @@ func NewClient(baseURL string) *Client {
 func (c *Client) CreateOrUpdateJob(job Job, runOnCreate bool) (*Job, error) {
 	url := fmt.Sprintf("%s/jobs?runoncreate=%t", c.BaseURL, runOnCreate)
 	jobData, err := json.Marshal(job)
-	println("jobData: ", string(jobData))
 	if err != nil {
 		return nil, err
 	}
