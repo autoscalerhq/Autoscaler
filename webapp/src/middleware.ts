@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { SessionContainer } from "supertokens-node/recipe/session";
 import { withSession } from "supertokens-node/nextjs";
 import { ensureSuperTokensInit } from "~/config/supertokens/backend";
+import {reportException} from '~/lib/errors';
 
 ensureSuperTokensInit();
 
@@ -24,7 +25,7 @@ export async function middleware(
   }
 
   return withSession(request, async (err, session) => {
-    reportError(err);
+    reportException(err);
     if (err) {
       return NextResponse.json(err, { status: 500 });
     }
