@@ -32,7 +32,7 @@ var gcpServices = map[string]GCPServiceDetails{
 }
 
 func fetchGCPPricing() {
-	_ = bootstrap.GetGCPClient()
+	_, _ = bootstrap.GetGCPClient()
 
 	db, err := bootstrap.GetDBInstance()
 	if err != nil {

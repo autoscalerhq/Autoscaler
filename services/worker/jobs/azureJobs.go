@@ -76,7 +76,7 @@ func getAzureRegions(accessToken string) ([]string, error) {
 
 func fetchAzurePricing() {
 
-	_ = bootstrap.GetAzureCredential()
+	_, _ = bootstrap.GetAzureCredential()
 
 	db, err := bootstrap.GetDBInstance()
 	if err != nil {

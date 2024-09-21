@@ -91,9 +91,12 @@ func CreateQueues() error {
 
 func InitializeAppJobs() {
 
-	client := bootstrap.GetDkronClient()
+	client, err := bootstrap.GetDkronClient()
+	if err != nil {
+		println("Error getting dkron client")
+	}
 
-	err := CreateClientSyncCron(client)
+	err = CreateClientSyncCron(client)
 	if err != nil {
 		println("Error creating client sync cron")
 	}
