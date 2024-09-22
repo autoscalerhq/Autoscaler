@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/nats-io/nats.go/jetstream"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho" // nolint:staticcheck  // deprecated.
 )
 
 type NatsKeyValue struct {
@@ -27,6 +28,7 @@ func ApplyMiddleware(e *echo.Echo, params MiddlewareParams) {
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
 	e.Use(TracingMiddleware())
 	e.Use(middleware.Recover())
+	e.Use(otelecho.Middleware("echo-conn-server"))
 	ApplyAuthAndCorsMiddleware(e)
 }
 
