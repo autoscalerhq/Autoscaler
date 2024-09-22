@@ -1,0 +1,61 @@
+##extensions:
+##  basicauth/otlp:
+##    client_auth:
+##      username: admin
+##      password: admin
+#
+#exporters:
+##  loki:
+##    endpoint: http://0.0.0.0:3100/otlp/v1/logs
+#  otlphttp: # tempo
+#    endpoint: http://0.0.0.0:3200/
+##  prometheus:
+##    endpoint: http://0.0.0.0:9090/
+#
+#service:
+#  pipelines: # section that can contain multiple subsections, one per pipeline
+#    traces: # type of the pipeline
+#      #      receivers: [otlp, zipkin]
+#      #      processors: [memory_limiter, batch]
+#      #      exporters: [otlp, zipkin, otlphttp]
+#      receivers: [otlp]
+#      processors: []
+#      exporters: [otlphttp]
+##    metrics:
+##      receivers: [otlp]
+##      processors: [ ]
+##      exporters: [prometheus]
+##    logs:
+##      receivers: [otlp]
+##      processors: [ ]
+##      exporters: [loki]
+#
+#receivers:
+#  otlp:
+#    protocols:
+#      grpc:
+#        endpoint: "0.0.0.0:4317"
+#      http:
+#        endpoint: "0.0.0.0:8887"
+#        cors:
+#          allowed_origins:
+#            - http://localhost
+#          allowed_headers:
+#            - Test
+#          max_age: 7200
+
+receivers:
+  otlp:
+    protocols:
+      http:
+
+exporters:
+  otlp:
+    endpoint: "tempo:4318"
+    tls:
+      insecure: true # TODO: don't leave this insecure
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [otlp]
