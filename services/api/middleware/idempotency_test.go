@@ -3,7 +3,7 @@ package middleware
 import (
 	"context"
 	"fmt"
-	"github.com/autoscalerhq/autoscaler/internal/nats"
+	"github.com/autoscalerhq/autoscaler/internal/bootstrap"
 	"github.com/autoscalerhq/autoscaler/services/api/util/apphttp"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -27,7 +27,10 @@ const (
 )
 
 func teardown(key string) error {
-	kv, idempotentCtx, err := natutils.NewKeyValueStore(jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+	kv, idempotentCtx, err := bootstrap.GetKVStore(jetstream.KeyValueConfig{
+		Bucket: "idempotent_requests",
+		TTL:    time.Hour * 24,
+	})
 	if err != nil {
 		return fmt.Errorf("error getting new key value store: %w", err)
 	}
@@ -42,7 +45,11 @@ func teardown(key string) error {
 
 func setup() *httptest.Server {
 
-	kv, idempotentCtx, err := natutils.NewKeyValueStore(jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+	kv, idempotentCtx, err := bootstrap.GetKVStore(jetstream.KeyValueConfig{
+		Bucket: "idempotent_requests",
+		TTL:    time.Hour * 24,
+	})
+
 	if err != nil {
 		return nil
 	}
@@ -338,8 +345,8 @@ func TestTwoDifferentKeysSameBodiesConcurrentRequests(t *testing.T) {
 
 func TestListKeys(t *testing.T) {
 
-	kv, ctx, err := natutils.NewKeyValueStore(jetstream.KeyValueConfig{
-		Bucket: IdempotencyBucket,
+	kv, ctx, err := bootstrap.GetKVStore(jetstream.KeyValueConfig{
+		Bucket: "idempotent_requests",
 	})
 
 	if err != nil {

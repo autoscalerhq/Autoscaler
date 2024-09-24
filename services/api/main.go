@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"errors"
-	natutils "github.com/autoscalerhq/autoscaler/internal/nats"
+	"github.com/autoscalerhq/autoscaler/internal/bootstrap"
 	"github.com/autoscalerhq/autoscaler/services/api/auth"
 	"github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/monitoring"
@@ -11,10 +11,7 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
-	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
-	"github.com/open-feature/go-sdk/openfeature"
 	"github.com/supertokens/supertokens-golang/supertokens"
 	m "go.opentelemetry.io/otel/metric"
 	t "go.opentelemetry.io/otel/trace"
@@ -57,41 +54,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	err = godotenv.Load()
 	if err != nil {
 		// Todo this should be handled better before going to production
 		//log.Fatal("Error loading .env file")
-	}
-
-	providerOptions := []flagd.ProviderOption{
-		flagd.WithBasicInMemoryCache(),
-		flagd.WithRPCResolver(),
-		flagd.WithHost("localhost"),
-		flagd.WithPort(8013),
-	}
-
-	provider := flagd.NewProvider(providerOptions...)
-	//
-	err = openfeature.SetProvider(provider)
-	if err != nil {
-		println("Open Feature flag setup err: ", err.Error())
-		return
-	}
-
-	// Create an empty evaluation context
-	evalContext := openfeature.NewEvaluationContext("key", map[string]interface{}{})
-
-	err = provider.Init(evalContext)
-	if err != nil {
-		println("Unable to init", err.Error())
-		return
-	}
-
-	//Wait for the provider to be ready
-	ready := waitForProvider(provider, 10*time.Second, 500*time.Millisecond)
-	if !ready {
-		println("Provider not ready after waiting")
-		return
 	}
 
 	// Handle SIGINT (CTRL+C) gracefully.
@@ -140,13 +107,12 @@ func main() {
 	//meter = otel.Meter(name)
 	//logger = otelslog.NewLogger(name) // Replace with actual logger initialization
 
-	nc, err := natutils.GetNatsConn()
-	defer func(nc *nats.Conn) {
-		err := nc.Drain()
-		if err != nil {
-		}
-	}(nc)
-	kv, idempotentCtx, err := natutils.NewKeyValueStore(jetstream.KeyValueConfig{Bucket: "idempotent_requests", TTL: time.Hour * 24})
+	idempotencykv, idempotentCtx, err := bootstrap.GetKVStore(jetstream.KeyValueConfig{
+		Bucket:   "idempotent_requests_api",
+		TTL:      time.Hour * 24,
+		MaxBytes: 1024 * 1024,
+	})
+
 	if err != nil {
 		println(err.Error(), "error getting new key value store")
 		return
@@ -154,12 +120,11 @@ func main() {
 	supertokens.DebugEnabled = true
 	e := echo.New()
 	middlewareParams := middleware.MiddlewareParams{
-		Nats: middleware.NatsKeyValue{KeyValueStore: kv, Context: idempotentCtx},
+		Nats: middleware.NatsKeyValue{KeyValueStore: idempotencykv, Context: idempotentCtx},
 	}
 	middleware.ApplyMiddleware(e, middlewareParams)
 	routes.Route(e, middlewareParams)
-	ctx, stop = signal.NotifyContext(context.Background(), os.Interrupt)
-	defer stop()
+
 	// Start server
 	go func() {
 		if err := e.Start(env.listenAddress); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -175,19 +140,6 @@ func main() {
 	if err := e.Shutdown(ctx); err != nil {
 		e.Logger.Fatal(err)
 	}
-}
 
-// waitForProvider waits for the provider to be ready, with a maximum wait time and retry interval.
-func waitForProvider(provider *flagd.Provider, maxWait time.Duration, interval time.Duration) bool {
-	start := time.Now()
-	for {
-		println("status", provider.Status())
-		if provider.Status() == "READY" {
-			return true
-		}
-		if time.Since(start) > maxWait {
-			return false
-		}
-		time.Sleep(interval)
-	}
+	bootstrap.Shutdown()
 }

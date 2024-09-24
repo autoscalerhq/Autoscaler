@@ -2,147 +2,59 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"github.com/autoscalerhq/autoscaler/lib/dkron"
-	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
-	"time"
+	"github.com/autoscalerhq/autoscaler/internal/bootstrap"
+	"github.com/autoscalerhq/autoscaler/services/worker/jobs"
+	"github.com/joho/godotenv"
+	"os"
+	"os/signal"
+	"strings"
 )
 
 func main() {
 
-	// Create a new Dkron client
-	client := dkron.NewClient("http://localhost:8080/v1")
-
-	name, err := client.ShowJobByName("example_job_nats")
+	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Error showing job:", err)
-		return
+		// Todo this should be handled better before going to production
+		//log.Fatal("Error loading .env file")
 	}
 
-	fmt.Println("Job name", name)
+	jobs.InitializeAppJobs()
 
-	// Example job definition
-	job2 := dkron.Job{
-		Name:     "example_job_nats",
-		Schedule: "@every 1s",
-		Executor: "nats",
-		ExecutorConfig: map[string]string{
-			"url":     "nats://host.docker.internal:4222",
-			"message": "job id",
-			"subject": "events.cron",
-		},
+	// TODO Make this based on a env/refreshable varible
+	// TODO make this able to be configured by env
+	// Determine the subjects to subscribe to
+	// Set up with actual env config
+	subjects := parseJobTypes("*")
+	println("Subscribing to subjects: %v", subjects)
+
+	ctx := context.Background()
+
+	// Set up subscriptions for each subject
+	for _, subject := range subjects {
+		go jobs.StartConsumer(ctx, subject)
 	}
 
-	// Create or update the job
-	createdJob2, err := client.CreateOrUpdateJob(job2, false)
-	if err != nil {
-		fmt.Println("Error creating or updating job:", err)
-		return
-	}
-	fmt.Println("Created/Updated Job:", createdJob2)
+	go jobs.PipeSubjectsToJetstream()
 
-	var servers = "nats://localhost:4222, nats://localhost:4223"
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
-	nc, err := nats.Connect(servers,
-		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
-			fmt.Printf("Got disconnected! Reason: %q\n", err)
-		}),
-		nats.ReconnectHandler(func(nc *nats.Conn) {
-			fmt.Printf("Got reconnected to %v!\n", nc.ConnectedUrl())
-		}),
-		nats.ClosedHandler(func(nc *nats.Conn) {
-			fmt.Printf("Connection closed. Reason: %q\n", nc.LastError())
-		}),
-		nats.ReconnectJitter(500*time.Millisecond, 2*time.Second),
-		nats.MaxReconnects(5),
-		nats.ReconnectWait(2*time.Second),
-	)
+	// Wait for the interrupt signal to gracefully shut down the server with a timeout of 10 seconds.
+	<-ctx.Done()
 
-	if err != nil {
-		println("nats err", err.Error())
-		panic("Failed to connect to NATS")
-	}
-
-	defer func(nc *nats.Conn) {
-		err := nc.Drain()
-		if err != nil {
-			println(err.Error(), "Nats drain err")
-		}
-	}(nc)
-
-	js, err := jetstream.New(nc)
-	if err != nil {
-		println("JetStream err", err)
-		return
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-	defer cancel()
-
-	// Getting work jobs
-	cfg := jetstream.StreamConfig{
-		Name:      "EVENTS",
-		Retention: jetstream.WorkQueuePolicy,
-		Subjects:  []string{"events.>"},
-	}
-
-	ctx, cancel = context.WithTimeout(context.Background(), 2*time.Minute)
-	defer cancel()
-
-	stream, err := js.CreateOrUpdateStream(ctx, cfg)
-	if err != nil {
-		println("Create stream err", err.Error())
-		return
-	}
-	fmt.Println("created the stream")
-	printStreamState(ctx, stream)
-
-	cons, err := stream.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig{
-		Name: "processor-3",
-	})
-
-	if err != nil {
-		println("Create Consumer err", err.Error())
-		return
-	}
-
-	var messageHandler jetstream.MessageHandler = func(msg jetstream.Msg) {
-		println("Msg: ", string(msg.Data()))
-		println("Msg sub: ", msg.Subject())
-		println("Msg headers: ", msg.Headers().Values(""))
-		err := msg.Ack()
-		if err != nil {
-			println(err.Error(), "ack err")
-		}
-	}
-
-	consumeCtx, err := cons.Consume(messageHandler, jetstream.PullMaxMessages(10))
-	defer consumeCtx.Drain()
-
-	if err != nil {
-		println("Consuming messages err", err.Error())
-		return
-	}
-
-	println("Pausing main thread")
-
-	fmt.Println("\n# Stream info with one consumer")
-	printStreamState(ctx, stream)
+	bootstrap.Shutdown()
 }
 
-func printStreamState(ctx context.Context, stream jetstream.Stream) {
-	info, err := stream.Info(ctx)
-	if err != nil {
-		println(err.Error(), "Cant get stream info")
-		return
+func parseJobTypes(jobTypes string) []string {
+	if jobTypes == "*" {
+		return []string{"jobs.>"}
 	}
 
-	b, err := json.MarshalIndent(info.State, "", " ")
-	if err != nil {
-		println(err.Error(), "could not marshal state info")
-		return
+	types := strings.Split(jobTypes, ",")
+	subjects := make([]string, len(types))
+	for i, t := range types {
+		t = strings.TrimSpace(t)
+		subjects[i] = "jobs." + t
 	}
-	fmt.Println(string(b))
+	return subjects
 }
