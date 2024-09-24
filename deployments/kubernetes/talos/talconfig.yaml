@@ -1,0 +1,53 @@
+clusterName: <cluster-name>
+endpoint: https://<kubernetes.endpoint>:6443
+nodes:
+  - hostname: <node-hostname>
+    ipAddress: <node-ip>
+    installDisk: /dev/<install-disk>
+    controlPlane: true
+  - hostname: <node-hostname>
+    ipAddress: <node-ip>
+    installDisk: /dev/<install-disk>
+    controlPlane: false
+  # - hostname: <node-hostname>
+  #   ipAddress: <node-ip>
+  #   installDisk: /dev/<install-disk>
+  #   controlPlane:
+controlPlane:
+  patches:
+    - |-
+      - op: add
+        path: /machine/kubelet/extraMounts
+        value:
+          - destination: /var/lib/longhorn
+            type: bind
+            source: /var/lib/longhorn
+            options:
+              - bind
+              - rshared
+              - rw
+  schematic:
+    customization:
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/iscsi-tools
+          - siderolabs/util-linux-tools
+worker:
+  patches:
+    - |-
+      - op: add
+        path: /machine/kubelet/extraMounts
+        value:
+          - destination: /var/lib/longhorn
+            type: bind
+            source: /var/lib/longhorn
+            options:
+              - bind
+              - rshared
+              - rw
+  schematic:
+    customization:
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/iscsi-tools
+          - siderolabs/util-linux-tools
