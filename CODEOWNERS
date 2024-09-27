@@ -1,0 +1,526 @@
+# This file is generated automatically by OpenSauced pizza-cli. DO NOT EDIT. Stay saucy!
+#
+# Generated with command:
+# $ pizza generate codeowners Autoscaler/
+
+.air.toml @Zac Clifton @EdWrld
+.cerbos-hub.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+.example.env @Zac Clifton @EdWrld @Jason Gallavin
+.gitattributes @Joshua McCoy @Zac Clifton @Jason Gallavin
+.github/ISSUE_TEMPLATE.md @Zac Clifton
+.github/ISSUE_TEMPLATE/bug_report.yml @Zac Clifton
+.github/ISSUE_TEMPLATE/docs_feedback.yml @Zac Clifton
+.github/ISSUE_TEMPLATE/feature_request.yml @Zac Clifton
+.github/ISSUE_TEMPLATE/polishing.yml @Zac Clifton
+.github/PULL_REQUEST_TEMPLATE.md @Zac Clifton @Joshua McCoy @Jason Gallavin
+.github/labeler.yml @Zac Clifton
+.github/workflows/on-pr.yml @Zac Clifton
+.github/workflows/on-stale-pr.yml @Zac Clifton
+.github/workflows/reuseable-check-crate.yml @Zac Clifton
+.github/workflows/scripts/add-triage-label.js @Zac Clifton @Joshua McCoy @Jason Gallavin
+.github/workflows/scripts/check_coverage.sh @Zac Clifton
+.github/workflows/scripts/check_fixmes.sh @Zac Clifton
+.github/workflows/scripts/check_line_endings.sh @Zac Clifton
+.github/workflows/scripts/check_todos.sh @Zac Clifton
+.github/workflows/scripts/community-contribution-label.js @Zac Clifton
+.github/workflows/scripts/is-community-contributor.js @Zac Clifton
+.github/workflows/scripts/milestone-assigner.js @Zac Clifton
+.github/workflows/scripts/run_converage.sh @Zac Clifton
+.github/workflows/scripts/upload_coverage_on_codecov.sh @Zac Clifton
+.gitignore @Zac Clifton @Jason Gallavin @Joshua McCoy
+.golangci.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+.idea/.gitignore @Jason Gallavin
+.idea/autoscaler.iml @Zac Clifton @Jason Gallavin @Joshua McCoy
+.idea/codeStyles/codeStyleConfig.xml @Zac Clifton @Jason Gallavin
+.idea/compiler.xml @Jason Gallavin @Zac Clifton
+.idea/dataSources.xml @Zac Clifton @Jason Gallavin @Joshua McCoy
+.idea/developer-tools.xml @Zac Clifton @Jason Gallavin @EdWrld
+.idea/jsLibraryMappings.xml @Zac Clifton @Jason Gallavin @Joshua McCoy
+.idea/material_theme_project_new.xml @Jason Gallavin @Zac Clifton
+.idea/runConfigurations/API.xml @Zac Clifton @EdWrld
+.idea/runConfigurations/API.xml @Zac Clifton @EdWrld
+.idea/runConfigurations/API___Watch_Test.xml @Zac Clifton @Joshua McCoy @Jason Gallavin
+.idea/runConfigurations/Gen_Docs.xml @EdWrld @Jason Gallavin @Zac Clifton
+.idea/runConfigurations/Run_Api.xml @Zac Clifton @Jason Gallavin
+.idea/runConfigurations/Run_api.xml @Zac Clifton @EdWrld @Jason Gallavin
+CITATION.cff @Zac Clifton @Jason Gallavin
+CONTRIBUTING.md @Jason Gallavin @Zac Clifton
+Earthfile @Zac Clifton @EdWrld @Jason Gallavin
+README.md @Zac Clifton @Pawan Jain @Jason Gallavin
+api/.air.toml @Zac Clifton @EdWrld
+api/.air.toml @Zac Clifton @EdWrld
+api/docs/docs.go @Zac Clifton @EdWrld
+api/docs/docs.go @Zac Clifton @EdWrld
+api/docs/swagger.json @Zac Clifton @EdWrld
+api/docs/swagger.json @Zac Clifton @EdWrld
+api/docs/swagger.yaml @Zac Clifton @EdWrld
+api/docs/swagger.yaml @Zac Clifton @EdWrld
+api/main.go @EdWrld @Zac Clifton
+api/middleware/idempotent.go @EdWrld
+api/middleware/idempotent.go @EdWrld
+api/middleware/otel.go @EdWrld @Zac Clifton
+api/middleware/otel.go @Zac Clifton @EdWrld
+api/otel.go @EdWrld @Zac Clifton
+api/otel.go @EdWrld
+api/otel.go @Zac Clifton
+api/routes/health_check.go @Zac Clifton @EdWrld
+api/routes/health_check.go @Zac Clifton @EdWrld
+api/tmp/build-errors.log @EdWrld
+api/util/http.go @EdWrld
+api/util/http.go @EdWrld
+apps/.gitignore @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/Cargo.toml @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/README.md @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/Shuttle.toml @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/api/.dockerignore @Zac Clifton @Jason Gallavin @Joshua McCoy
+apps/api/Cargo.toml @Zac Clifton @Joshua McCoy @Jason Gallavin
+apps/api/Dockerfile @Zac Clifton @Joshua McCoy @Jason Gallavin
+apps/api/go.mod @Jason Gallavin
+apps/api/go.sum @Jason Gallavin
+apps/api/main.go @Jason Gallavin
+apps/api/src/main.rs @Zac Clifton @Joshua McCoy @Jason Gallavin
+apps/api/supertokens.go @Jason Gallavin
+apps/api/supertokens.go @Jason Gallavin
+apps/apiold/.gitignore @Zac Clifton
+apps/apiold/Cargo.toml @Zac Clifton
+apps/apiold/migrations/20230415200225_schema.sql @Zac Clifton
+apps/apiold/src/auth.rs @Zac Clifton
+apps/apiold/src/cerbos.rs @Zac Clifton
+apps/apiold/src/customers.rs @Zac Clifton
+apps/apiold/src/dashboard.rs @Zac Clifton
+apps/apiold/src/deals.rs @Zac Clifton
+apps/apiold/src/mail.rs @Zac Clifton
+apps/apiold/src/main.rs @Zac Clifton
+apps/apiold/src/payments.rs @Zac Clifton
+apps/apiold/src/router.rs @Zac Clifton
+apps/apiold/src/shuttle.rs @Zac Clifton
+apps/env_config/Cargo.toml @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/env_config/src/api_config.rs @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/env_config/src/lib.rs @Zac Clifton @Jason Gallavin @Joshua McCoy
+apps/env_config/src/shared_setup_config.rs @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/env_config/src/worker_config.rs @Jason Gallavin @Joshua McCoy @Zac Clifton
+apps/env_variables.md @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/generate_docs/Cargo.toml @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/generate_docs/src/main.rs @Jason Gallavin @Joshua McCoy @Zac Clifton
+apps/shared_setup/Cargo.toml @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/shared_setup/src/lib.rs @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/shared_setup/src/pyroscope/mod.rs @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/supertokens-web/.gitignore @Jason Gallavin
+apps/supertokens-web/LICENSE.md @Jason Gallavin
+apps/supertokens-web/frontend/.gitignore @Jason Gallavin
+apps/supertokens-web/frontend/.gitignore @Jason Gallavin
+apps/supertokens-web/frontend/LICENSE.md @Jason Gallavin
+apps/supertokens-web/frontend/LICENSE.md @Jason Gallavin
+apps/supertokens-web/frontend/package.json @Jason Gallavin
+apps/supertokens-web/frontend/public/index.html @Jason Gallavin
+apps/supertokens-web/frontend/public/index.html @Jason Gallavin
+apps/supertokens-web/frontend/public/manifest.json @Jason Gallavin
+apps/supertokens-web/frontend/public/manifest.json @Jason Gallavin
+apps/supertokens-web/frontend/public/robots.txt @Jason Gallavin
+apps/supertokens-web/frontend/public/robots.txt @Jason Gallavin
+apps/supertokens-web/frontend/src/App.css @Jason Gallavin
+apps/supertokens-web/frontend/src/App.css @Jason Gallavin
+apps/supertokens-web/frontend/src/App.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/App.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/Home/CallAPIView.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/Home/CallAPIView.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/Home/Home.css @Jason Gallavin
+apps/supertokens-web/frontend/src/Home/Home.css @Jason Gallavin
+apps/supertokens-web/frontend/src/Home/SuccessView.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/Home/SuccessView.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/Home/index.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/Home/index.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/arrow-right-icon.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/arrow-right-icon.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/blogs-icon.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/blogs-icon.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/celebrate-icon.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/celebrate-icon.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/guide-icon.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/guide-icon.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/index.ts @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/index.ts @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/separator-line.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/separator-line.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/sign-out-icon.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/assets/images/sign-out-icon.svg @Jason Gallavin
+apps/supertokens-web/frontend/src/config.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/config.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/index.css @Jason Gallavin
+apps/supertokens-web/frontend/src/index.css @Jason Gallavin
+apps/supertokens-web/frontend/src/index.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/index.tsx @Jason Gallavin
+apps/supertokens-web/frontend/src/react-app-env.d.ts @Jason Gallavin
+apps/supertokens-web/frontend/src/react-app-env.d.ts @Jason Gallavin
+apps/supertokens-web/frontend/tsconfig.json @Jason Gallavin
+apps/supertokens-web/frontend/tsconfig.json @Jason Gallavin
+apps/supertokens-web/package.json @Jason Gallavin
+apps/supertokens-web/public/index.html @Jason Gallavin
+apps/supertokens-web/public/manifest.json @Jason Gallavin
+apps/supertokens-web/public/robots.txt @Jason Gallavin
+apps/supertokens-web/src/App.css @Jason Gallavin
+apps/supertokens-web/src/App.tsx @Jason Gallavin
+apps/supertokens-web/src/Home/CallAPIView.tsx @Jason Gallavin
+apps/supertokens-web/src/Home/Home.css @Jason Gallavin
+apps/supertokens-web/src/Home/SuccessView.tsx @Jason Gallavin
+apps/supertokens-web/src/Home/index.tsx @Jason Gallavin
+apps/supertokens-web/src/assets/images/arrow-right-icon.svg @Jason Gallavin
+apps/supertokens-web/src/assets/images/blogs-icon.svg @Jason Gallavin
+apps/supertokens-web/src/assets/images/celebrate-icon.svg @Jason Gallavin
+apps/supertokens-web/src/assets/images/guide-icon.svg @Jason Gallavin
+apps/supertokens-web/src/assets/images/index.ts @Jason Gallavin
+apps/supertokens-web/src/assets/images/separator-line.svg @Jason Gallavin
+apps/supertokens-web/src/assets/images/sign-out-icon.svg @Jason Gallavin
+apps/supertokens-web/src/config.tsx @Jason Gallavin
+apps/supertokens-web/src/index.css @Jason Gallavin
+apps/supertokens-web/src/index.tsx @Jason Gallavin
+apps/supertokens-web/src/react-app-env.d.ts @Jason Gallavin
+apps/supertokens-web/tsconfig.json @Jason Gallavin
+apps/web/.eslintrc.json @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/.gitignore @Jason Gallavin
+apps/web/.idea/.gitignore @Zac Clifton @Jason Gallavin @Joshua McCoy
+apps/web/.idea/inspectionProfiles/Project_Default.xml @Zac Clifton @Joshua McCoy @Jason Gallavin
+apps/web/.idea/material_theme_project_new.xml @Jason Gallavin
+apps/web/.idea/modules.xml @Zac Clifton @Joshua McCoy @Jason Gallavin
+apps/web/.idea/vcs.xml @Zac Clifton @Jason Gallavin @Joshua McCoy
+apps/web/.idea/web.iml @Zac Clifton @Jason Gallavin @Joshua McCoy
+apps/web/next.config.js @Jason Gallavin @Joshua McCoy @Zac Clifton
+apps/web/package.json @Jason Gallavin @Zac Clifton @Joshua McCoy
+apps/web/pnpm-lock.yaml @Jason Gallavin @Joshua McCoy @Zac Clifton
+apps/web/postcss.config.js @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/public/next.svg @Zac Clifton @Jason Gallavin @Joshua McCoy
+apps/web/public/vercel.svg @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/app/api-client/ApiClient.ts @Jason Gallavin
+apps/web/src/app/api-client/NextjsApiClient.ts @Jason Gallavin
+apps/web/src/app/api-client/client-hooks.ts @Jason Gallavin
+apps/web/src/app/api-client/server-hooks.ts @Jason Gallavin
+apps/web/src/app/api/auth/\[...path\]/route.ts @Jason Gallavin
+apps/web/src/app/api/user/route.ts @Jason Gallavin
+apps/web/src/app/auth/\[\[...path\]\]/page.tsx @Jason Gallavin
+apps/web/src/app/components/callApiButton.tsx @Jason Gallavin
+apps/web/src/app/components/callApiButton.tsx @Jason Gallavin
+apps/web/src/app/components/home.tsx @Jason Gallavin
+apps/web/src/app/components/home.tsx @Jason Gallavin
+apps/web/src/app/components/linksComponent.tsx @Jason Gallavin
+apps/web/src/app/components/linksComponent.tsx @Jason Gallavin
+apps/web/src/app/components/sessionAuthForNextJS.tsx @Jason Gallavin
+apps/web/src/app/components/sessionAuthForNextJS.tsx @Jason Gallavin
+apps/web/src/app/components/supertokensProvider.tsx @Jason Gallavin
+apps/web/src/app/components/supertokensProvider.tsx @Jason Gallavin
+apps/web/src/app/components/tryRefreshClientComponent.tsx @Jason Gallavin
+apps/web/src/app/components/tryRefreshClientComponent.tsx @Jason Gallavin
+apps/web/src/app/config/appInfo.ts @Jason Gallavin
+apps/web/src/app/config/appInfo.ts @Jason Gallavin
+apps/web/src/app/config/backend.ts @Jason Gallavin
+apps/web/src/app/config/backend.ts @Jason Gallavin
+apps/web/src/app/config/frontend.tsx @Jason Gallavin
+apps/web/src/app/config/frontend.tsx @Jason Gallavin
+apps/web/src/app/config/supertokens/appInfo.ts @Jason Gallavin
+apps/web/src/app/config/supertokens/backend.ts @Jason Gallavin
+apps/web/src/app/config/supertokens/components/AuthContext.tsx @Jason Gallavin
+apps/web/src/app/config/supertokens/components/SuperTokensAuthWrapper.tsx @Jason Gallavin
+apps/web/src/app/config/supertokens/components/sessionAuthForNextJS.tsx @Jason Gallavin
+apps/web/src/app/config/supertokens/components/supertokensProvider.tsx @Jason Gallavin
+apps/web/src/app/config/supertokens/components/tryRefreshClientComponent.tsx @Jason Gallavin
+apps/web/src/app/config/supertokens/frontend.tsx @Jason Gallavin
+apps/web/src/app/config/supertokens/helpers.ts @Jason Gallavin
+apps/web/src/app/globals.css @Jason Gallavin
+apps/web/src/app/layout.tsx @Jason Gallavin
+apps/web/src/app/page.module.css @Jason Gallavin
+apps/web/src/app/page.tsx @Jason Gallavin
+apps/web/src/app/server-page.tsx @Jason Gallavin
+apps/web/src/assets/images/arrow-right-icon.svg @Jason Gallavin
+apps/web/src/assets/images/blogs-icon.svg @Jason Gallavin
+apps/web/src/assets/images/celebrate-icon.svg @Jason Gallavin
+apps/web/src/assets/images/guide-icon.svg @Jason Gallavin
+apps/web/src/assets/images/index.ts @Jason Gallavin
+apps/web/src/assets/images/separator-line.svg @Jason Gallavin
+apps/web/src/assets/images/sign-out-icon.svg @Jason Gallavin
+apps/web/src/components/AuthedLayout.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/components/CustomerSingleModal.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/components/DealSingleModal @Jason Gallavin @Joshua McCoy @Zac Clifton
+apps/web/src/components/Layout.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/components/Metrics.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/components/Navigation.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/components/RecentSales.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/components/SalesChart.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+apps/web/src/components/Sidebar.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/components/TopClients.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/components/navbar.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/middleware.ts @Jason Gallavin
+apps/web/src/pages/_app.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/_document.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/dashboard/customers/\[id\].tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/dashboard/customers/create.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/dashboard/customers/edit.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/dashboard/customers/index.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/dashboard/deals/create.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/dashboard/deals/edit.tsx @Jason Gallavin @Joshua McCoy @Zac Clifton
+apps/web/src/pages/dashboard/deals/index.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/dashboard/index.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/dashboard/upgrade/checkout/failed.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/dashboard/upgrade/checkout/index.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/dashboard/upgrade/checkout/success.tsx @Jason Gallavin @Joshua McCoy @Zac Clifton
+apps/web/src/pages/dashboard/upgrade/index.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/forgot.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/index.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/login.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/pages/pricing.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+apps/web/src/pages/register.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+apps/web/src/stores/zustandStore.ts @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/src/styles/globals.css @Jason Gallavin @Joshua McCoy @Zac Clifton
+apps/web/tailwind.config.js @Joshua McCoy @Zac Clifton @Jason Gallavin
+apps/web/tsconfig.json @Jason Gallavin @Joshua McCoy @Zac Clifton
+apps/web/turbowatch.ts @Joshua McCoy @Zac Clifton @Jason Gallavin
+assets/erd.diagram @Jason Gallavin @Joshua McCoy @Zac Clifton
+atlas.hcl @Jason Gallavin @Zac Clifton @mccoyJosh
+cli/jarvy/Cargo.toml @Joshua McCoy @Zac Clifton @Jason Gallavin
+cli/jarvy/Readme.md @Zac Clifton @Joshua McCoy @Jason Gallavin
+cli/jarvy/src/main.rs @Joshua McCoy @Zac Clifton @Jason Gallavin
+cli/jarvy/src/os_setup.rs @Joshua McCoy @Zac Clifton @Jason Gallavin
+cli/jarvy/src/outputs.rs @Joshua McCoy @Zac Clifton @Jason Gallavin
+cli/jarvy/src/setup.rs @Joshua McCoy @Zac Clifton @Jason Gallavin
+cli/jarvy/src/tools.rs @Zac Clifton @Joshua McCoy @Jason Gallavin
+configs/README.md @Jason Gallavin @Joshua McCoy @Zac Clifton
+configs/flags.json @Zac Clifton @EdWrld @Jason Gallavin
+database/.gitignore @Zac Clifton @Jason Gallavin
+deployments/README.md @Joshua McCoy @Zac Clifton @Jason Gallavin
+docker/config/prometheus.yml @Joshua McCoy @Zac Clifton @Jason Gallavin
+docker/config/tempo-config.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+docker/docker-compose-supertokens.yml @Jason Gallavin
+docker/docker-compose.monitoring.yml @Zac Clifton @EdWrld @Joshua McCoy
+docker/docker-compose.yml @Zac Clifton @Jason Gallavin @Joshua McCoy
+docker/setup.sh @Joshua McCoy @Zac Clifton @Jason Gallavin
+docs/README.md @Zac Clifton @Jason Gallavin @Joshua McCoy
+docs/hello-world.mdx @Joshua McCoy @Zac Clifton @Jason Gallavin
+fern/docs.yml @Zac Clifton @Jason Gallavin @Joshua McCoy
+fern/fern.config.json @Jason Gallavin @Joshua McCoy @Zac Clifton
+go.mod @Zac Clifton @EdWrld @Jason Gallavin
+go.sum @Zac Clifton @Jason Gallavin @EdWrld
+internal/README.md @Zac Clifton @Joshua McCoy @EdWrld
+internal/dkron/client.go @Zac Clifton
+internal/dkron/client.go @Zac Clifton @EdWrld
+internal/hello/hello.go @Zac Clifton @EdWrld @Joshua McCoy
+internal/math/math.go @Zac Clifton
+internal/math/math.go @Zac Clifton
+internal/nats/key_value_stream.go @EdWrld
+internal/nats/key_value_stream.go @EdWrld
+internal/nats/utils.go @Jason Gallavin @Zac Clifton @EdWrld
+lib/README.md @Jason Gallavin
+lib/dkron/client.go @Jason Gallavin
+lib/math/math.go @Zac Clifton @EdWrld @Jason Gallavin
+lib/models/models.go @Zac Clifton @mccoyJosh @Jason Gallavin
+pkg/README.md @Zac Clifton @Joshua McCoy
+pkg/README.md @Zac Clifton @EdWrld
+policy/README.md @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/derived_roles/organization_assignment.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/Env.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/Env_test.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/Service.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/Service_test.yaml @Zac Clifton @Jason Gallavin @Joshua McCoy
+policy/resource_policies/System.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/System_test.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/analytics.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/analytics_test.yaml @Jason Gallavin @Joshua McCoy @Zac Clifton
+policy/resource_policies/api.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/api_test.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/cron.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/cron_test.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/logging.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/logging_test.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/org.yaml @Jason Gallavin @Joshua McCoy @Zac Clifton
+policy/resource_policies/org_test.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/scaler.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/scaler_test.yaml @Jason Gallavin @Joshua McCoy @Zac Clifton
+policy/resource_policies/streaming.yaml @Jason Gallavin @Joshua McCoy @Zac Clifton
+policy/resource_policies/streaming_test.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/testdata/principals.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+policy/resource_policies/testdata/resources.yaml @Joshua McCoy @Zac Clifton @Jason Gallavin
+services/api/.air.toml @Jason Gallavin
+services/api/api.go @Zac Clifton @Joshua McCoy
+services/api/auth/auth.go @Jason Gallavin @Zac Clifton
+services/api/auth/routes.go @Zac Clifton @Jason Gallavin
+services/api/auth/supertokens.go @Zac Clifton @Jason Gallavin
+services/api/docs/docs.go @Jason Gallavin
+services/api/docs/swagger.json @Jason Gallavin
+services/api/docs/swagger.yaml @Jason Gallavin
+services/api/main.go @Zac Clifton @EdWrld @Jason Gallavin
+services/api/middleware/auth.go @Jason Gallavin @Zac Clifton
+services/api/middleware/cors.go @Jason Gallavin @Zac Clifton
+services/api/middleware/ctxExtention.go @Zac Clifton @Jason Gallavin @EdWrld
+services/api/middleware/idempotency_test.go @Zac Clifton @Jason Gallavin
+services/api/middleware/idempotent.go @Zac Clifton @Jason Gallavin @EdWrld
+services/api/middleware/loadShedding.go @Zac Clifton @Jason Gallavin @EdWrld
+services/api/middleware/middleware.go @Jason Gallavin @Zac Clifton
+services/api/middleware/otel.go @Zac Clifton @Jason Gallavin
+services/api/middleware/requestCounter.go @Zac Clifton @Jason Gallavin @EdWrld
+services/api/monitoring/otel.go @Jason Gallavin
+services/api/monitoring/pyroscope.go @Zac Clifton @EdWrld @Jason Gallavin
+services/api/otel.go @Zac Clifton
+services/api/routes/comment.go @Jason Gallavin @Zac Clifton
+services/api/routes/health_check.go @Jason Gallavin
+services/api/routes/routes.go @Jason Gallavin @Zac Clifton
+services/api/routes/support/auth.go @Jason Gallavin @Zac Clifton
+services/api/util/apphttp/http.go @Zac Clifton @Jason Gallavin
+services/api/util/http.go @EdWrld
+services/api/util/http.go @EdWrld
+services/worker/main.go @Zac Clifton @Jason Gallavin @EdWrld
+services/worker/worker.go @Zac Clifton @Joshua McCoy
+supertokens_readme.md @Jason Gallavin
+test/api/middleware/idempotency_test.go @EdWrld
+test/api/middleware/idempotency_test.go @Zac Clifton
+test/load-test/simpleloadtest.js @Zac Clifton @Jason Gallavin @Joshua McCoy
+test/middleware/idempotency_test.go @EdWrld
+tmp/build-errors.log @EdWrld
+website/.env.example @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/.eslintrc.cjs @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/.gitignore @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/README.md @Jason Gallavin @Joshua McCoy @Zac Clifton
+website/components.json @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/next.config.js @Zac Clifton @Joshua McCoy @Jason Gallavin
+website/package.json @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/pnpm-lock.yaml @Jason Gallavin
+website/postcss.config.cjs @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/prettier.config.js @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/api-client/ApiClient.ts @Zac Clifton
+website/src/api-client/NextjsApiClient.ts @Zac Clifton
+website/src/api-client/client-hooks.ts @Zac Clifton @Jason Gallavin
+website/src/api-client/server-hooks.ts @Zac Clifton @Jason Gallavin
+website/src/app/\(protected\)/app/page.module.css @Zac Clifton @Jason Gallavin
+website/src/app/\(protected\)/app/page.tsx @Jason Gallavin @Zac Clifton
+website/src/app/\(protected\)/layout.tsx @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/\[service\]/\[system\]/alerts/page.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/app/\[org\]/\[env\]/\[service\]/\[system\]/analytics/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/\[service\]/\[system\]/policies/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/\[service\]/\[system\]/pulls/page.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/app/\[org\]/\[env\]/\[service\]/\[system\]/push-apis/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/\[service\]/\[system\]/scaler/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/\[service\]/\[system\]/streams/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/\[service\]/policies/page.tsx @Jason Gallavin @Joshua McCoy @Zac Clifton
+website/src/app/\[org\]/\[env\]/get-started/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/layout.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/not-found.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/overview/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/service-templates/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/\[env\]/system-templates/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/not-found.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/settings/audit-log/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/settings/billing/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/settings/environments/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/settings/layout.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/app/\[org\]/settings/members/page.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/app/\[org\]/settings/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/\[org\]/settings/security/page.tsx @Jason Gallavin @Joshua McCoy @Zac Clifton
+website/src/app/\[org\]/settings/service-tokens/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/api-client/ApiClient.ts @Jason Gallavin
+website/src/app/api-client/ApiClient.ts @Jason Gallavin
+website/src/app/api-client/NextjsApiClient.ts @Jason Gallavin
+website/src/app/api-client/NextjsApiClient.ts @Jason Gallavin
+website/src/app/api-client/client-hooks.ts @Jason Gallavin
+website/src/app/api-client/client-hooks.ts @Jason Gallavin
+website/src/app/api-client/server-hooks.ts @Jason Gallavin
+website/src/app/api-client/server-hooks.ts @Jason Gallavin
+website/src/app/api/user/route.ts @Jason Gallavin @Zac Clifton
+website/src/app/auth/\[\[...path\]\]/page.tsx @Jason Gallavin @Zac Clifton
+website/src/app/components/callApiButton.tsx @Jason Gallavin
+website/src/app/components/callApiButton.tsx @Jason Gallavin
+website/src/app/components/home.tsx @Jason Gallavin
+website/src/app/components/linksComponent.tsx @Jason Gallavin
+website/src/app/config/supertokens/appInfo.ts @Jason Gallavin
+website/src/app/config/supertokens/appInfo.ts @Jason Gallavin
+website/src/app/config/supertokens/backend.ts @Jason Gallavin
+website/src/app/config/supertokens/backend.ts @Jason Gallavin
+website/src/app/config/supertokens/components/AuthContext.tsx @Jason Gallavin
+website/src/app/config/supertokens/components/AuthContext.tsx @Jason Gallavin
+website/src/app/config/supertokens/components/SuperTokensAuthWrapper.tsx @Jason Gallavin
+website/src/app/config/supertokens/components/SuperTokensAuthWrapper.tsx @Jason Gallavin
+website/src/app/config/supertokens/components/sessionAuthForNextJS.tsx @Jason Gallavin
+website/src/app/config/supertokens/components/sessionAuthForNextJS.tsx @Jason Gallavin
+website/src/app/config/supertokens/components/supertokensProvider.tsx @Jason Gallavin
+website/src/app/config/supertokens/components/supertokensProvider.tsx @Jason Gallavin
+website/src/app/config/supertokens/components/tryRefreshClientComponent.tsx @Jason Gallavin
+website/src/app/config/supertokens/components/tryRefreshClientComponent.tsx @Jason Gallavin
+website/src/app/config/supertokens/frontend.tsx @Jason Gallavin
+website/src/app/config/supertokens/frontend.tsx @Jason Gallavin
+website/src/app/config/supertokens/helpers.ts @Jason Gallavin
+website/src/app/config/supertokens/helpers.ts @Jason Gallavin
+website/src/app/layout.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/app/onboarding/page.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/app/page.module.css @Jason Gallavin @Zac Clifton
+website/src/app/page.tsx @Zac Clifton @Jason Gallavin
+website/src/app/providers.tsx @Jason Gallavin @Zac Clifton @Joshua McCoy
+website/src/app/server-page.tsx @Zac Clifton @Jason Gallavin
+website/src/assets/images/arrow-right-icon.svg @Jason Gallavin @Zac Clifton
+website/src/assets/images/blogs-icon.svg @Zac Clifton @Jason Gallavin
+website/src/assets/images/celebrate-icon.svg @Zac Clifton @Jason Gallavin
+website/src/assets/images/guide-icon.svg @Zac Clifton @Jason Gallavin
+website/src/assets/images/index.ts @Zac Clifton @Jason Gallavin
+website/src/assets/images/separator-line.svg @Zac Clifton @Jason Gallavin
+website/src/assets/images/sign-out-icon.svg @Zac Clifton @Jason Gallavin
+website/src/components/auth/callApiButton.tsx @Zac Clifton @Jason Gallavin
+website/src/components/auth/home.tsx @Zac Clifton @Jason Gallavin
+website/src/components/auth/linksComponent.tsx @Zac Clifton @Jason Gallavin
+website/src/components/supertokens/AuthContext.tsx @Zac Clifton
+website/src/components/supertokens/SuperTokensAuthWrapper.tsx @Zac Clifton
+website/src/components/supertokens/sessionAuthForNextJS.tsx @Zac Clifton
+website/src/components/supertokens/supertokensProvider.tsx @Zac Clifton @Jason Gallavin
+website/src/components/supertokens/tryRefreshClientComponent.tsx @Jason Gallavin @Zac Clifton
+website/src/components/supertokensProvider.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/components/ui/accordion.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/avatar.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/badge.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/button.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/card.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/chart.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/components/ui/command.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/context-menu.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/dialog.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/dropdown-menu.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/form.tsx @Jason Gallavin @Joshua McCoy @Zac Clifton
+website/src/components/ui/hover-card.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/label.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/components/ui/menubar.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/navigation-menu.tsx @Jason Gallavin @Joshua McCoy @Zac Clifton
+website/src/components/ui/pagination.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/popover.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/progress.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/radio-group.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/scroll-area.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/select.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/separator.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/skeleton.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/components/ui/sonner.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/switch.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/components/ui/tabs.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/textarea.tsx @Jason Gallavin @Joshua McCoy @Zac Clifton
+website/src/components/ui/toast.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/toaster.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/toggle-group.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/toggle.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/components/ui/tooltip.tsx @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/ui/use-toast.ts @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/src/components/util/InitialPageSpinner/InitialPageSpinner.module.css @Jason Gallavin
+website/src/components/util/InitialPageSpinner/InitialPageSpinner.tsx @Jason Gallavin
+website/src/config/appinfo.ts @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/config/frontend.tsx @Zac Clifton @Jason Gallavin @Joshua McCoy
+website/src/config/index.ts @Zac Clifton @Jason Gallavin
+website/src/config/supertokens/appInfo.ts @Zac Clifton @Jason Gallavin
+website/src/config/supertokens/backend.ts @Zac Clifton
+website/src/config/supertokens/frontend.tsx @Zac Clifton @Jason Gallavin
+website/src/config/supertokens/helpers.ts @Zac Clifton
+website/src/env.js @Zac Clifton @Joshua McCoy @Jason Gallavin
+website/src/images/arrow-right-icon.svg @Zac Clifton @Jason Gallavin
+website/src/images/blogs-icon.svg @Zac Clifton @Jason Gallavin
+website/src/images/celebrate-icon.svg @Zac Clifton @Jason Gallavin
+website/src/images/guide-icon.svg @Jason Gallavin @Zac Clifton
+website/src/images/index.ts @Zac Clifton @Jason Gallavin
+website/src/images/separator-line.svg @Zac Clifton @Jason Gallavin
+website/src/images/sign-out-icon.svg @Zac Clifton @Jason Gallavin
+website/src/lib/errors.ts @Jason Gallavin
+website/src/lib/utils.ts @Jason Gallavin @Joshua McCoy @Zac Clifton
+website/src/middleware.ts @Jason Gallavin @Zac Clifton
+website/src/styles/globals.css @Joshua McCoy @Zac Clifton @Jason Gallavin
+website/tailwind.config.ts @Jason Gallavin @Joshua McCoy @Zac Clifton
+website/tsconfig.json @Joshua McCoy @Zac Clifton @Jason Gallavin
