@@ -48,6 +48,12 @@ do sleep 5; done
 
 helm upgrade --install metallb metallb/metallb --values ./1-infra/1-metallb.values.yaml -n metallb-system --wait
 
+# install nginx ingress controller
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+
+
 # Temp disabled due to conflict with talos CNI and istio CNI when tring to run in ambient mode
 ## Install Istio with ambient mesh; https://istio.io/latest/docs/ambient/install/helm/
 #helm upgrade --install istio-base istio/base -n istio-system --set defaultRevision=default --wait
