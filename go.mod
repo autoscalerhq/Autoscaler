@@ -1,8 +1,9 @@
 module github.com/autoscalerhq/autoscaler
 
-go 1.22
+go 1.23
 
 replace (
+	github.com/autoscalerhq/autoscaler/internal/nats => ./internal/nats
 	github.com/autoscalerhq/autoscaler/lib/dkron => ./lib/dkron
 	github.com/autoscalerhq/autoscaler/lib/math => ./lib/math
 	github.com/autoscalerhq/autoscaler/services/api/middleware => ./services/api/middleware
@@ -71,7 +72,7 @@ require (
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
-	github.com/grafana/pyroscope-go/godeltaprof v0.1.6 // indirect
+	github.com/grafana/pyroscope-go/godeltaprof v0.1.8 // indirect
 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -82,7 +83,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kevinconway/rolling/v3 v3.0.0 // indirect
-	github.com/klauspost/compress v1.17.3 // indirect
+	github.com/klauspost/compress v1.17.10 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
