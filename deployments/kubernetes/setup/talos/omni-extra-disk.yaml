@@ -1,0 +1,15 @@
+machine:
+  kubelet:
+    extraMounts:
+      - destination: /var/mnt/storage/longhorn
+        type: bind
+        source: /var/mnt/storage/longhorn
+        options:
+          - bind
+          - rshared
+          - rw
+  disks:
+    # You would do this fer each disk
+    - device: /dev/vdb
+      partitions:
+        - mountpoint: /var/mnt/storage

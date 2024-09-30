@@ -121,3 +121,30 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+postgresql:
+  enabled: true # Set too false to use your own postgresql instance
+
+nats:
+  enabled: true # Set too false to use your own postgresql instance
+  jetstream:
+    enabled: true
+    maxMemory: 4G
+  metrics:
+    enabled: true
+  persistence:
+    enabled: true
+
+clickhouse:
+  enabled: true # Set too false to use your own postgresql instance
+
+dkron:
+  enabled: true # Set too false to use your own dkron deployment instance
+
+supertokens:
+  enabled: true # Set too false to use your own dkron deployment instance
+
+cerbos:
+  enabled: true # Set too false to use your own dkron deployment instance
+
+

@@ -1,0 +1,6 @@
+### Helm template
+# Chart dependencies
+**/charts/*.tgz
+
+**/secrets.yaml
+kubernetes/setup/0-monitoring/secrets.yaml

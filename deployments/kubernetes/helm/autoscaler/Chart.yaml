@@ -22,3 +22,34 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "1.16.0"
+
+dependencies:
+  - name: clickhouse
+    version: 6.2.23
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+
+  - name: nats
+    version: 8.4.3
+    repository: https://charts.bitnami.com/bitnami
+    condition: nats.enabled
+
+  - name: postgresql
+    version: 15.5.36
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+
+  - name: dkron
+    version: 2.0.3
+    repository: "https://raw.githubusercontent.com/distribworks/dkron-helm/master"
+    condition: dkron.enabled
+
+  - name: supertokens
+    version: 1.0.0
+    repository: https://diabolocom.github.io/graphql-hive/chart
+    condition: supertokens.enabled
+
+  - name: cerbos
+    version: 0.38.1
+    repository: https://download.cerbos.dev/helm-charts
+    condition: cerbos.enabled

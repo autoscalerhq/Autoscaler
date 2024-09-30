@@ -1,5 +1,6 @@
 # Custom
 
+deployments/kubernetes/setup/0-monitoring/secrets.yaml
 docker/data
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,linux,windows,rust,rust-analyzer,jetbrains+iml,go

@@ -1,0 +1,84 @@
+image:
+  repository: prometheuscommunity/smartctl-exporter
+  pullPolicy: IfNotPresent
+  tag: v0.12.0@sha256:d49a659f037db4b0f5adbcabff7f4dc3a8fb691b176a671583362d66a1115c5d
+securityContext:
+  container:
+    privileged: true
+    runAsUser: 0
+    runAsGroup: 0
+service:
+  main:
+    ports:
+      main:
+        protocol: http
+        port: 9633
+workload:
+  main:
+    type: DaemonSet
+    podSpec:
+      containers:
+        main:
+          args:
+            - --web.listen-address
+            - :{{ .Values.service.main.ports.main.port }}
+            - --web.telemetry-path
+            - "{{ .Values.smartctl.metricsEndpoint }}"
+            - --smartctl.path
+            - /usr/sbin/smartctl
+            - --smartctl.interval
+            - "{{ .Values.smartctl.pollInterval }}"
+            - --smartctl.rescan
+            - "{{ .Values.smartctl.rescanInterval }}"
+            - --smartctl.device-exclude
+            - "{{ .Values.smartctl.excludedDevices }}"
+            - --log.level
+            - "{{ .Values.logs.general.level }}"
+            - --log.format
+            - "{{ .Values.logs.general.format }}"
+          probes:
+            liveness:
+              path: "{{ .Values.smartctl.metricsEndpoint }}"
+              port: main
+            readiness:
+              path: "{{ .Values.smartctl.metricsEndpoint }}"
+              port: main
+            startup:
+              type: tcp
+              port: main
+
+persistence:
+  hostdev:
+    enabled: true
+    type: hostPath
+    hostPath: /dev
+    mountPath: /hostdev
+
+metrics:
+  main:
+    enabled: true
+    type: "deamonset"
+    endpoints:
+      - port: main
+        path: "{{ .Values.smartctl.metricsEndpoint }}"
+portal:
+  open:
+    enabled: false
+smartctl:
+  metricsEndpoint: "/metrics"
+  pollInterval: "60s"
+  rescanInterval: "10m"
+  excludedDevices: ""
+logs:
+  general:
+    level: info
+    format: logfmt
+
+configmap:
+  dashboard:
+    enabled: true
+    labels:
+      grafana_dashboard: "1"
+    data:
+      smartctl.json: >-
+        {{ .Files.Get "dashboard.json" | indent 8 }}
