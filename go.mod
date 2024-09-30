@@ -3,6 +3,7 @@ module github.com/autoscalerhq/autoscaler
 go 1.22
 
 replace (
+	github.com/autoscalerhq/autoscaler/internal/nats => ./internal/nats
 	github.com/autoscalerhq/autoscaler/lib/dkron => ./lib/dkron
 	github.com/autoscalerhq/autoscaler/lib/math => ./lib/math
 	github.com/autoscalerhq/autoscaler/services/api/middleware => ./services/api/middleware
