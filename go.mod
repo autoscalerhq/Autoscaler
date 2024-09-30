@@ -1,6 +1,6 @@
 module github.com/autoscalerhq/autoscaler
 
-go 1.22
+go 1.23
 
 replace (
 	github.com/autoscalerhq/autoscaler/lib/dkron => ./lib/dkron
@@ -8,6 +8,7 @@ replace (
 	github.com/autoscalerhq/autoscaler/services/api/middleware => ./services/api/middleware
 	github.com/autoscalerhq/autoscaler/services/api/monitoring => ./services/api/monitoring
 	github.com/autoscalerhq/autoscaler/services/api/routes => ./services/api/routes
+	github.com/autoscalerhq/autoscaler/internal/nats => ./internal/nats
 )
 
 require (
