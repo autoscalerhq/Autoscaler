@@ -37,6 +37,12 @@ build-all:
         +build-worker
 
 build-all-images:
+#     BUILD \
+#            --platform=linux/amd64 \
+#            --platform=linux/arm/v7 \
+#            --platform=linux/arm64 \
+#            --platform=linux/arm/v6 \
+#            +build-api
      BUILD \
         --platform=linux/amd64 \
 #        --platform=linux/arm/v7 \
@@ -55,7 +61,7 @@ build-all-images:
 #---
 
 setup-deps:
-    FROM golang:1.22-alpine3.20
+    FROM golang:1.23-alpine3.20
     WORKDIR /app
     RUN apk update && apk add --no-cache git
     COPY go.mod go.sum .
@@ -73,10 +79,7 @@ build-api:
     FROM +setup-deps
     ARG GOOS=linux
     ARG GOARCH=amd64
-    ARG --required VARIANT
-    RUN echo "TARGETPLATFORM=$TARGETPLATFORM, TARGETARCH=$TARGETARCH, TARGETVARIANT=$TARGETVARIANT"
-    RUN echo "TARGETPLATFORM=$PLATFORM, TARGETARCH=$ARCH, TARGETVARIANT=$VARIANT"
-    RUN exit 1
+    ARG VARIANT
     RUN GOARM=${VARIANT#v} go build -o app services/api/main.go
     SAVE ARTIFACT ./api
 
@@ -99,10 +102,11 @@ build-image-api:
     ARG TARGETVARIANT
     FROM --platform=$TARGETPLATFORM alpine:3.20
     RUN false
-    COPY --platform=$TARGETPLATFORM \
-        (+build-api --GOARCH='${TARGETARCH}' --VARIANT='${TARGETVARIANT}') ./api
-    ENTRYPOINT ["/api"]
-    SAVE IMAGE --without-earthly-labels --push autoscaler/api:latest
+    COPY --platform=${TARGETPLATFORM} \
+        (+build-api --GOARCH='${TARGETARCH}' --VARIANT='${TARGETVARIANT}') ./app/api
+#    COPY +build-api ./app/api
+    ENTRYPOINT ["/app/api"]
+    SAVE IMAGE --push autoscaler/api:latest
 
 build-image-worker:
     ARG TARGETPLATFORM
@@ -110,7 +114,7 @@ build-image-worker:
     ARG TARGETVARIANT
     FROM --platform=$TARGETPLATFORM alpine:3.20
     COPY \
-        --platform=$TARGETPLATFORM \
+        --platform=linux/amd64 \
         (+build-worker --GOARCH=$TARGETARCH --VARIANT=$TARGETVARIANT) ./worker
     ENTRYPOINT ["/worker"]
     SAVE IMAGE --without-earthly-labels --push autoscaler/worker:latest
