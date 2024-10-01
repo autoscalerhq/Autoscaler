@@ -1,10 +1,11 @@
 # .github/workflows/ci.yml
 
-name: Earthly +build
+name: On Merge MAIN
 
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
