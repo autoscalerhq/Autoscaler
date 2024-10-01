@@ -85,7 +85,7 @@ build-image-api:
      FROM --platform=$TARGETPLATFORM alpine:3.20
     COPY (+build-api/api --VARIANT=$TARGETVARIANT) ./app
     ENTRYPOINT ["/app"]
-    SAVE IMAGE --push autoscaler/api:latest
+    SAVE IMAGE --push ghcr.io/autoscalerhq/api:latest
 
 build-image-worker:
     ARG TARGETPLATFORM
@@ -96,5 +96,5 @@ build-image-worker:
         --platform=linux/amd64 \
         (+build-worker/worker --VARIANT=$TARGETVARIANT) ./app
     ENTRYPOINT ["/app"]
-    SAVE IMAGE --push autoscaler/worker:latest
+    SAVE IMAGE --push ghcr.io/autoscalerhq/worker:latest
 

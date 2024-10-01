@@ -10,8 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      GH_DOCKER_USERNAME: ${{ secrets.GH_DOCKER_USERNAME }}
+      GH_DOCKER_TOKEN: ${{ secrets.GH_DOCKER_TOKEN }}
       FORCE_COLOR: 1
     steps:
       - uses: earthly/actions-setup@v1
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Docker Login
-        run: docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_TOKEN"
+        run: docker login ghcr.io --username "$GH_DOCKER_USERNAME" --password "$GH_DOCKER_TOKEN"
 
       - name: Run build
         run: earthly --ci --push +build-all-images
