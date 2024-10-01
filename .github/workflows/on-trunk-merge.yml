@@ -34,4 +34,4 @@ jobs:
         run: docker login ghcr.io --username "$GH_DOCKER_USERNAME" --password "$GH_DOCKER_TOKEN"
 
       - name: Run build
-        run: earthly --org bearbinary --ci --push +build-all-images
+        run: earthly --org bearbinary --sat s1 --ci --push +build-all-images
