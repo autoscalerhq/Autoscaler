@@ -20,20 +20,32 @@ build-all:
      BUILD \
         --platform=linux/amd64 \
         --platform=linux/arm64 \
+        --platform=linux/arm/v7 \
+        --platform=linux/ppc64le \
+        --platform=linux/s390x \
         +build-api
     BUILD \
         --platform=linux/amd64 \
         --platform=linux/arm64 \
+        --platform=linux/arm/v7 \
+        --platform=linux/ppc64le \
+        --platform=linux/s390x \
         +build-worker
 
 build-all-images:
      BUILD \
         --platform=linux/amd64 \
         --platform=linux/arm64 \
+        --platform=linux/arm/v7 \
+        --platform=linux/ppc64le \
+        --platform=linux/s390x \
         +build-image-api
      BUILD \
         --platform=linux/amd64 \
         --platform=linux/arm64 \
+        --platform=linux/arm/v7 \
+        --platform=linux/ppc64le \
+        --platform=linux/s390x \
         +build-image-worker
 
 #---

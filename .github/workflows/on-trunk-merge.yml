@@ -16,12 +16,12 @@ jobs:
       GH_DOCKER_TOKEN: ${{ secrets.GH_DOCKER_TOKEN }}
       FORCE_COLOR: 1
     steps:
-      - name: Set up QEMU
-        id: qemu
-        uses: docker/setup-qemu-action@v1
-        with:
-          image: tonistiigi/binfmt:latest
-          platforms: all
+#      - name: Set up QEMU
+#        id: qemu
+#        uses: docker/setup-qemu-action@v1
+#        with:
+#          image: tonistiigi/binfmt:latest
+#          platforms: all
 
       - uses: earthly/actions-setup@v1
         with:
