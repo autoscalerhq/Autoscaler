@@ -53,7 +53,7 @@ export default function Manager({params}: { params: { org: string, env: string }
             (integration.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 integration.createdAt.includes(searchTerm) ||
                 integration.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                (integration.response && integration.response.toLowerCase().includes(searchTerm.toLowerCase()))) &&
+                (integration.response?.toLowerCase().includes(searchTerm.toLowerCase()))) &&
             (statusFilter === "All" || integration.status === statusFilter)
     );
 
