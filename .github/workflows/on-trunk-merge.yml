@@ -11,13 +11,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      EARTHLY_TOKEN: ${{ secrets.EARTHLY_TOKEN }}
       GH_DOCKER_USERNAME: ${{ secrets.GH_DOCKER_USERNAME }}
       GH_DOCKER_TOKEN: ${{ secrets.GH_DOCKER_TOKEN }}
       FORCE_COLOR: 1
     steps:
+#      - name: Set up QEMU
+#        id: qemu
+#        uses: docker/setup-qemu-action@v1
+#        with:
+#          image: tonistiigi/binfmt:latest
+#          platforms: all
+
       - uses: earthly/actions-setup@v1
         with:
           version: v0.8.0
+          github-token: $GH_DOCKER_TOKEN
 
       - uses: actions/checkout@v4
 
@@ -25,4 +34,4 @@ jobs:
         run: docker login ghcr.io --username "$GH_DOCKER_USERNAME" --password "$GH_DOCKER_TOKEN"
 
       - name: Run build
-        run: earthly --ci --push +build-all-images
+        run: earthly --org bearbinary --sat s1 --ci --push +build-all-images
