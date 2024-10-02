@@ -14,35 +14,39 @@ dev-down:
 
 #---
 # Building
-# Note Earthly only supports amd64 and arm64
+# linux/riscv64 is beta supported by node. We only release versions that can be supported by all of our apps.
+# linux/ppc64le is not suppored by node-alpine images.
 #---
-build-all:
-     BUILD \
-        --platform=linux/amd64 \
-        --platform=linux/arm64 \
-        +build-api
-    BUILD \
-        --platform=linux/amd64 \
-        --platform=linux/arm64 \
-        +build-worker
-
 build-all-images:
      BUILD \
         --platform=linux/amd64 \
         --platform=linux/arm64 \
+        --platform=linux/arm/v7 \
+        --platform=linux/s390x \
         +build-image-api
      BUILD \
         --platform=linux/amd64 \
         --platform=linux/arm64 \
+        --platform=linux/arm/v7 \
+        --platform=linux/s390x \
         +build-image-worker
+
+    BUILD \
+        --platform=linux/amd64 \
+        --platform=linux/arm64 \
+        --platform=linux/arm/v7 \
+        --platform=linux/s390x \
+        +build-image-webapp
 
 #---
 # Setup Dependencies
 #---
-setup-deps:
+be-setup-deps:
     FROM golang:1.23-alpine3.20
     WORKDIR /app
-    RUN apk update && apk add --no-cache git
+#    Only add if a tool is needed to be installed and ensure to pin the version
+#    && apk add git=2.23.0
+    RUN apk update
     COPY go.mod go.sum .
     COPY ./internal ./internal
     COPY ./services ./services
@@ -50,42 +54,54 @@ setup-deps:
     RUN go mod download
     RUN go mod tidy
 
+fe-setup-deps:
+    FROM oven/bun:latest
+    WORKDIR /app
+    COPY ./webapp .
+
+
 #---
 # Build Services
 #---
 build-api:
-    FROM +setup-deps
+    FROM +be-setup-deps
     WORKDIR /app
     ARG GOOS=linux
-    ARG TARGETARCH
+    ARG GOARCH=amd64
     ARG VARIANT
-    RUN GOARM=${VARIANT#v} GOARCH=$TARGETARCH go build -o api services/api/main.go
+    RUN GOARM=${VARIANT#v} go build -o api services/api/main.go
     SAVE ARTIFACT ./api
-    #AS LOCAL ./tmp/api-$TARGETARCH
 
 build-worker:
-    FROM +setup-deps
+    FROM +be-setup-deps
     WORKDIR /app
     ARG GOOS=linux
-    ARG TARGETARCH
+    ARG GOARCH=amd64
     ARG VARIANT
-    RUN GOARM=${VARIANT#v} GOARCH=$TARGETARCH go build -o worker services/worker/main.go
+    RUN GOARM=${VARIANT#v} go build -o worker services/worker/main.go
     SAVE ARTIFACT ./worker
-    #AS LOCAL ./tmp/worker-$TARGETARCH
+
+build-webapp:
+    FROM +fe-setup-deps
+    RUN bun i && bun run build
+    SAVE ARTIFACT .next/standalone
 
 #---
 # Build Docker Images
 #---
 build-image-api:
-
     ARG TARGETPLATFORM
     ARG TARGETOS
     ARG TARGETARCH
     ARG TARGETVARIANT
-     FROM --platform=$TARGETPLATFORM alpine:3.20
-    COPY (+build-api/api --VARIANT=$TARGETVARIANT) ./app
+    FROM --platform=$TARGETPLATFORM alpine:3.20
+    COPY \
+    # if this is set to --platform=$TARGETPLATFORM then the build will happen on that architecture.
+    # However this is not garunteed to actually compile and the only one that is, is amd64.
+        --platform=linux/amd64 \
+        (+build-api/api --GOARCH=$TARGETARCH --VARIANT=$TARGETVARIANT) ./app
     ENTRYPOINT ["/app"]
-    SAVE IMAGE --push autoscaler/api:latest
+    SAVE IMAGE --push ghcr.io/autoscalerhq/api:latest
 
 build-image-worker:
     ARG TARGETPLATFORM
@@ -93,8 +109,15 @@ build-image-worker:
     ARG TARGETVARIANT
     FROM --platform=$TARGETPLATFORM alpine:3.20
     COPY \
+    # if this is set to --platform=$TARGETPLATFORM then the build will happen on that architecture.
+    # However this is not garunteed to actually compile and the only one that is, is amd64.
         --platform=linux/amd64 \
-        (+build-worker/worker --VARIANT=$TARGETVARIANT) ./app
+        (+build-worker/worker --GOARCH=$TARGETARCH --VARIANT=$TARGETVARIANT) ./app
     ENTRYPOINT ["/app"]
-    SAVE IMAGE --push autoscaler/worker:latest
+    SAVE IMAGE --push ghcr.io/autoscalerhq/worker:latest
+
+build-image-webapp:
+    FROM node:22-alpine3.20
+    COPY --platform=linux/amd64 (+build-webapp/standalone ) ./app
+    SAVE IMAGE --push ghcr.io/autoscalerhq/web:latest
 

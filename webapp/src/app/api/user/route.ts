@@ -17,6 +17,7 @@ export function GET(request: NextRequest) {
       note: "Fetch any data from your application for authenticated user after using verifySession middleware",
       userId: session.getUserId(),
       sessionHandle: session.getHandle(),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       accessTokenPayload: session.getAccessTokenPayload(),
     });
   });
