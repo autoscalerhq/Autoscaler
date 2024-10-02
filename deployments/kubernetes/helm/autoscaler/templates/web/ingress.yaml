@@ -1,21 +1,21 @@
-{{- if .Values.ingress.enabled }}
+{{- if .Values.webapp.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "mychart.fullname" . }}
+  name: {{ include "mychart.fullname" . }}-webapp
   labels:
     app: {{ include "mychart.name" . }}
     chart: {{ include "mychart.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   annotations:
-    {{- range $key, $value := .Values.ingress.annotations }}
+    {{- range $key, $value := .Values.webapp.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.className | quote }}
+  ingressClassName: {{ .Values.webapp.ingress.className | quote }}
   rules:
-    {{- range .Values.ingress.hosts }}
+    {{- range .Values.webapp.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -24,14 +24,14 @@ spec:
             pathType: {{ .pathType | quote }}
             backend:
               service:
-                name: {{ .serviceName }}
+                name: {{ include "mychart.fullname" . }}-webapp
                 port:
-                  number: {{ .servicePort }}
+                  number: {{ $.Values.webapp.service.port }}
           {{- end }}
     {{- end }}
-  {{- if .Values.ingress.tls }}
+  {{- if .Values.webapp.ingress.tls }}
   tls:
-    {{- range .Values.ingress.tls }}
+    {{- range .Values.webapp.ingress.tls }}
     - secretName: {{ .secretName }}
       hosts:
         {{- range .hosts }}

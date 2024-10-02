@@ -1,0 +1,16 @@
+# templates/tests/test-api.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "mychart.fullname" . }}-test-api"
+  labels:
+    {{- include "mychart.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "mychart.fullname" . }}-api:{{ .Values.api.service.port }}', '-O-', '-q']
+  restartPolicy: Never

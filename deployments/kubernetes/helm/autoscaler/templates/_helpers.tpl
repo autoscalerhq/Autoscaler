@@ -60,3 +60,19 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{- define "mychart.name" -}}
+{{ .Chart.Name }}
+{{- end -}}
+
+{{- define "mychart.fullname" -}}
+{{ .Release.Name }}-{{ include "mychart.name" . }}
+{{- end -}}
+
+{{- define "mychart.chart" -}}
+{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+{{- end -}}
+
+{{- define "mychart.serviceAccountName" -}}
+{{ include "mychart.fullname" . }}-serviceaccount
+{{- end -}}

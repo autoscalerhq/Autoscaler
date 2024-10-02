@@ -1,0 +1,43 @@
+{{- if .Values.web.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mychart.fullname" . }}-web
+  labels:
+    app: {{ include "mychart.name" . }}
+    chart: {{ include "mychart.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.web.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "mychart.fullname" . }}-web
+  template:
+    metadata:
+      labels:
+        app: {{ include "mychart.fullname" . }}-web
+      annotations:
+        {{- toYaml .Values.web.podAnnotations | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "mychart.serviceAccountName" . }}-web
+      containers:
+        - name: web
+          image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.web.service.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.global.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.global.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.web.resources | nindent 12 }}
+      nodeSelector:
+        {{- toYaml .Values.web.nodeSelector | nindent 8 }}
+      tolerations:
+        {{- toYaml .Values.web.tolerations | nindent 8 }}
+      affinity:
+        {{- toYaml .Values.web.affinity | nindent 8 }}
+{{- end }}

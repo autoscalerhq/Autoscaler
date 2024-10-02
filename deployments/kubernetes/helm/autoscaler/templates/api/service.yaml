@@ -1,0 +1,20 @@
+# Service for API
+{{- if .Values.api.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mychart.fullname" . }}-api
+  labels:
+    app: {{ include "mychart.name" . }}
+    chart: {{ include "mychart.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.api.service.type }}
+  ports:
+    - port: {{ .Values.api.service.port }}
+      targetPort: {{ .Values.api.service.port }}
+      protocol: TCP
+  selector:
+    app: {{ include "mychart.fullname" . }}-api
+{{- end }}
