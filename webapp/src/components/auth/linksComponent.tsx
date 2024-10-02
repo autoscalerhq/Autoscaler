@@ -13,7 +13,7 @@ const SignOutLink = (props: { name: string; link: string; icon: string }) => {
       className={styles.linksContainerLink}
       onClick={async () => {
         await Session.signOut();
-        SuperTokens.redirectToAuth();
+        void SuperTokens.redirectToAuth();
       }}
     >
       <Image className={styles.linkIcon} src={props.icon} alt={props.name} />
@@ -31,17 +31,17 @@ export const LinksComponent = () => {
     {
       name: "Blogs",
       link: "https://supertokens.com/blog",
-      icon: BlogsIcon,
+      icon: "/images/blogs-icon.svg",
     },
     {
       name: "Guides",
       link: recipeDetails.docsLink,
-      icon: GuideIcon,
+      icon: "/images/guide-icon.svg",
     },
     {
       name: "Sign Out",
       link: "",
-      icon: SignOutIcon,
+      icon: "/images/sign-out-icon.svg",
     },
   ];
 

@@ -7,7 +7,6 @@ import { LinksComponent } from "./linksComponent";
 import React from 'react';
 import {useAuthContext} from '~/components/supertokens/AuthContext';
 
-
 export function HomeComponent() {
 
   const {accessTokenPayload} = useAuthContext();
@@ -18,7 +17,7 @@ export function HomeComponent() {
             className={`${styles.topBand} ${styles.successTitle} ${styles.bold500}`}
           >
             <Image
-              src={CelebrateIcon}
+              src={"/images/celebrate-icon.svg"}
               alt="Login successful"
               className={styles.successIcon}
             />{" "}
@@ -35,7 +34,7 @@ export function HomeComponent() {
         <LinksComponent />
         <Image
           className={styles.separatorLine}
-          src={SeparatorLine}
+          src={"images/separator-line.svg"}
           alt="separator"
         />
       </div>
