@@ -18,6 +18,8 @@ export function HomeComponent() {
           >
             <Image
               src={"/images/celebrate-icon.svg"}
+              width={31}
+              height={31}
               alt="Login successful"
               className={styles.successIcon}
             />{" "}
@@ -35,6 +37,8 @@ export function HomeComponent() {
         <Image
           className={styles.separatorLine}
           src={"images/separator-line.svg"}
+          width={530}
+          height={1}
           alt="separator"
         />
       </div>

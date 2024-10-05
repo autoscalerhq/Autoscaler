@@ -7,7 +7,7 @@ import Image from "next/image";
 import Session from "supertokens-auth-react/recipe/session";
 import SuperTokens from "supertokens-auth-react";
 
-const SignOutLink = (props: { name: string; link: string; icon: string }) => {
+const SignOutLink = (props: { name: string; link: string; icon: string, width: number, height: number }) => {
   return (
     <div
       className={styles.linksContainerLink}
@@ -16,7 +16,7 @@ const SignOutLink = (props: { name: string; link: string; icon: string }) => {
         void SuperTokens.redirectToAuth();
       }}
     >
-      <Image className={styles.linkIcon} src={props.icon} alt={props.name} />
+      <Image className={styles.linkIcon} src={props.icon} width={props.width} height={props.height} alt={props.name} />
       <div role={"button"}>{props.name}</div>
     </div>
   );
@@ -27,20 +27,28 @@ export const LinksComponent = () => {
     name: string;
     link: string;
     icon: string;
+    width: number;
+    height: number;
   }[] = [
     {
       name: "Blogs",
       link: "https://supertokens.com/blog",
       icon: "/images/blogs-icon.svg",
+      width: 16,
+      height: 14
     },
     {
       name: "Guides",
       link: recipeDetails.docsLink,
       icon: "/images/guide-icon.svg",
+      width: 13,
+      height: 14
     },
     {
       name: "Sign Out",
       link: "",
+      width: 15,
+      height: 15,
       icon: "/images/sign-out-icon.svg",
     },
   ];
@@ -55,6 +63,8 @@ export const LinksComponent = () => {
               link={link.link}
               icon={link.icon}
               key={link.name}
+              width={link.width}
+              height={link.height}
             />
           );
         }
@@ -69,6 +79,8 @@ export const LinksComponent = () => {
             <Image
               className={styles.linkIcon}
               src={link.icon}
+              width={link.width}
+              height={link.height}
               alt={link.name}
             />
             <div role={"button"}>{link.name}</div>
