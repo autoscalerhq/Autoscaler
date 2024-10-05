@@ -26,17 +26,6 @@ func VerifySessionMiddleware(theirHandler http.Handler) http.Handler {
 	})
 }
 
-func MakeDefaultSuperTokensAppInfoEnv() SuperTokensConfiguration {
-	return SuperTokensConfiguration{
-		ConnectionUri: "http://localhost:3567",
-		ApiKey:        "",
-		AppInfo: SuperTokensAppInfoEnv{
-			ApiDomain:     "http://localhost:8080",
-			WebsiteDomain: "http://localhost:3000",
-		},
-	}
-}
-
 func InitSuperTokens(env SuperTokensConfiguration) error {
 	apiBasePath := "/auth"
 	websiteBasePath := "/auth"
