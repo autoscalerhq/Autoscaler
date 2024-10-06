@@ -7,17 +7,17 @@ import (
 	"net/http"
 )
 
-type SuperTokensEnv struct {
+type SuperTokensConfiguration struct {
 	// connectionUri is the URL of the SuperTokens core instance
-	connectionUri string
+	ConnectionUri string
 	// api token to communicate with SuperTokens core instance
-	apiKey  string
-	appInfo SuperTokensAppInfoEnv
+	ApiKey  string
+	AppInfo SuperTokensAppInfoEnv
 }
 type SuperTokensAppInfoEnv struct {
 	// appName is the name of the app
-	apiDomain     string
-	websiteDomain string
+	ApiDomain     string
+	WebsiteDomain string
 }
 
 func VerifySessionMiddleware(theirHandler http.Handler) http.Handler {
@@ -26,29 +26,18 @@ func VerifySessionMiddleware(theirHandler http.Handler) http.Handler {
 	})
 }
 
-func MakeDefaultSuperTokensAppInfoEnv() SuperTokensEnv {
-	return SuperTokensEnv{
-		connectionUri: "http://localhost:3567",
-		apiKey:        "",
-		appInfo: SuperTokensAppInfoEnv{
-			apiDomain:     "http://localhost:8080",
-			websiteDomain: "http://localhost:3000",
-		},
-	}
-}
-
-func InitSuperTokens(env SuperTokensEnv) error {
+func InitSuperTokens(env SuperTokensConfiguration) error {
 	apiBasePath := "/auth"
 	websiteBasePath := "/auth"
 	err := supertokens.Init(supertokens.TypeInput{
 		Supertokens: &supertokens.ConnectionInfo{
-			ConnectionURI: env.connectionUri,
-			APIKey:        env.apiKey,
+			ConnectionURI: env.ConnectionUri,
+			APIKey:        env.ApiKey,
 		},
 		AppInfo: supertokens.AppInfo{
 			AppName:         "autoscaler",
-			APIDomain:       env.appInfo.apiDomain,
-			WebsiteDomain:   env.appInfo.websiteDomain,
+			APIDomain:       env.AppInfo.ApiDomain,
+			WebsiteDomain:   env.AppInfo.WebsiteDomain,
 			APIBasePath:     &apiBasePath,
 			WebsiteBasePath: &websiteBasePath,
 		},

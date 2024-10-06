@@ -5,6 +5,7 @@ import (
 	"errors"
 	natutils "github.com/autoscalerhq/autoscaler/internal/nats"
 	"github.com/autoscalerhq/autoscaler/services/api/auth"
+	"github.com/autoscalerhq/autoscaler/services/api/configuration"
 	"github.com/autoscalerhq/autoscaler/services/api/middleware"
 	"github.com/autoscalerhq/autoscaler/services/api/monitoring"
 	"github.com/autoscalerhq/autoscaler/services/api/routes"
@@ -37,23 +38,21 @@ var (
 	logger *slog.Logger
 )
 
-type Environment struct {
-	supertokens   auth.SuperTokensEnv
-	listenAddress string
-}
-
-func makeDefaultEnv() Environment {
-	return Environment{
-		supertokens:   auth.MakeDefaultSuperTokensAppInfoEnv(),
-		listenAddress: ":8888",
-	}
-}
-
 // For local development, Nats 1, 2 And flagd must be running
 func main() {
 
-	env := makeDefaultEnv()
-	err := auth.InitSuperTokens(env.supertokens)
+	env, err := configuration.LoadConfiguration(".env")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = auth.InitSuperTokens(auth.SuperTokensConfiguration{
+		ConnectionUri: env.SuperTokensConnectionUri,
+		ApiKey:        env.SuperTokensApiKey,
+		AppInfo: auth.SuperTokensAppInfoEnv{
+			ApiDomain:     env.SuperTokensAppApiDomain,
+			WebsiteDomain: env.SuperTokensAppWebsiteDomain,
+		},
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -162,7 +161,7 @@ func main() {
 	defer stop()
 	// Start server
 	go func() {
-		if err := e.Start(env.listenAddress); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := e.Start(env.ListenAddress); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			e.Logger.Fatal("shutting down the server")
 		}
 	}()
